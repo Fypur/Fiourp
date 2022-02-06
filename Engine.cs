@@ -1,0 +1,54 @@
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Fiourp
+{
+    public static class Engine
+    {
+        public static GraphicsDeviceManager Graphics;
+
+        public static Vector2 ScreenSize;
+        public static Vector2 ScreenSizeX;
+        public static Vector2 ScreenSizeY;
+        public static float Deltatime;
+
+        public static Camera Cam;
+        public static Entity Player;
+        public static Map CurrentMap;
+        public static RenderTarget2D RenderTarget;
+
+        public static void Initialize(GraphicsDeviceManager graphicsDevice, int windowsWidth, int windowHeight, RenderTarget2D renderTarget)
+        {
+            Graphics = graphicsDevice;
+            graphicsDevice.PreferredBackBufferWidth = windowsWidth;
+            graphicsDevice.PreferredBackBufferHeight = windowHeight;
+            graphicsDevice.ApplyChanges();
+
+            ScreenSize = new Vector2(graphicsDevice.PreferredBackBufferWidth, graphicsDevice.PreferredBackBufferHeight);
+            ScreenSizeX = new Vector2(ScreenSize.X, 0);
+            ScreenSizeY = new Vector2(0, ScreenSize.Y);
+
+            RenderTarget = renderTarget;
+
+            DataManager.Initialize();
+            Audio.Initialize();
+        }
+
+        public static void Update(GameTime gameTime)
+        {
+            Input.UpdateState();
+            Deltatime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+        }
+
+        public static void LateUpdate() 
+        {
+            Input.UpdateOldState();
+            Audio.Update();
+        }
+    }
+}
