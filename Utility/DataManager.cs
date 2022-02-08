@@ -9,7 +9,7 @@ namespace Fiourp
 {
     public static class DataManager
     {
-        public static ContentManager Content = new ContentManager(new GameServiceContainer());
+        public static ContentManager Content = Engine.Content;
         public static string contentDirName = new DirectoryInfo(Content.RootDirectory).FullName;
 
 
@@ -22,7 +22,6 @@ namespace Fiourp
         };
 
         public static Dictionary<string, Dictionary<string, SpriteFont>> Fonts = GetFonts();
-
 
         public static Texture2D GetTexture(string textureID)
             => Textures[textureID];

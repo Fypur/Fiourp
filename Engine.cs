@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ namespace Fiourp
     public static class Engine
     {
         public static GraphicsDeviceManager Graphics;
+        public static ContentManager Content;
 
         public static Vector2 ScreenSize;
         public static Vector2 ScreenSizeX;
@@ -22,9 +24,10 @@ namespace Fiourp
         public static Map CurrentMap;
         public static RenderTarget2D RenderTarget;
 
-        public static void Initialize(GraphicsDeviceManager graphicsDevice, int windowsWidth, int windowHeight, RenderTarget2D renderTarget)
+        public static void Initialize(GraphicsDeviceManager graphicsDevice, ContentManager content, int windowsWidth, int windowHeight, RenderTarget2D renderTarget)
         {
             Graphics = graphicsDevice;
+            Content = content;
             graphicsDevice.PreferredBackBufferWidth = windowsWidth;
             graphicsDevice.PreferredBackBufferHeight = windowHeight;
             graphicsDevice.ApplyChanges();
@@ -43,6 +46,7 @@ namespace Fiourp
         {
             Input.UpdateState();
             Deltatime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            CurrentMap.Update();
         }
 
         public static void LateUpdate() 
