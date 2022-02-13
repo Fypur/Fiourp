@@ -15,7 +15,7 @@ namespace Fiourp
         public static float QuintInAndOut(float x)
             => x < 0.5f ? 4 * x * x * x : 1 - (float)Math.Pow(-2 * x + 2, 3) / 2;
 
-        public static float Default(float x) 
+        public static float None(float x) 
             => x;
 
         /// <summary>

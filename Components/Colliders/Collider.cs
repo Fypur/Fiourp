@@ -30,6 +30,9 @@ namespace Fiourp
         #region Collide Methods
         public bool Collide(Collider other)
         {
+            if (!other.Collidable)
+                return false;
+
             if (other is BoxCollider box)
                 return Collide(box);
             else if (other is CircleCollider circle)
@@ -56,7 +59,7 @@ namespace Fiourp
             ParentEntity.Pos = position;
 
             foreach (Entity e in checkedEntities)
-                if (Collide(e))
+                if (Collide(e) && e != ParentEntity)
                 {
                     ParentEntity.Pos = oldPos;
                     return true;
@@ -68,12 +71,12 @@ namespace Fiourp
 
         public bool CollideAt(List<Entity> checkedEntities, Vector2 position, out Entity collidedEntity)
         {
-            Vector2 oldPos = ParentEntity.Pos;
+            Vector2 oldPos = ParentEntity.ExactPos;
             ParentEntity.Pos = position;
             collidedEntity = null;
 
             foreach (Entity e in checkedEntities)
-                if (Collide(e))
+                if (Collide(e) && e != ParentEntity)
                 {
                     ParentEntity.Pos = oldPos;
                     collidedEntity = e;

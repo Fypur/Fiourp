@@ -14,7 +14,7 @@ namespace Fiourp
         public float gravityScale;
         public static readonly Vector2 gravityVector = new Vector2(0, 9.81f);
 
-        public Vector2 ExactPos => new Vector2(Pos.X + xRemainder, Pos.Y + yRemainder);
+        public override Vector2 ExactPos => new Vector2(Pos.X + xRemainder, Pos.Y + yRemainder);
         private float xRemainder;
         private float yRemainder;
 

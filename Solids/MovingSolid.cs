@@ -11,6 +11,7 @@ namespace Fiourp
         public Vector2 Velocity;
         protected List<Actor> ridingActors;
 
+        public override Vector2 ExactPos => Pos + new Vector2(xRemainder, yRemainder);
         private float xRemainder;
         private float yRemainder;
 
@@ -20,7 +21,10 @@ namespace Fiourp
         public MovingSolid(Vector2 position, int width, int height, Sprite sprite) : base(position, width, height, sprite) { }
         public MovingSolid(Vector2 position, int width, int height, Color color) : base(position, width, height, color) { }
 
-        public void Move(float x, float y)
+        public void Move(Vector2 vector)
+            => Move(vector.X, vector.Y);
+
+        public virtual void Move(float x, float y)
         {
             xRemainder += x;
             yRemainder += y;
@@ -105,12 +109,71 @@ namespace Fiourp
             Collider.Collidable = true;
         }
 
+        public void MoveCollideSolids(Vector2 amount)
+            => MoveCollideSolids(amount.X, amount.Y);
+
+        public void MoveCollideSolids(float amountX, float amountY)
+        {
+            float finalX = 0;
+            float finalY = 0;
+
+            xRemainder += amountX;
+            int move = (int)Math.Round(xRemainder);
+
+            if (move != 0)
+            {
+                xRemainder -= move;
+                int sign = Math.Sign(amountX);
+
+                while (move != 0)
+                {
+                    if (!Collider.CollideAt(Pos + new Vector2(finalX + sign, 0)))
+                    {
+                        finalX += sign;
+                        move -= sign;
+                    }
+                    else
+                    {
+                        //CallbackOnCollision?.Invoke();
+                        break;
+                    }
+                }
+            }
+
+            yRemainder += amountY;
+            move = (int)Math.Round(yRemainder);
+
+            if (move != 0)
+            {
+                yRemainder -= move;
+                int sign = Math.Sign(amountY);
+
+                while (move != 0)
+                {
+                    if (!Collider.CollideAt(Pos + new Vector2(0, finalY + sign)))
+                    {
+                        finalY += sign;
+                        move -= sign;
+                    }
+                    else
+                    {
+                        //CallbackOnSolidCollision?.Invoke();
+                        break;
+                    }
+                }
+            }
+
+
+            Debug.LogUpdate(finalX, finalY);
+            Move(finalX, finalY);
+        }
+
         protected void MoveTo(Vector2 pos)
         {
             Move(pos.X - Pos.X, pos.Y - Pos.Y);
         }
 
-        void Gravity()
+        protected void Gravity()
             => Velocity += gravityVector * gravityScale;
 
         private List<Actor> GetAllRidingActors()

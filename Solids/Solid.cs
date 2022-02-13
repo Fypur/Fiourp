@@ -20,10 +20,5 @@ namespace Fiourp
             Texture2D texture = new Texture2D(Engine.Graphics.GraphicsDevice, 1, 1);
             texture.SetData(new Color[] { color });
         }
-
-        public override void Render()
-        {
-            base.Render();
-        }
     }
 }

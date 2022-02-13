@@ -113,7 +113,7 @@ namespace Fiourp
             timer = new Timer(time, false, (t) =>
 
                 Pos = Vector2.Lerp(initPos, newPos,
-                     (easingFunction ?? Ease.Default).Invoke(Ease.Reverse(t.Value / t.MaxValue))),
+                     (easingFunction ?? Ease.None).Invoke(Ease.Reverse(t.Value / t.MaxValue))),
 
                 () => Pos = newPos);
         }

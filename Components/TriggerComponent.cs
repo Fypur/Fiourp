@@ -15,7 +15,6 @@ namespace Fiourp
         public Action<Entity> OnTriggerStay { get => trigger.OnTriggerStayAction; set => trigger.OnTriggerStayAction = value; }
         public Action<Entity> OnTriggerExit { get => trigger.OnTriggerExitAction; set => trigger.OnTriggerExitAction = value; }
 
-
         private TriggerEntity trigger;
 
         public TriggerComponent(Vector2 localPosition, float width, float height, List<Type> triggerers,

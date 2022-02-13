@@ -35,8 +35,12 @@ namespace Fiourp
             }
             else if (Enumerator.MoveNext())
             {
-                Enumerator.MoveNext();
-                if (Enumerator.Current is int)
+                if(Enumerator.Current == null)
+                {
+                    waitTimer = 0;
+                    isTimer = false;
+                }
+                else if (Enumerator.Current is int)
                 {
                     waitTimer = (int)Enumerator.Current;
                     isTimer = false;

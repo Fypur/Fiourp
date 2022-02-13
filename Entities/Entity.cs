@@ -17,6 +17,7 @@ namespace Fiourp
         public Tags Tag;
         public enum Tags { Unknown, Actor, Solid, Trigger, UI }
 
+        public virtual Vector2 ExactPos => Pos;
         public Vector2 Size { get => new Vector2(Width, Height); set { Width = (int)value.X; Height = (int)value.Y; } }
         public Vector2 HalfSize { get => new Vector2(Width / 2, Height / 2); }
         public Rectangle Rect { get => new Rectangle(Pos.ToPoint(), Size.ToPoint()); set { Pos = value.Location.ToVector2(); Size = value.Size.ToVector2(); } }
@@ -91,7 +92,7 @@ namespace Fiourp
                 Collider?.Render();
         }
 
-        public void AddComponent(Component component)
+        public Component AddComponent(Component component)
         {
             component.ParentEntity = this;
             component.Added();
@@ -99,6 +100,8 @@ namespace Fiourp
 
             if (component is Renderer renderer)
                 renderers.Add(renderer);
+
+            return component;
         }
 
         public void RemoveComponent(Component component)

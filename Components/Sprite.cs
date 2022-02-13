@@ -25,10 +25,8 @@ namespace Fiourp
         public Rectangle? Rect = null;
 
         public override string ToString()
-        {
-            return $"Sprite: {Texture.Name}, {Color}, layerDepth: {LayerDepth}, Rect: {Rect}, Origin {Origin}, " +
+            => $"Sprite: {Texture.Name}, {Color}, layerDepth: {LayerDepth}, Rect: {Rect}, Origin {Origin}, " +
                 $"Scale: {Scale}, Rotation {Rotation}, SpriteEffects: {Effect}";
-        }
 
         public Sprite(Texture2D texture)
         {
@@ -67,13 +65,12 @@ namespace Fiourp
             if (Texture == null)
                 return;
 
-            if (Rect is Rectangle rect)
-                Drawing.Draw(Texture, rect, Color, Rotation, Origin, Scale, Effect, LayerDepth);
+            if (Texture == Drawing.pointTexture)
+                Drawing.Draw(Texture, ParentEntity.Rect, Color, Rotation, Origin, Scale, Effect, LayerDepth);
             else
             {
                 Drawing.Draw(Texture, ParentEntity.Pos, null, Color, Rotation, Origin, Scale, Effect, LayerDepth);
             }
-                
         }
     }
 }
