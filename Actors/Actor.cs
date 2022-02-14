@@ -13,23 +13,41 @@ namespace Fiourp
 
         public float gravityScale;
         public static readonly Vector2 gravityVector = new Vector2(0, 9.81f);
+        private Vector2 currentLiftSpeed;
+        private Timer liftSpeedTimer;
+        private const float liftSpeedGrace = 0.16f;
 
         public override Vector2 ExactPos => new Vector2(Pos.X + xRemainder, Pos.Y + yRemainder);
         private float xRemainder;
         private float yRemainder;
 
-
-        public virtual bool IsRiding(Solid solid)
-            => new Rectangle(Pos.ToPoint(), new Point(Width, Height + 1)).Intersects(new Rectangle(solid.Pos.ToPoint(), new Point(solid.Width, solid.Height)));
-
-        public virtual void Squish() 
-            => Engine.CurrentMap.Destroy(this);
-
-
-        public Actor(Vector2 position, int width, int height, float gravityScale, Sprite sprite) 
+        public Actor(Vector2 position, int width, int height, float gravityScale, Sprite sprite)
             : base(position, width, height, sprite)
         {
             this.gravityScale = gravityScale;
+            liftSpeedTimer = (Timer)AddComponent(new Timer(liftSpeedGrace, false, null, () => LiftSpeed = Vector2.Zero));
+            liftSpeedTimer.Paused = true;
+        }
+
+        public virtual bool IsRiding(Solid solid)
+            => Collider.CollideAt(solid, Pos + new Vector2(0, 1));
+
+        public virtual void Squish()
+            => Engine.CurrentMap.Destroy(this);
+
+        public Vector2 LiftSpeed
+        {
+            get => currentLiftSpeed;
+
+            set
+            {
+                currentLiftSpeed = value;
+
+                if (value == Vector2.Zero)
+                    return;
+                liftSpeedTimer.Paused = false;
+                liftSpeedTimer.Value = liftSpeedGrace;
+            }
         }
 
         public void MoveX(float amount, Action CallbackOnCollision = null)
@@ -58,7 +76,7 @@ namespace Fiourp
             }
         }
 
-        public void MoveY(float amount, Action CallbackOnSolidCollision = null)
+        public void MoveY(float amount, Action CallbackOnCollision = null)
         {
             yRemainder += amount;
             int move = (int)Math.Round(yRemainder);
@@ -77,7 +95,7 @@ namespace Fiourp
                     }
                     else
                     {
-                        CallbackOnSolidCollision?.Invoke();
+                        CallbackOnCollision?.Invoke();
                         break;
                     }
                 }

@@ -34,38 +34,46 @@ namespace Fiourp
             if (moveX == 0 && moveY == 0) return;
 
             List<Actor> ridingActors = GetAllRidingActors();
+            foreach (Actor r in ridingActors)
+                Debug.LogUpdate(r);
             Collider.Collidable = false;
-
-            if(moveX != 0)
+            if (moveX != 0)
             {
                 xRemainder -= moveX;
                 Pos.X += moveX;
-
+                
                 if(moveX > 0)
                 {
-                    foreach (Actor actor in Engine.CurrentMap.Data.Actors)
+                    for (int i = Engine.CurrentMap.Data.Actors.Count - 1; i >= 0; i--)
                     {
+                        Actor actor = Engine.CurrentMap.Data.Actors[i];
                         if (Collider.Collide(actor))
                         {
                             actor.MoveX(Pos.X + Width - actor.Pos.X, actor.Squish);
+                            actor.LiftSpeed = new Vector2(moveX / Engine.Deltatime, actor.LiftSpeed.Y);
+                            
                         }
                         else if (ridingActors.Contains(actor))
                         {
                             actor.MoveX(moveX, null);
+                            actor.LiftSpeed = new Vector2(moveX / Engine.Deltatime, actor.LiftSpeed.Y);
                         }
                     }
                 }
                 else
                 {
-                    foreach (Actor actor in Engine.CurrentMap.Data.Actors)
+                    for (int i = Engine.CurrentMap.Data.Actors.Count - 1; i >= 0; i--)
                     {
+                        Actor actor = Engine.CurrentMap.Data.Actors[i];
                         if (Collider.Collide(actor))
                         {
                             actor.MoveX(Pos.X - actor.Pos.X - actor.Width, actor.Squish);
+                            actor.LiftSpeed = new Vector2(moveX / Engine.Deltatime, actor.LiftSpeed.Y);
                         }
                         else if (ridingActors.Contains(actor))
                         {
                             actor.MoveX(moveX, null);
+                            actor.LiftSpeed = new Vector2(moveX / Engine.Deltatime, actor.LiftSpeed.Y);
                         }
                     }
                 }
@@ -78,29 +86,35 @@ namespace Fiourp
 
                 if (moveY > 0)
                 {
-                    foreach (Actor actor in Engine.CurrentMap.Data.Actors)
+                    for (int i = Engine.CurrentMap.Data.Actors.Count - 1; i >= 0; i--)
                     {
+                        Actor actor = Engine.CurrentMap.Data.Actors[i];
                         if (Collider.Collide(actor))
                         {
                             actor.MoveY(Pos.Y + Height - actor.Pos.Y, actor.Squish);
+                            actor.LiftSpeed = new Vector2(actor.LiftSpeed.X, moveY / Engine.Deltatime);
                         }
                         else if (ridingActors.Contains(actor))
                         {
                             actor.MoveY(moveY, null);
+                            actor.LiftSpeed = new Vector2(actor.LiftSpeed.X, moveY / Engine.Deltatime);
                         }
                     }
                 }
                 else
                 {
-                    foreach (Actor actor in Engine.CurrentMap.Data.Actors)
+                    for (int i = Engine.CurrentMap.Data.Actors.Count - 1; i >= 0; i--)
                     {
+                        Actor actor = Engine.CurrentMap.Data.Actors[i];
                         if (Collider.Collide(actor))
                         {
                             actor.MoveY(Pos.Y - actor.Pos.Y - actor.Height, actor.Squish);
+                            actor.LiftSpeed = new Vector2(actor.LiftSpeed.X, moveY / Engine.Deltatime);
                         }
                         else if (ridingActors.Contains(actor))
                         {
                             actor.MoveY(moveY, null);
+                            actor.LiftSpeed = new Vector2(actor.LiftSpeed.X, moveY / Engine.Deltatime);
                         }
                     }
                 }
@@ -109,10 +123,10 @@ namespace Fiourp
             Collider.Collidable = true;
         }
 
-        public void MoveCollideSolids(Vector2 amount)
-            => MoveCollideSolids(amount.X, amount.Y);
+        public void MoveCollideSolids(Vector2 amount, Action CallbackOnCollisionX = null, Action CallbackOnCollisionY = null)
+            => MoveCollideSolids(amount.X, amount.Y, CallbackOnCollisionX, CallbackOnCollisionY);
 
-        public void MoveCollideSolids(float amountX, float amountY)
+        public void MoveCollideSolids(float amountX, float amountY, Action CallbackOnCollisionX = null, Action CallbackOnCollisionY = null)
         {
             float finalX = 0;
             float finalY = 0;
@@ -134,7 +148,7 @@ namespace Fiourp
                     }
                     else
                     {
-                        //CallbackOnCollision?.Invoke();
+                        CallbackOnCollisionX?.Invoke();
                         break;
                     }
                 }
@@ -157,7 +171,7 @@ namespace Fiourp
                     }
                     else
                     {
-                        //CallbackOnSolidCollision?.Invoke();
+                        CallbackOnCollisionY?.Invoke();
                         break;
                     }
                 }
@@ -182,7 +196,7 @@ namespace Fiourp
 
             foreach(Actor a in Engine.CurrentMap.Data.Actors)
             {
-                if (a.IsRiding(this) == true)
+                if (a.IsRiding(this))
                     ridingActors.Add(a);
             }
 
