@@ -28,6 +28,8 @@ namespace Fiourp
             => $"Sprite: {Texture.Name}, {Color}, layerDepth: {LayerDepth}, Rect: {Rect}, Origin {Origin}, " +
                 $"Scale: {Scale}, Rotation {Rotation}, SpriteEffects: {Effect}";
 
+        public static Sprite None { get { Sprite s = new Sprite(Drawing.pointTexture); s.Texture = null; return s; } }
+
         public Sprite(Texture2D texture)
         {
             Texture = texture;
