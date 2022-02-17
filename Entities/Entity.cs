@@ -18,6 +18,7 @@ namespace Fiourp
         public enum Tags { Unknown, Actor, Solid, Trigger, UI }
 
         public virtual Vector2 ExactPos => Pos;
+        public Vector2 MiddlePos { get => Pos + HalfSize; set { Pos = value - HalfSize; } }
         public Vector2 Size { get => new Vector2(Width, Height); set { Width = (int)value.X; Height = (int)value.Y; } }
         public Vector2 HalfSize { get => new Vector2(Width / 2, Height / 2); }
         public Rectangle Rect { get => new Rectangle(Pos.ToPoint(), Size.ToPoint()); set { Pos = value.Location.ToVector2(); Size = value.Size.ToVector2(); } }
