@@ -22,5 +22,14 @@ namespace Fiourp
 
         public static Vector2 Abs(Vector2 vector)
             => new Vector2(Math.Abs(vector.X), Math.Abs(vector.Y));
+
+        /// <summary>
+        /// Projection of vector a on vector b
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        public static Vector2 Projection(Vector2 a, Vector2 b)
+            => (float)(Vector2.Dot(a, b) / Math.Pow(b.Length(), 2)) * b;
     }
 }
