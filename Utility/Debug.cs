@@ -21,6 +21,9 @@ namespace Fiourp
                 Drawing.DebugForever.Add(l.ToString());
         }
 
+        public static void Point(params Vector2[] log)
+            => Point(Color.DarkRed, log);
+             
         public static void Point(Color color, params Vector2[] log)
         {
             foreach (Vector2 v in log)

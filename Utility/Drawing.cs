@@ -88,8 +88,8 @@ namespace Fiourp
         {
             Vector2 pos = Vector2.Zero;
 
-            if(Debug.Count * font.MeasureString("A").Y + DebugForever.Count * font.MeasureString("A").Y > Engine.ScreenSize.Y)
-                DebugForever.Clear();
+            /*if(Debug.Count * font.MeasureString("A").Y + DebugForever.Count * font.MeasureString("A").Y > Engine.ScreenSize.Y)
+                DebugForever.Clear();*/
 
             foreach(string s in Debug)
             {

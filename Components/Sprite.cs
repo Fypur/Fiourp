@@ -23,6 +23,7 @@ namespace Fiourp
         public float LayerDepth = 0;
 
         public Rectangle? Rect = null;
+        public bool Centered;
 
         public override string ToString()
             => $"Sprite: {Texture.Name}, {Color}, layerDepth: {LayerDepth}, Rect: {Rect}, Origin {Origin}, " +
@@ -62,6 +63,13 @@ namespace Fiourp
             Rect = rect;
         }
 
+        public Sprite(Texture2D texture, Rectangle rect, float rotation)
+        {
+            Texture = texture;
+            Rect = rect;
+            Rotation = MathHelper.ToRadians(rotation);
+        }
+
         public override void Render()
         {
             if (Texture == null)
@@ -69,10 +77,11 @@ namespace Fiourp
 
             if (Texture == Drawing.pointTexture)
                 Drawing.Draw(Texture, ParentEntity.Rect, Color, Rotation, Origin, Scale, Effect, LayerDepth);
+            else if (Centered)
+                Drawing.Draw(Texture, ParentEntity.Pos + ParentEntity.HalfSize, null, Color.White, Rotation, Origin,
+                    Vector2.One, SpriteEffects.None, 1);
             else
-            {
                 Drawing.Draw(Texture, ParentEntity.Pos, null, Color, Rotation, Origin, Scale, Effect, LayerDepth);
-            }
         }
     }
 }
