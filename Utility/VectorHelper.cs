@@ -31,5 +31,11 @@ namespace Fiourp
         /// <returns></returns>
         public static Vector2 Projection(Vector2 a, Vector2 b)
             => (float)(Vector2.Dot(a, b) / Math.Pow(b.Length(), 2)) * b;
+
+        public static Vector2 ClosestOnSegement(Vector2 from, Vector2 a, Vector2 b)
+        {
+            Vector2 v = b - a;
+            return a + v * MathHelper.Clamp(Vector2.Dot(from - a, v) / v.LengthSquared(), 0f, 1f);
+        }
     }
 }

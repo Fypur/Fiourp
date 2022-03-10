@@ -32,6 +32,8 @@ namespace Fiourp
             Corners = GetLevelCorners();
 
             entityData = data.Entities;
+            if(entityData == null)
+                entityData = new List<Entity>();
             enterAction = data.EnterAction;
         }
 

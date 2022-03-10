@@ -184,7 +184,7 @@ namespace Fiourp
 
         protected void MoveTo(Vector2 pos)
         {
-            Move(pos.X - Pos.X, pos.Y - Pos.Y);
+            Move(pos.X - ExactPos.X, pos.Y - ExactPos.Y);
         }
 
         protected void Gravity()
