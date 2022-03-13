@@ -37,5 +37,7 @@ namespace Fiourp
             Vector2 v = b - a;
             return a + v * MathHelper.Clamp(Vector2.Dot(from - a, v) / v.LengthSquared(), 0f, 1f);
         }
+        public static Vector2 AngleToVector(float angle)
+            => new Vector2((float)Math.Cos(MathHelper.ToRadians(angle)), (float)Math.Sin(MathHelper.ToRadians(angle)));
     }
 }
