@@ -56,7 +56,7 @@ namespace Fiourp
                     return view = Matrix.CreateTranslation(new Vector3(-pos, 0.0f)) *
                            Matrix.CreateScale(ZoomLevel) *
                            Matrix.CreateRotationZ(MathHelper.ToRadians(Rotation)) *
-                           Matrix.CreateTranslation(new Vector3(Engine.ScreenSize / 2, 0.0f));
+                           Matrix.CreateTranslation(new Vector3(new Vector2(Engine.RenderTarget.Width / 2, Engine.RenderTarget.Height / 2), 0.0f));
                 }
                 else
                     return view;
@@ -123,7 +123,11 @@ namespace Fiourp
             changed = false;
 
             if (bounds == Rectangle.Empty)
+            {
+                if(Pos != position)
+                    changed = true;
                 return position;
+            }
 
             if ((bounds.Contains(position - Engine.ScreenSize / 2 * ZoomLevel) && bounds.Contains(position + Engine.ScreenSize / 2 * ZoomLevel)) || bounds == Rectangle.Empty)
             {
@@ -229,9 +233,9 @@ namespace Fiourp
             => bounds = new Rectangle(position.ToPoint(), size.ToPoint());
 
         public Vector2 WorldToScreenPosition(Vector2 position)
-            => Vector2.Transform(position, ViewMatrix) / (Engine.ScreenSize.X / Engine.RenderTarget.Width);
+            => Vector2.Transform(position / (Engine.ScreenSize.X / Engine.RenderTarget.Width), ViewMatrix);
 
         public Vector2 ScreenToWorldPosition(Vector2 position)
-            => Vector2.Transform(position, InverseViewMatrix) / (Engine.ScreenSize.X / Engine.RenderTarget.Width);
+            => Vector2.Transform(position / (Engine.ScreenSize.X / Engine.RenderTarget.Width), InverseViewMatrix);
     }
 }

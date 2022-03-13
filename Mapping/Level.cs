@@ -40,7 +40,6 @@ namespace Fiourp
         public void Load()
         {
             Engine.CurrentMap.CurrentLevel = this;
-            Engine.Cam.SetBoundaries(Pos, Size);
             enterAction?.Invoke();
 
             for (int y = 0; y < Organisation.GetLength(0); y++)

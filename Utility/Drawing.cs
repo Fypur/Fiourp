@@ -88,8 +88,8 @@ namespace Fiourp
         {
             Vector2 pos = Vector2.Zero;
 
-            /*if(Debug.Count * font.MeasureString("A").Y + DebugForever.Count * font.MeasureString("A").Y > Engine.ScreenSize.Y)
-                DebugForever.Clear();*/
+            if(Debug.Count * font.MeasureString("A").Y + DebugForever.Count * font.MeasureString("A").Y > Engine.ScreenSize.Y)
+                DebugForever.Clear();
 
             foreach(string s in Debug)
             {
@@ -111,10 +111,10 @@ namespace Fiourp
         public static void DebugPoint(int scale)
         {
             foreach(Tuple<Vector2, Color> pos in DebugPos)
-                DrawPoint(pos.Item1 * scale, 1, pos.Item2);
+                DrawPoint(pos.Item1 * scale, 8, pos.Item2);
 
             foreach (Tuple<Vector2, Color> pos in DebugPosUpdate)
-                DrawPoint(pos.Item1 * scale, 1, pos.Item2);
+                DrawPoint(pos.Item1 * scale, 8, pos.Item2);
 
             DebugPosUpdate.Clear();
         }

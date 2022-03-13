@@ -23,7 +23,10 @@ namespace Fiourp
 
         public static void Point(params Vector2[] log)
             => Point(Color.DarkRed, log);
-             
+
+        public static void PointUpdate(params Vector2[] log)
+            => PointUpdate(Color.DarkRed, log);
+
         public static void Point(Color color, params Vector2[] log)
         {
             foreach (Vector2 v in log)
