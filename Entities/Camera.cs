@@ -68,6 +68,8 @@ namespace Fiourp
             get => Matrix.Invert(ViewMatrix);
         }
 
+        public float RenderTargetScreenSizeCoef { get => Engine.ScreenSize.X / Engine.RenderTarget.Width; }
+
         public Camera(Vector2 position, float rotation, float zoomLevel, Rectangle? bounds = null)
         {
             Engine.Cam = this;
@@ -129,7 +131,7 @@ namespace Fiourp
                 return position;
             }
 
-            if ((bounds.Contains(position - Engine.ScreenSize / 2 * ZoomLevel) && bounds.Contains(position + Engine.ScreenSize / 2 * ZoomLevel)) || bounds == Rectangle.Empty)
+            if ((bounds.Contains(position - Engine.ScreenSize / 2 / RenderTargetScreenSizeCoef) && bounds.Contains(position + Engine.ScreenSize / 2 / RenderTargetScreenSizeCoef)) || bounds == Rectangle.Empty)
             {
                 if(position != Pos)
                     changed = true;
@@ -138,19 +140,19 @@ namespace Fiourp
             }
             else
             {
-                Vector2 correctedPos = position - Engine.ScreenSize / 2 * ZoomLevel;
+                Vector2 correctedPos = position - Engine.ScreenSize / 2 / RenderTargetScreenSizeCoef;
 
                 if (correctedPos.X < bounds.X)
                     correctedPos.X = bounds.X;
-                else if (correctedPos.X + Engine.ScreenSize.X * ZoomLevel > bounds.X + bounds.Width)
+                else if (correctedPos.X + Engine.ScreenSize.X / RenderTargetScreenSizeCoef > bounds.X + bounds.Width)
                     correctedPos.X = bounds.X + bounds.Width - Engine.ScreenSize.X;
 
                 if (correctedPos.Y < bounds.Y)
                     correctedPos.Y = bounds.Y;
-                else if (correctedPos.Y + Engine.ScreenSize.Y * ZoomLevel > bounds.Y + bounds.Height)
-                    correctedPos.Y = bounds.Y + bounds.Height - Engine.ScreenSize.Y;
+                else if (correctedPos.Y + Engine.ScreenSize.Y / RenderTargetScreenSizeCoef > bounds.Y + bounds.Height)
+                    correctedPos.Y = bounds.Y + bounds.Height - Engine.ScreenSize.Y / RenderTargetScreenSizeCoef;
 
-                correctedPos += Engine.ScreenSize / 2 * ZoomLevel;
+                correctedPos += Engine.ScreenSize / 2 / RenderTargetScreenSizeCoef;
 
                 if (Pos != correctedPos)
                     changed = true;
@@ -161,23 +163,23 @@ namespace Fiourp
 
         public Vector2 InBoundsPos(Vector2 position)
         {
-            if ((bounds.Contains(position - Engine.ScreenSize / 2 * ZoomLevel) && bounds.Contains(position + Engine.ScreenSize / 2 * ZoomLevel)) || bounds == Rectangle.Empty)
+            if ((bounds.Contains(position - Engine.ScreenSize / 2 / RenderTargetScreenSizeCoef) && bounds.Contains(position + Engine.ScreenSize / 2 / RenderTargetScreenSizeCoef)) || bounds == Rectangle.Empty)
                 return position;
             else
             {
-                Vector2 correctedPos = position - Engine.ScreenSize / 2 * ZoomLevel;
+                Vector2 correctedPos = position - Engine.ScreenSize / 2 / RenderTargetScreenSizeCoef;
 
                 if (correctedPos.X < bounds.X)
                     correctedPos.X = bounds.X;
-                else if (correctedPos.X + Engine.ScreenSize.X * ZoomLevel > bounds.X + bounds.Width)
+                else if (correctedPos.X + Engine.ScreenSize.X / RenderTargetScreenSizeCoef > bounds.X + bounds.Width)
                     correctedPos.X = bounds.X + bounds.Width - Engine.ScreenSize.X;
 
                 if (correctedPos.Y < bounds.Y)
                     correctedPos.Y = bounds.Y;
-                else if (correctedPos.Y + Engine.ScreenSize.Y * ZoomLevel > bounds.Y + bounds.Height)
-                    correctedPos.Y = bounds.Y + bounds.Height - Engine.ScreenSize.Y;
+                else if (correctedPos.Y + Engine.ScreenSize.Y / RenderTargetScreenSizeCoef > bounds.Y + bounds.Height)
+                    correctedPos.Y = bounds.Y + bounds.Height - Engine.ScreenSize.Y / RenderTargetScreenSizeCoef;
 
-                correctedPos += Engine.ScreenSize / 2 * ZoomLevel;
+                correctedPos += Engine.ScreenSize / 2 / RenderTargetScreenSizeCoef;
 
                 return correctedPos;
             }
@@ -185,19 +187,19 @@ namespace Fiourp
 
         public float InBoundsPosX(float x)
         {
-            if(x - Engine.ScreenSize.X / 2 * ZoomLevel > bounds.X && x - Engine.ScreenSize.X / 2 * ZoomLevel < bounds.X + bounds.Width &&
-                x + Engine.ScreenSize.X / 2 * ZoomLevel > bounds.X && x + Engine.ScreenSize.X / 2 * ZoomLevel < bounds.X + bounds.Width)
+            if(x - Engine.ScreenSize.X / 2 / RenderTargetScreenSizeCoef > bounds.X && x - Engine.ScreenSize.X / 2 / RenderTargetScreenSizeCoef < bounds.X + bounds.Width &&
+                x + Engine.ScreenSize.X / 2 / RenderTargetScreenSizeCoef > bounds.X && x + Engine.ScreenSize.X / 2 / RenderTargetScreenSizeCoef < bounds.X + bounds.Width)
                 return x;
             else
             {
-                float correctedX = x - Engine.ScreenSize.X / 2 * ZoomLevel;
+                float correctedX = x - Engine.ScreenSize.X / 2 / RenderTargetScreenSizeCoef;
 
                 if (correctedX < bounds.X)
                     correctedX = bounds.X;
-                else if (correctedX + Engine.ScreenSize.X * ZoomLevel > bounds.X + bounds.Width)
-                    correctedX = bounds.X + bounds.Width - Engine.ScreenSize.X;
+                else if (correctedX + Engine.ScreenSize.X / RenderTargetScreenSizeCoef > bounds.X + bounds.Width)
+                    correctedX = bounds.X + bounds.Width - Engine.ScreenSize.X / RenderTargetScreenSizeCoef;
 
-                correctedX += Engine.ScreenSize.X / 2 * ZoomLevel;
+                correctedX += Engine.ScreenSize.X / 2 / RenderTargetScreenSizeCoef;
 
                 return correctedX;
             }
@@ -205,19 +207,19 @@ namespace Fiourp
 
         public float InBoundsPosY(float y)
         {
-            if (y - Engine.ScreenSize.Y / 2 > bounds.Y && y - Engine.ScreenSize.Y / 2 < bounds.Y + bounds.Height &&
-                y + Engine.ScreenSize.Y / 2 > bounds.Y && y + Engine.ScreenSize.Y / 2 < bounds.Y + bounds.Height)
+            if (y - Engine.ScreenSize.Y / 2 / RenderTargetScreenSizeCoef > bounds.Y && y - Engine.ScreenSize.Y / 2 / RenderTargetScreenSizeCoef < bounds.Y + bounds.Height &&
+                y + Engine.ScreenSize.Y / 2 / RenderTargetScreenSizeCoef > bounds.Y && y + Engine.ScreenSize.Y / 2 / RenderTargetScreenSizeCoef < bounds.Y + bounds.Height)
                 return y;
             else
             {
-                float correctedY = y - Engine.ScreenSize.Y / 2;
+                float correctedY = y - Engine.ScreenSize.Y / 2 / RenderTargetScreenSizeCoef;
 
                 if (correctedY < bounds.Y)
                     correctedY = bounds.Y;
-                else if (correctedY + Engine.ScreenSize.Y > bounds.Y + bounds.Height)
-                    correctedY = bounds.Y + bounds.Height - Engine.ScreenSize.Y;
+                else if (correctedY + Engine.ScreenSize.Y / RenderTargetScreenSizeCoef > bounds.Y + bounds.Height)
+                    correctedY = bounds.Y + bounds.Height - Engine.ScreenSize.Y / RenderTargetScreenSizeCoef;
 
-                correctedY += Engine.ScreenSize.Y / 2;
+                correctedY += Engine.ScreenSize.Y / 2 / RenderTargetScreenSizeCoef;
 
                 return correctedY;
             }
@@ -227,10 +229,16 @@ namespace Fiourp
             => Move(position - Pos, time, easingFunction);
 
         public void SetBoundaries(Rectangle bounds)
-            => this.bounds = bounds;
+        {
+            this.bounds = bounds;
+            Pos = Pos;
+        }
 
         public void SetBoundaries(Vector2 position, Vector2 size)
-            => bounds = new Rectangle(position.ToPoint(), size.ToPoint());
+        {
+            bounds = new Rectangle(position.ToPoint(), size.ToPoint());
+            Pos = Pos;
+        }
 
         public Vector2 WorldToScreenPosition(Vector2 position)
             => Vector2.Transform(position / (Engine.ScreenSize.X / Engine.RenderTarget.Width), ViewMatrix);
