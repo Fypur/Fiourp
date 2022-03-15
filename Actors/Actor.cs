@@ -17,7 +17,11 @@ namespace Fiourp
         private Timer liftSpeedTimer;
         private const float liftSpeedGrace = 0.16f;
 
-        public override Vector2 ExactPos => new Vector2(Pos.X + xRemainder, Pos.Y + yRemainder);
+        public override Vector2 ExactPos
+        {
+            get => new Vector2(Pos.X + xRemainder, Pos.Y + yRemainder);
+            set { Pos = VectorHelper.Floor(value); xRemainder = value.X - (float)Math.Floor(value.X); yRemainder = value.Y - (float)Math.Floor(value.Y); }
+        }
         private float xRemainder;
         private float yRemainder;
 

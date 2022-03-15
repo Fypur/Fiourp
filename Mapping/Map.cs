@@ -68,9 +68,7 @@ namespace Fiourp
             Data.Entities.Add(entity);
 
             if (entity is Solid)
-            {
                 Data.Solids.Add((Solid)entity);
-            }
             else if (entity is Actor)
                 Data.Actors.Add((Actor)entity);
             else if (entity is Trigger)
@@ -82,12 +80,12 @@ namespace Fiourp
 
         public void Destroy(Entity entity)
         {
+            entity.OnDestroy();
+
             Data.Entities.Remove(entity);
 
             if (entity is Solid)
-            {
                 Data.Solids.Remove((Solid)entity);
-            }
             else if (entity is Actor)
                 Data.Actors.Remove((Actor)entity);
             else if (entity is Trigger)

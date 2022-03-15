@@ -17,7 +17,7 @@ namespace Fiourp
         public Tags Tag;
         public enum Tags { Unknown, Actor, Solid, Trigger, UI }
 
-        public virtual Vector2 ExactPos => Pos;
+        public virtual Vector2 ExactPos { get => Pos; set => Pos = value; }
         public Vector2 MiddleExactPos => ExactPos + HalfSize;
         public Vector2 MiddlePos { get => Pos + HalfSize; set { Pos = value - HalfSize; } }
         public Vector2 Size { get => new Vector2(Width, Height); set { Width = (int)value.X; Height = (int)value.Y; } }
@@ -93,6 +93,9 @@ namespace Fiourp
             if (Debug.DebugMode)
                 Collider?.Render();
         }
+
+        public virtual void OnDestroy()
+        { }
 
         public Component AddComponent(Component component)
         {

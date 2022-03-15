@@ -11,7 +11,11 @@ namespace Fiourp
         public Vector2 Velocity;
         protected List<Actor> ridingActors;
 
-        public override Vector2 ExactPos => Pos + new Vector2(xRemainder, yRemainder);
+        public override Vector2 ExactPos
+        {
+            get => new Vector2(Pos.X + xRemainder, Pos.Y + yRemainder); 
+            set { Pos = VectorHelper.Floor(value); xRemainder = value.X - (float)Math.Floor(value.X); yRemainder = value.Y - (float)Math.Floor(value.Y); }
+        }
         private float xRemainder;
         private float yRemainder;
 
