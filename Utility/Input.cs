@@ -8,8 +8,11 @@ namespace Fiourp
 {
     public static class Input
     {
-        private static KeyboardState state;
-        private static KeyboardState previousState;
+        public static State CurrentState { get => new State(kbState, mouseState); set { kbState = value.KbState; mouseState = value.MouseState; } }
+        public static State OldState { get => new State(kbPreviousState, previousMouseState); set { kbPreviousState = value.KbState; previousMouseState = value.MouseState; } }
+
+        private static KeyboardState kbState;
+        private static KeyboardState kbPreviousState;
 
         private static MouseState mouseState;
         private static MouseState previousMouseState;
@@ -19,26 +22,37 @@ namespace Fiourp
 
         public enum MouseButton { Left, Right, Middle, Macro1, Macro2 }
 
+        public class State
+        {
+            public KeyboardState KbState;
+            public MouseState MouseState;
+            public State(KeyboardState kbState, MouseState mouseState)
+            {
+                KbState = kbState;
+                MouseState = mouseState;
+            }
+        }
+
         public static void UpdateState() 
         {
-            state = Keyboard.GetState();
+            kbState = Keyboard.GetState();
             mouseState = Mouse.GetState();
         }
 
         public static void UpdateOldState() 
         {
-            previousState = Keyboard.GetState();
+            kbPreviousState = Keyboard.GetState();
             previousMouseState = Mouse.GetState();
         }
 
         public static bool GetKeyDown(Keys key)
-            => state.IsKeyDown(key) && !previousState.IsKeyDown(key);
+            => kbState.IsKeyDown(key) && !kbPreviousState.IsKeyDown(key);
 
         public static bool GetKey(Keys key)
-            => state.IsKeyDown(key);
+            => kbState.IsKeyDown(key);
 
         public static bool GetKeyUp(Keys key)
-            => !state.IsKeyDown(key) && previousState.IsKeyDown(key);
+            => !kbState.IsKeyDown(key) && kbPreviousState.IsKeyDown(key);
 
         public static bool GetMouseButtonDown(MouseButton button)
             => MouseButtonToState(mouseState, button) == ButtonState.Pressed && MouseButtonToState(previousMouseState, button) == ButtonState.Released;

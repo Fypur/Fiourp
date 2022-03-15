@@ -127,10 +127,11 @@ namespace Fiourp
             return false;
         }
 
-        public void AddChild(Entity child)
+        public Entity AddChild(Entity child)
         {
             Children.Add(child);
             childrenPositionOffset.Add(child.Pos - Pos);
+            return child;
         }
 
         public void RemoveChild(Entity child)
