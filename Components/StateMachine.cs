@@ -29,10 +29,10 @@ namespace Fiourp
                     stateEnter.Item1?.Invoke();
             }
 
+            previousState = CurrentState;
+
             if (stateFuncs.TryGetValue(CurrentState, out var stateUpdate))
                 stateUpdate.Item2?.Invoke();
-
-            previousState = CurrentState;
         }
 
         public void RegisterStateFunctions(T state, Action onEnter, Action update, Action onExit)

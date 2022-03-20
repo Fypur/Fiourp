@@ -15,7 +15,7 @@ namespace Fiourp
 
         public static Dictionary<string, Texture2D> Textures = GetAllTextures();
 
-        public static Dictionary<string, Texture2D> GrassTileSet = LoadAllGraphicsFilesInFolder<Texture2D>("GrassTileSet");
+        public static Dictionary<string, Texture2D> GrassTileSet = GetAllGraphicsFilesInFolder<Texture2D>("GrassTileSet");
         public static readonly Dictionary<int, Dictionary<string, Texture2D>> TileSets = new Dictionary<int, Dictionary<string, Texture2D>>()
         {
             { 1, GrassTileSet }
@@ -42,6 +42,7 @@ namespace Fiourp
             foreach (FileInfo file in dir.GetFiles())
             {
                 string name = file.FullName.Substring(file.FullName.LastIndexOf("Graphics\\") + 9);
+                name = name.Replace('\\', '/');
                 string key = name.Substring(0, name.Length - 4);
                 d[key] = Content.Load<Texture2D>("Graphics/" + key);
             }
@@ -50,7 +51,7 @@ namespace Fiourp
                 GetAllGraphicsFiles(direct.FullName.Substring(contentDirName.Length + "Graphics\\".Length), d);
         }
 
-        public static Dictionary<string, T> LoadAllGraphicsFilesInFolder<T>(string folderName)
+        public static Dictionary<string, T> GetAllGraphicsFilesInFolder<T>(string folderName)
         {
             DirectoryInfo dir = new DirectoryInfo(Content.RootDirectory + "\\Graphics\\" + folderName);
 
@@ -63,6 +64,33 @@ namespace Fiourp
             }
 
             return d;
+        }
+
+        /// <summary>
+        /// Get all graphics files that start with the specified name
+        /// </summary>
+        /// <param name="folderName"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static Texture2D[] LoadAllGraphicsWithName(string name, string folderName = "")
+        {
+            DirectoryInfo dir = new DirectoryInfo(Content.RootDirectory + "\\Graphics\\" + folderName);
+            List<Texture2D> textures = new List<Texture2D>();
+
+            foreach (FileInfo file in dir.GetFiles())
+            {
+                string fileName = file.FullName.Substring(file.FullName.LastIndexOf("Graphics\\") + 9);
+                if (!file.Name.StartsWith(name))
+                    continue;
+
+                string key = fileName.Substring(0, fileName.Length - 4);
+                textures.Add(Content.Load<Texture2D>("Graphics/" + key));
+            }
+
+            foreach (DirectoryInfo direct in dir.GetDirectories())
+                textures.AddRange(LoadAllGraphicsWithName(name, direct.FullName.Substring(contentDirName.Length + "Graphics\\".Length)));
+
+            return textures.ToArray();
         }
 
         public static Dictionary<string, Dictionary<string, SpriteFont>> GetFonts()
