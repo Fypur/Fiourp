@@ -124,5 +124,14 @@ namespace Fiourp
             DebugEvent();
             DebugEvent = delegate { };
         }
+
+        public static Texture2D CropTo(this Texture2D texture, Vector2 position, Vector2 size)
+        {
+            Color[] data = new Color[(int)(size.X * size.Y)];
+            Texture2D returned = new Texture2D(Engine.Graphics.GraphicsDevice, (int)size.X, (int)size.Y);
+            texture.GetData(0, new Rectangle(position.ToPoint(), size.ToPoint()), data, 0, (int)(size.X * size.Y));
+            returned.SetData(data);
+            return returned;
+        }
     }
 }

@@ -51,7 +51,6 @@ namespace Fiourp
         public Sprite(Texture2D texture)
         {
             Texture = texture;
-            Origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
         }
 
         public Sprite(Texture2D texture, Vector2 origin)
