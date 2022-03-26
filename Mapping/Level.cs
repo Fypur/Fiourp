@@ -108,7 +108,7 @@ namespace Fiourp
         private Texture2D GetTileTexture(int x, int y) 
         {
             int tileValue = Organisation[y, x];
-            Dictionary<string, Texture2D> tileSet = DataManager.TileSets[tileValue];
+            Dictionary<string, Texture2D> tileSet = DataManager.Tilesets[tileValue];
 
             bool rightBlock = GetOrganisation(x + 1, y, tileValue) != 0;
             bool leftBlock = GetOrganisation(x - 1, y, tileValue) != 0;

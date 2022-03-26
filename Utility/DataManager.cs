@@ -12,21 +12,16 @@ namespace Fiourp
         public static ContentManager Content = Engine.Content;
         public static string contentDirName = new DirectoryInfo(Content.RootDirectory).FullName;
 
-
         public static Dictionary<string, Texture2D> Textures = GetAllTextures();
 
-        public static Dictionary<string, Texture2D> GrassTileSet = GetAllGraphicsFilesInFolder<Texture2D>("GrassTileSet");
-        public static readonly Dictionary<int, Dictionary<string, Texture2D>> TileSets = new Dictionary<int, Dictionary<string, Texture2D>>()
-        {
-            { 1, GrassTileSet }
-        };
+        public static Dictionary<int, Dictionary<string, Texture2D>> Tilesets;
 
         public static Dictionary<string, Dictionary<string, SpriteFont>> Fonts = GetFonts();
 
         public static Texture2D GetTexture(string textureID)
             => Textures[textureID];
 
-        public static void Initialize() { }
+        public static void Initialize(string XMLPath) { Tilesets = GetAllTileSets(XMLPath); }
 
         public static Dictionary<string, Texture2D> GetAllTextures()
         {
@@ -113,5 +108,25 @@ namespace Fiourp
             
             return d;
         }
+
+        private static Dictionary<int, Dictionary<string, Texture2D>> GetAllTileSets(string XMLpath)
+        {
+            DirectoryInfo dir = new DirectoryInfo(Content.RootDirectory + "\\Graphics\\Tilesets");
+            Dictionary<int, Dictionary<string, Texture2D>> d = new();
+
+            System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
+            doc.LoadXml(File.ReadAllText("Utility/SpriteData.xml"));
+
+            foreach (System.Xml.XmlElement element in doc["Sprites"]["Tilesets"])
+            {
+                if (element.Name == "OneOfEach")
+                    d[stringToInt(element.GetAttribute("id"))] = Drawing.GetTileSetTextures(Content.Load<Texture2D>(dir.FullName + "/" + element.GetAttribute("path")), stringToInt(element.GetAttribute("tileSize")), Drawing.TileSetType.OneOfEach);
+            }
+
+            return d;
+        }
+
+        private static int stringToInt(string str)
+            => int.Parse(str, System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
     }
 }

@@ -133,5 +133,33 @@ namespace Fiourp
             returned.SetData(data);
             return returned;
         }
+
+        public enum TileSetType { OneOfEach, RandomOf4 }
+        public static Dictionary<string, Texture2D> GetTileSetTextures(Texture2D tileset, int tileSize, TileSetType type)
+        {
+            Dictionary<string, Texture2D> d = new();
+
+            switch (type)
+            {
+                case TileSetType.OneOfEach:
+                    string[,] tileNames = new string[,] {
+                        { "top", "down", "left", "right" },
+                        { "topLeftCorner", "topRightCorner", "bottomLeftCorner", "bottomRightCorner" },
+                        { "topLeftPoint", "topRightPoint", "bottomleftPoint", "bottomRightPoint" },
+                        { "upFullCorner", "downFullCorner", "leftFullCorner", "rightFullCorner" },
+                        { "verticalPillar", "horizontalPillar", "complete", "inside" }
+                    };
+                    for (int y = 0; y < tileSize * 5; y += tileSize)
+                        for(int x = 0; x < tileSize * 4; x += tileSize)
+                            d[tileNames[y / 8, x / 8]] = tileset.CropTo(new Vector2(x, y), new Vector2(tileSize));
+                    break;
+
+                case TileSetType.RandomOf4:
+                    return d;
+            }
+
+            return d;
+        }
     }
 }
+

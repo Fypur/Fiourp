@@ -24,7 +24,7 @@ namespace Fiourp
         public static Map CurrentMap;
         public static RenderTarget2D RenderTarget;
 
-        public static void Initialize(GraphicsDeviceManager graphicsDevice, ContentManager content, int windowsWidth, int windowHeight, RenderTarget2D renderTarget)
+        public static void Initialize(GraphicsDeviceManager graphicsDevice, ContentManager content, int windowsWidth, int windowHeight, RenderTarget2D renderTarget, string XMLPath)
         {
             Graphics = graphicsDevice;
             Content = content;
@@ -38,7 +38,8 @@ namespace Fiourp
 
             RenderTarget = renderTarget;
 
-            DataManager.Initialize();
+            DataManager.Initialize(XMLPath);
+            Sprite.LoadAnimationXML(XMLPath);
             Audio.Initialize();
         }
 

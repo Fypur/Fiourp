@@ -198,13 +198,17 @@ namespace Fiourp
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(File.ReadAllText(path));
 
-            foreach(XmlElement element in doc["Sprites"])
+            foreach(XmlElement element in doc["Sprites"]["Animations"])
             {
                 AllAnimData[element.Name] = new();
 
                 foreach(XmlElement anim in element)
                 {
-                   AllAnimData[element.Name].Animations[anim.GetAttribute("id")] = new Animation(DataManager.LoadAllGraphicsWithName(anim.GetAttribute("id")), float.Parse(anim.GetAttribute("delay"), System.Globalization.CultureInfo.InvariantCulture.NumberFormat), anim.GetAttribute("goto"));
+                    string id = anim.GetAttribute("id");
+                    if (anim.Name == "Anim")
+                        AllAnimData[element.Name].Animations[anim.GetAttribute("id")] = new Animation(DataManager.LoadAllGraphicsWithName(anim.GetAttribute("id")), float.Parse(anim.GetAttribute("delay"), System.Globalization.CultureInfo.InvariantCulture.NumberFormat), anim.GetAttribute("goto"));
+                    else if (anim.Name == "Loop")
+                        AllAnimData[element.Name].Animations[anim.GetAttribute("id")] = new Animation(DataManager.LoadAllGraphicsWithName(anim.GetAttribute("id")), float.Parse(anim.GetAttribute("delay"), System.Globalization.CultureInfo.InvariantCulture.NumberFormat), anim.GetAttribute("id"));
                 }
             }
         }
