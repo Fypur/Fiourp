@@ -41,12 +41,14 @@ namespace Fiourp
         private float animTimer;
 
         public override string ToString()
-            => $"Sprite: {Texture.Name}, {Color}, layerDepth: {LayerDepth}, Rect: {Rect}, Origin {Origin}, " +
+            => $"Texture: {Texture.Name}, {Color}, layerDepth: {LayerDepth}, Rect: {Rect}, Origin {Origin}, " +
                 $"Scale: {Scale}, Rotation {Rotation}, SpriteEffects: {Effect}";
 
         #region Constructors
 
-        public static Sprite None { get { Sprite s = new Sprite(Drawing.pointTexture); s.Texture = null; return s; } }
+        public static Sprite None => new Sprite(null);
+
+        public Sprite() { }
 
         public Sprite(Texture2D texture)
         {
@@ -146,7 +148,7 @@ namespace Fiourp
             if (Texture == Drawing.pointTexture)
                 Drawing.Draw(Texture, ParentEntity.Rect, Color, Rotation, Origin, Scale, Effect, LayerDepth);
             else if (Centered)
-                Drawing.Draw(Texture, ParentEntity.Pos + ParentEntity.HalfSize + Offset, null, Color.White, Rotation, Origin,
+                Drawing.Draw(Texture, ParentEntity.Pos + ParentEntity.HalfSize + Offset, null, Color, Rotation, Origin,
                     Vector2.One, SpriteEffects.None, 1);
             else
                 Drawing.Draw(Texture, ParentEntity.Pos + Offset, null, Color, Rotation, Origin, Scale, Effect, LayerDepth);
@@ -212,5 +214,31 @@ namespace Fiourp
                 }
             }
         }
+
+        public Sprite Copy()
+        {
+            Sprite s = new Sprite();
+
+            s.OnLastFrame = OnLastFrame;
+            s.OnLoop = OnLoop ;
+            s.OnChange = OnChange ;
+            s.Texture = Texture ;
+            s.Rotation = Rotation;
+            s.Color = Color;
+            s.Origin = Origin;
+            s.Offset = Offset;
+            s.Scale = Scale;
+            s.Effect = Effect;
+            s.LayerDepth = LayerDepth;
+            s.Rect = Rect;
+            s.Centered = Centered ;
+            s.animations = animations;
+            s.animating = animating ;
+            s.currentAnimation = currentAnimation;
+            s.currentFrame = currentFrame ;
+            s.animTimer = animTimer;
+
+            return s;
+    }
     }
 }

@@ -42,5 +42,23 @@ namespace Fiourp
         }
         public static Vector2 AngleToVector(float angle)
             => new Vector2((float)Math.Cos(MathHelper.ToRadians(angle)), (float)Math.Sin(MathHelper.ToRadians(angle)));
+
+        public static Vector2 VectorBetween(this Random random, Vector2 a, Vector2 b)
+        {
+            float X;
+            float Y;
+
+            if (a.X < b.X)
+                X = (float)(random.NextDouble() * (b.X - a.X) + a.X);
+            else
+                X = (float)(random.NextDouble() * (a.X - b.X) + b.X);
+
+            if (a.Y < b.Y)
+                Y = (float)(random.NextDouble() * (b.Y - a.Y) + a.Y);
+            else
+                Y = (float)(random.NextDouble() * (a.Y - b.Y) + b.Y);
+
+            return new Vector2(X, Y);
+        }
     }
 }
