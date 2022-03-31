@@ -92,7 +92,13 @@ namespace Fiourp
         {
             if(Followed != null)
                 Sprite.Offset = Followed.Pos;
+
             base.Render();
+        }
+
+        public override string ToString()
+        {
+            return $"Particle: Type: {Type}, Followed: {Followed},\n Current LifeTime: {LifeTime}, Start Life Time: {StartLifeTime},\n Start Color: {StartColor},\n Velocity: {Velocity},\n StartSize: {StartSize}, Size: {Size},\n Sprite: {Sprite}";
         }
     }
 }

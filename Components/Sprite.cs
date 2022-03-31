@@ -146,7 +146,11 @@ namespace Fiourp
                 return;
 
             if (Texture == Drawing.pointTexture)
-                Drawing.Draw(Texture, ParentEntity.Rect, Color, Rotation, Origin, Scale, Effect, LayerDepth);
+            {
+                Rectangle rect = ParentEntity.Rect;
+                rect.Location += Offset.ToPoint();
+                Drawing.Draw(Texture, rect, Color, Rotation, Origin, Scale, Effect, LayerDepth);
+            }
             else if (Centered)
                 Drawing.Draw(Texture, ParentEntity.Pos + ParentEntity.HalfSize + Offset, null, Color, Rotation, Origin,
                     Vector2.One, SpriteEffects.None, 1);
