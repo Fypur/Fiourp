@@ -110,15 +110,15 @@ namespace Fiourp
             int tileValue = Organisation[y, x];
             Dictionary<string, Texture2D> tileSet = DataManager.Tilesets[tileValue];
 
-            bool rightBlock = GetOrganisation(x + 1, y, tileValue) != 0;
-            bool leftBlock = GetOrganisation(x - 1, y, tileValue) != 0;
-            bool topBlock = GetOrganisation(x, y - 1, tileValue) != 0;
-            bool bottomBlock = GetOrganisation(x, y + 1, tileValue) != 0;
+            bool rightBlock = GetOrganisation(x + 1, y, tileValue) == tileValue;
+            bool leftBlock = GetOrganisation(x - 1, y, tileValue) == tileValue;
+            bool topBlock = GetOrganisation(x, y - 1, tileValue) == tileValue;
+            bool bottomBlock = GetOrganisation(x, y + 1, tileValue) == tileValue;
 
-            bool topRightBlock = GetOrganisation(x + 1, y - 1, tileValue) != 0;
-            bool topLeftBlock = GetOrganisation(x - 1, y - 1, tileValue) != 0;
-            bool bottomRightBlock = GetOrganisation(x + 1, y + 1, tileValue) != 0;
-            bool bottomLeftBlock = GetOrganisation(x - 1, y - 1, tileValue) != 0;
+            bool topRightBlock = GetOrganisation(x + 1, y - 1, tileValue) == tileValue;
+            bool topLeftBlock = GetOrganisation(x - 1, y - 1, tileValue) == tileValue;
+            bool bottomRightBlock = GetOrganisation(x + 1, y + 1, tileValue) == tileValue;
+            bool bottomLeftBlock = GetOrganisation(x - 1, y - 1, tileValue) == tileValue;
 
             if (!leftBlock && !rightBlock && !topBlock && !bottomBlock)
                 return tileSet["complete"];

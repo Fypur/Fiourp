@@ -87,8 +87,8 @@ namespace Fiourp
             if(timer != null)
                 timer.Update();
 
-            if (FollowsPlayer)
-                Follow(Engine.Player, 5, 5, new Rectangle(new Vector2(-Engine.ScreenSize.X / 6, -Engine.ScreenSize.Y / 12).ToPoint(),
+            if (FollowsPlayer && (timer == null || timer.Value <= 0))
+                Follow(Engine.Player, 3, 3, new Rectangle(new Vector2(-Engine.ScreenSize.X / 6, -Engine.ScreenSize.Y / 12).ToPoint(),
                     new Vector2(Engine.ScreenSize.X / 3, Engine.ScreenSize.Y / 6).ToPoint()));
         }
 

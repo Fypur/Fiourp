@@ -35,11 +35,12 @@ namespace Fiourp
         public static Vector2 Projection(Vector2 a, Vector2 b)
             => (float)(Vector2.Dot(a, b) / Math.Pow(b.Length(), 2)) * b;
 
-        public static Vector2 ClosestOnSegment(Vector2 from, Vector2 a, Vector2 b)
+        public static Vector2 ClosestOnSegment(Vector2 point, Vector2 segmentPoint, Vector2 segmentPoint2)
         {
-            Vector2 v = b - a;
-            return a + v * MathHelper.Clamp(Vector2.Dot(from - a, v) / v.LengthSquared(), 0f, 1f);
+            Vector2 v = segmentPoint2 - segmentPoint;
+            return segmentPoint + v * MathHelper.Clamp(Vector2.Dot(point - segmentPoint, v) / v.LengthSquared(), 0f, 1f);
         }
+
         public static Vector2 AngleToVector(float angle)
             => new Vector2((float)Math.Cos(MathHelper.ToRadians(angle)), (float)Math.Sin(MathHelper.ToRadians(angle)));
 

@@ -34,8 +34,14 @@ namespace Fiourp
             base.Update();
 
             for (int i = Triggerers.Count - 1; i >= 0; i--)
-                foreach (Entity entity in Engine.CurrentMap.Data.EntitiesByType[Triggerers[i]])
+            {
+                Engine.CurrentMap.Data.EntitiesByType.TryGetValue(Triggerers[i], out List<Entity> triggers);
+                if (triggers == null)
+                    continue;
+
+                for (int y = triggers.Count - 1; y >= 0; y--)
                 {
+                    Entity entity = Engine.CurrentMap.Data.EntitiesByType[Triggerers[i]][y];
                     if (Collider.Collide(entity))
                     {
                         if (enteredEntities.Contains(entity))
@@ -52,6 +58,7 @@ namespace Fiourp
                         enteredEntities.Remove(entity);
                     }
                 }
+            }
         }
 
         public override void Render() 

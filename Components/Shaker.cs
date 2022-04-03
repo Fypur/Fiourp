@@ -12,6 +12,7 @@ namespace Fiourp
     {
         public float Intensity;
         public float Time;
+        public static Random Random = new Random();
 
         private Vector2 initPos;
 
@@ -23,7 +24,7 @@ namespace Fiourp
 
         public override void Added()
         {
-            initPos = ParentEntity.Pos;
+            initPos = ParentEntity.ExactPos;
             ParentEntity.AddComponent(new Coroutine(Shake()));
         }
 
@@ -31,15 +32,30 @@ namespace Fiourp
         {
             while (Time > 0)
             {
-                ParentEntity.Pos = initPos + new Vector2(RandomFloat(-1, 1), RandomFloat(-1, 1)) * Intensity;
+                Vector2 random = new Vector2(RandomFloat(-1, 1), RandomFloat(-1, 1)) * Intensity;
+                random = Vector2.Clamp(ParentEntity.ExactPos + random, initPos - new Vector2(Intensity), initPos + new Vector2(Intensity)) - ParentEntity.ExactPos;
+
+                if (ParentEntity is MovingSolid s)
+                    s.Move(random);
+                else if (ParentEntity is Actor a)
+                    a.Move(random);
+                else
+                    ParentEntity.Pos += random;
+
                 Time -= Engine.Deltatime;
                 yield return 0;
             }
 
+            if (ParentEntity is MovingSolid so)
+                so.MoveTo(initPos);
+            else if (ParentEntity is Actor ac)
+                ac.MoveTo(initPos);
+            else
+                ParentEntity.Pos += initPos;
             Destroy();
         }
 
         private float RandomFloat(float min, float max)
-            => (float)new Random().NextDouble() * (max - min) + min;
+            => (float)Random.NextDouble() * (max - min) + min;
     }
 }

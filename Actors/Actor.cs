@@ -106,10 +106,16 @@ namespace Fiourp
             }
         }
 
+        public void Move(Vector2 amount, Action CallbackOnCollisionX = null, Action CallbackOnCollisionY = null)
+        {
+            MoveX(amount.X, CallbackOnCollisionX);
+            MoveY(amount.Y, CallbackOnCollisionY);
+        }
+
         public void MoveTo(Vector2 pos, Action CallbackOnCollisionX = null, Action CallbackOnCollisionY = null) 
         {
-            MoveX(pos.X - Pos.X, CallbackOnCollisionX);
-            MoveY(pos.Y - Pos.Y, CallbackOnCollisionY);
+            MoveX(pos.X - ExactPos.X, CallbackOnCollisionX);
+            MoveY(pos.Y - ExactPos.Y, CallbackOnCollisionY);
         }
 
         public void Gravity()

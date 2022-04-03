@@ -40,7 +40,9 @@ namespace Fiourp
             List<Actor> ridingActors = GetAllRidingActors();
             foreach (Actor r in ridingActors)
                 Debug.LogUpdate(r);
+
             Collider.Collidable = false;
+
             if (moveX != 0)
             {
                 xRemainder -= moveX;
@@ -181,12 +183,10 @@ namespace Fiourp
                 }
             }
 
-
-            Debug.LogUpdate(finalX, finalY);
             Move(finalX, finalY);
         }
 
-        protected void MoveTo(Vector2 pos)
+        public void MoveTo(Vector2 pos)
         {
             Move(pos.X - ExactPos.X, pos.Y - ExactPos.Y);
         }
