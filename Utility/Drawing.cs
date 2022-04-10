@@ -143,7 +143,7 @@ namespace Fiourp
             {
                 case TileSetType.OneOfEach:
                     string[,] tileNames = new string[,] {
-                        { "top", "down", "left", "right" },
+                        { "top", "bottom", "left", "right" },
                         { "topLeftCorner", "topRightCorner", "bottomLeftCorner", "bottomRightCorner" },
                         { "topLeftPoint", "topRightPoint", "bottomleftPoint", "bottomRightPoint" },
                         { "upFullCorner", "downFullCorner", "leftFullCorner", "rightFullCorner" },
@@ -162,4 +162,3 @@ namespace Fiourp
         }
     }
 }
-

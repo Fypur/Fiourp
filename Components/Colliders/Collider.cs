@@ -93,6 +93,12 @@ namespace Fiourp
         public bool CollideWithActorsAt(Vector2 position)
             => CollideAt(new List<Entity>(Engine.CurrentMap.Data.Actors), position);
 
+        public bool CollideAt(Vector2 position, out Entity entity)
+        {
+            bool returned = CollideAt(new List<Entity>(Engine.CurrentMap.Data.Entities), position, out entity);
+            return returned;
+        }
+
         public bool CollideAt(Vector2 position, out Actor actor)
         {
             bool returned = CollideAt(new List<Entity>(Engine.CurrentMap.Data.Actors), position, out Entity entity);
