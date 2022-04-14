@@ -30,8 +30,8 @@ namespace Fiourp
             ProgressiveDraw(GenerateText(text), timePerCharacter);
         }
 
-        public void ProgressiveDraw(string text, float timePerCharacter, bool pregeneratedString = false)
-            => AddComponent(new Coroutine(TextDraw(pregeneratedString ? text : GenerateText(text), timePerCharacter))); 
+        public void ProgressiveDraw(string text, float timePerCharacter, bool formattedText = false)
+            => AddComponent(new Coroutine(TextDraw(formattedText ? text : GenerateText(text), timePerCharacter))); 
 
         public void StopProgressiveDraw()
         {
@@ -50,6 +50,9 @@ namespace Fiourp
 
         public void SetText(string text)
             => Text = GenerateText(text);
+
+        public void ClearText()
+            => Text = "";
 
         public string GenerateText(string text)
         {

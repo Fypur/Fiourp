@@ -8,7 +8,6 @@ namespace Fiourp
         {
             Collider = null;
             RemoveComponent(Collider);
-            Debug.Log(sprite);
         }
     }
 }

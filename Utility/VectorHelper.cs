@@ -17,6 +17,12 @@ namespace Fiourp
             => (float)Math.Atan2(from.X * to.Y - from.Y * to.X, Vector2.Dot(from, to));
         */
 
+        public static Vector2 OnlyX(this Vector2 vector)
+            => new Vector2(vector.X, 0);
+
+        public static Vector2 OnlyY(this Vector2 vector)
+            => new Vector2(0, vector.Y);
+
         public static float GetAngle(Vector2 from, Vector2 to)
             => (float)Math.Atan2(from.X * to.Y - from.Y * to.X, Vector2.Dot(from, to));
 

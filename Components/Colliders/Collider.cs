@@ -32,6 +32,11 @@ namespace Fiourp
         {
             if (!other.Collidable)
                 return false;
+            
+            if(other.ParentEntity is JumpThru && other.AbsoluteTop != AbsoluteBottom - 1)
+                return false;
+            if (ParentEntity is JumpThru && AbsoluteTop != other.AbsoluteBottom - 1)
+                return false;
 
             if (other is BoxCollider box)
                 return Collide(box);

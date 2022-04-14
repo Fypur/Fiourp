@@ -51,5 +51,8 @@ namespace Fiourp
 
         public bool HasChanged()
             => !previousState.Equals(CurrentState);
+
+        public override string ToString()
+            => $"StateMachine: {CurrentState}";
     }
 }

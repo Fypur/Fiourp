@@ -13,6 +13,7 @@ namespace Fiourp
         public int Height;
 
         public bool Active = true;
+        public bool Visible = true;
 
         public Tags Tag;
         public enum Tags { Unknown, Actor, Solid, Trigger, UI }
@@ -39,13 +40,11 @@ namespace Fiourp
             Width = width;
             Height = height;
 
-            #region Entities By Type
             Type t = GetType();
             if (!Engine.CurrentMap.Data.EntitiesByType.ContainsKey(t))
                 Engine.CurrentMap.Data.EntitiesByType.Add(t, new List<Entity>() { this });
             else
                 Engine.CurrentMap.Data.EntitiesByType[t].Add(this);
-            #endregion
 
             #region Tag set
 
@@ -78,7 +77,8 @@ namespace Fiourp
             for (int i = Children.Count - 1; i >= 0; i--)
             {
                 Children[i].Pos = Pos + childrenPositionOffset[i];
-                Children[i].Update();
+                if (Children[i].Active)
+                    Children[i].Update();
             }
         }
 
@@ -88,10 +88,22 @@ namespace Fiourp
                 renderers[i].Render();
 
             for (int i = Children.Count - 1; i >= 0; i--)
-                Children[i].Render();
+                if(Children[i].Active && !(Children[i] is UIElement))
+                    Children[i].Render();
+
+            for (int i = Children.Count - 1; i >= 0; i--)
+                if (Children[i].Active && !(Children[i] is UIElement))
+                    Children[i].Render();
 
             if (Debug.DebugMode)
                 Collider?.Render();
+        }
+
+        public void UIChildRender()
+        {
+            for (int i = Children.Count - 1; i >= 0; i--)
+                if (Children[i].Active && Children[i] is UIElement)
+                    Children[i].Render();
         }
 
         public virtual void OnDestroy()

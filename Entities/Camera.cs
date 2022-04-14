@@ -87,24 +87,26 @@ namespace Fiourp
             if(timer != null)
                 timer.Update();
 
-            if (FollowsPlayer && (timer == null || timer.Value <= 0))
+            if (Engine.Player != null && FollowsPlayer && (timer == null || timer.Value <= 0))
                 Follow(Engine.Player, 3, 3, new Rectangle(new Vector2(-Engine.ScreenSize.X / 6, -Engine.ScreenSize.Y / 12).ToPoint(),
                     new Vector2(Engine.ScreenSize.X / 3, Engine.ScreenSize.Y / 6).ToPoint()));
         }
 
         public void Follow(Entity actor, float xSmooth, float ySmooth, Rectangle strictFollowBounds)
         {
+            //TODO: Better Camera Follow: Don't let player get too far from center
             strictFollowBounds.Location += Pos.ToPoint();
+            Vector2 inBoundsActorPos = InBoundsPos(actor.Pos);
 
             if (strictFollowBounds.Contains(actor.Pos))
             {
-                Pos = new Vector2(MathHelper.Lerp(Pos.X, InBoundsPosX(actor.Pos.X), Engine.Deltatime * xSmooth),
-                    MathHelper.Lerp(Pos.Y, InBoundsPosY(actor.Pos.Y), Engine.Deltatime * ySmooth));
+                Pos = new Vector2(MathHelper.Lerp(Pos.X, inBoundsActorPos.X, Engine.Deltatime * xSmooth),
+                    MathHelper.Lerp(Pos.Y, inBoundsActorPos.Y, Engine.Deltatime * ySmooth));
             }
             else
             {
-                Pos = new Vector2(MathHelper.Lerp(Pos.X, InBoundsPosX(actor.Pos.X), Engine.Deltatime * xSmooth),
-                    MathHelper.Lerp(Pos.Y, InBoundsPosY(actor.Pos.Y), Engine.Deltatime * ySmooth * 2.5f));
+                Pos = new Vector2(MathHelper.Lerp(Pos.X, inBoundsActorPos.X, Engine.Deltatime * xSmooth),
+                    MathHelper.Lerp(Pos.Y, inBoundsActorPos.Y, Engine.Deltatime * ySmooth * 2.5f));
             }
         }
 
@@ -138,56 +140,38 @@ namespace Fiourp
 
                 return position;
             }
-            else
-            {
-                Vector2 correctedPos = position - Engine.ScreenSize / 2 / RenderTargetScreenSizeCoef;
 
-                if (correctedPos.X < bounds.X)
-                    correctedPos.X = bounds.X;
-                else if (correctedPos.X + Engine.ScreenSize.X / RenderTargetScreenSizeCoef > bounds.X + bounds.Width)
-                    correctedPos.X = bounds.X + bounds.Width - Engine.ScreenSize.X;
+            Vector2 correctedPos = InBoundsPos(position);
 
-                if (correctedPos.Y < bounds.Y)
-                    correctedPos.Y = bounds.Y;
-                else if (correctedPos.Y + Engine.ScreenSize.Y / RenderTargetScreenSizeCoef > bounds.Y + bounds.Height)
-                    correctedPos.Y = bounds.Y + bounds.Height - Engine.ScreenSize.Y / RenderTargetScreenSizeCoef;
+            if (Pos != correctedPos)
+                changed = true;
 
-                correctedPos += Engine.ScreenSize / 2 / RenderTargetScreenSizeCoef;
-
-                if (Pos != correctedPos)
-                    changed = true;
-
-                return correctedPos;
-            }
+            return correctedPos;
         }
 
         public Vector2 InBoundsPos(Vector2 position)
         {
             if ((bounds.Contains(position - Engine.ScreenSize / 2 / RenderTargetScreenSizeCoef) && bounds.Contains(position + Engine.ScreenSize / 2 / RenderTargetScreenSizeCoef)) || bounds == Rectangle.Empty)
                 return position;
-            else
-            {
-                Vector2 correctedPos = position - Engine.ScreenSize / 2 / RenderTargetScreenSizeCoef;
 
-                if (correctedPos.X < bounds.X)
-                    correctedPos.X = bounds.X;
-                else if (correctedPos.X + Engine.ScreenSize.X / RenderTargetScreenSizeCoef > bounds.X + bounds.Width)
-                    correctedPos.X = bounds.X + bounds.Width - Engine.ScreenSize.X;
-
-                if (correctedPos.Y < bounds.Y)
-                    correctedPos.Y = bounds.Y;
-                else if (correctedPos.Y + Engine.ScreenSize.Y / RenderTargetScreenSizeCoef > bounds.Y + bounds.Height)
-                    correctedPos.Y = bounds.Y + bounds.Height - Engine.ScreenSize.Y / RenderTargetScreenSizeCoef;
-
-                correctedPos += Engine.ScreenSize / 2 / RenderTargetScreenSizeCoef;
-
-                return correctedPos;
-            }
+            return new Vector2(InBoundsPosX(position.X), InBoundsPosY(position.Y));
         }
 
-        public float InBoundsPosX(float x)
+        public Vector2 InBoundsPos(Vector2 position, Rectangle bounds)
         {
-            if(x - Engine.ScreenSize.X / 2 / RenderTargetScreenSizeCoef > bounds.X && x - Engine.ScreenSize.X / 2 / RenderTargetScreenSizeCoef < bounds.X + bounds.Width &&
+            Rectangle oldBounds = this.bounds;
+            this.bounds = bounds;
+
+            Vector2 inBounds = InBoundsPos(position);
+
+            this.bounds = oldBounds;
+
+            return inBounds;
+        }
+
+        private float InBoundsPosX(float x)
+        {
+            if (x - Engine.ScreenSize.X / 2 / RenderTargetScreenSizeCoef > bounds.X && x - Engine.ScreenSize.X / 2 / RenderTargetScreenSizeCoef < bounds.X + bounds.Width &&
                 x + Engine.ScreenSize.X / 2 / RenderTargetScreenSizeCoef > bounds.X && x + Engine.ScreenSize.X / 2 / RenderTargetScreenSizeCoef < bounds.X + bounds.Width)
                 return x;
             else
@@ -205,7 +189,7 @@ namespace Fiourp
             }
         }
 
-        public float InBoundsPosY(float y)
+        private float InBoundsPosY(float y)
         {
             if (y - Engine.ScreenSize.Y / 2 / RenderTargetScreenSizeCoef > bounds.Y && y - Engine.ScreenSize.Y / 2 / RenderTargetScreenSizeCoef < bounds.Y + bounds.Height &&
                 y + Engine.ScreenSize.Y / 2 / RenderTargetScreenSizeCoef > bounds.Y && y + Engine.ScreenSize.Y / 2 / RenderTargetScreenSizeCoef < bounds.Y + bounds.Height)
@@ -245,5 +229,11 @@ namespace Fiourp
 
         public Vector2 ScreenToWorldPosition(Vector2 position)
             => Vector2.Transform(position / (Engine.ScreenSize.X / Engine.RenderTarget.Width), InverseViewMatrix);
+
+        public Vector2 RenderTargetToScreenPosition(Vector2 position)
+            => position * RenderTargetScreenSizeCoef;
+
+        public Vector2 ScreenToRenderTargetPosition(Vector2 position)
+            => position / RenderTargetScreenSizeCoef;
     }
 }

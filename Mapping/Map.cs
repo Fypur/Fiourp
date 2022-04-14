@@ -38,7 +38,7 @@ namespace Fiourp
         public void Update()
         {
             for (int i = Data.Entities.Count - 1; i >= 0; i--)
-                if (Data.Entities[i].Active)
+                if (i < Data.Entities.Count && Data.Entities[i].Active)
                     Data.Entities[i].Update();
         }
 
@@ -46,21 +46,24 @@ namespace Fiourp
         {
             for (int i = Data.Entities.Count - 1; i >= 0; i--)
             {
-                if(Data.Entities[i].Active && Data.Entities[i].Tag != Entity.Tags.UI)
+                if(i < Data.Entities.Count && Data.Entities[i].Active && Data.Entities[i].Tag != Entity.Tags.UI)
                     Data.Entities[i].Render();
             }
-                
 
             for (int i = Data.Triggers.Count - 1; i >= 0; i--)
-                if (Data.Triggers[i].Active)
+                if (i < Data.Triggers.Count && Data.Triggers[i].Active)
                     Data.Triggers[i].Render();
         }
 
         public void UIRender()
         {
             for (int i = Data.UIElements.Count - 1; i >= 0; i--)
-                if (Data.UIElements[i].Active)
+                if (i < Data.UIElements.Count && Data.UIElements[i].Active)
                     Data.UIElements[i].Render();
+
+            for(int i = Data.Entities.Count - 1; i >= 0; i--)
+                if(i < Data.Entities.Count && Data.Entities[i].Active)
+                    Data.Entities[i].UIChildRender();
         }
 
         public Entity Instantiate(Entity entity)

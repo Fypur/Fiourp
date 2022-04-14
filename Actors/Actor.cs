@@ -115,7 +115,7 @@ namespace Fiourp
                 }
 
                 if (sign == -1)
-                    foreach (JumpThru jumpthru in Engine.CurrentMap.Data.EntitiesByType[typeof(JumpThru)])
+                    foreach (JumpThru jumpthru in Engine.CurrentMap.Data.GetEntities<JumpThru>())
                         jumpthru.Collider.Collidable = true;
             }
         }
