@@ -14,7 +14,7 @@ namespace Fiourp
         public float TextScale;
         public enum Style { Normal, Bold, Italic }
 
-        public TextBox(string text, string fontID, Vector2 position, int width, int height, int fontSize = 3)
+        public TextBox(string text, string fontID, Vector2 position, int width, int height, float fontSize = 3)
             : base(position, width, height, null)
         {
             FontID = fontID;
@@ -22,7 +22,7 @@ namespace Fiourp
             Text = GenerateText(text);
         }
 
-        public TextBox(string text, string fontID, float timePerCharacter, Vector2 position, int width, int height, int fontSize = 3)
+        public TextBox(string text, string fontID, float timePerCharacter, Vector2 position, int width, int height, float fontSize = 3)
             : base(position, width, height, null)
         {
             FontID = fontID;
@@ -92,6 +92,11 @@ namespace Fiourp
             base.Render();
             if(Text != null)
                 Drawing.DrawString(Text, Pos, Color.White, DataManager.Fonts[FontID]["Normal"], TextScale);
+            if (Debug.DebugMode)
+                Drawing.DrawEdge(new Rectangle(Pos.ToPoint(), Size.ToPoint()), 1, Color.Blue);
         }
+
+        public override string ToString()
+            => $"Pos: {Pos}, Font: {FontID}, Scale: {TextScale}, Text: {Text}";
     }
 }

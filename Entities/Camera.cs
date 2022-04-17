@@ -225,10 +225,10 @@ namespace Fiourp
         }
 
         public Vector2 WorldToScreenPosition(Vector2 position)
-            => Vector2.Transform(position / (Engine.ScreenSize.X / Engine.RenderTarget.Width), ViewMatrix);
+            => Vector2.Transform(position, ViewMatrix);
 
         public Vector2 ScreenToWorldPosition(Vector2 position)
-            => Vector2.Transform(position / (Engine.ScreenSize.X / Engine.RenderTarget.Width), InverseViewMatrix);
+            => Vector2.Transform(position, InverseViewMatrix);
 
         public Vector2 RenderTargetToScreenPosition(Vector2 position)
             => position * RenderTargetScreenSizeCoef;
