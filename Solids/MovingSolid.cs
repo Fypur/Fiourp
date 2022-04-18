@@ -38,8 +38,6 @@ namespace Fiourp
             if (moveX == 0 && moveY == 0) return;
 
             List<Actor> ridingActors = GetAllRidingActors();
-            foreach (Actor r in ridingActors)
-                Debug.LogUpdate(r);
 
             Collider.Collidable = false;
 
