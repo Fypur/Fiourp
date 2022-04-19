@@ -16,6 +16,11 @@ namespace Fiourp
 
         private static MouseState mouseState;
         private static MouseState previousMouseState;
+
+        public static bool GamePadConnected;
+        private static GamePadState gamePadState;
+        private static GamePadState previousGamePadState;
+
         public static Vector2 MousePos { get => Engine.Cam.ScreenToWorldPosition(Engine.Cam.ScreenToRenderTargetPosition(mouseState.Position.ToVector2())); }
         public static Vector2 MousePosNoRenderTarget { get => Engine.Cam.ScreenToWorldPosition(Engine.Cam.ScreenToRenderTargetPosition(mouseState.Position.ToVector2()))
                 * Engine.Cam.RenderTargetScreenSizeCoef; }
@@ -37,12 +42,15 @@ namespace Fiourp
         {
             kbState = Keyboard.GetState();
             mouseState = Mouse.GetState();
+            gamePadState = GamePad.GetState(1);
+            GamePadConnected = gamePadState.IsConnected;
         }
 
         public static void UpdateOldState() 
         {
             kbPreviousState = Keyboard.GetState();
             previousMouseState = Mouse.GetState();
+            previousGamePadState = GamePad.GetState(PlayerIndex.One);
         }
 
         public static bool GetKeyDown(Keys key)
@@ -62,6 +70,21 @@ namespace Fiourp
 
         public static bool GetMouseButtonUp(MouseButton button)
             => MouseButtonToState(mouseState, button) == ButtonState.Released && MouseButtonToState(previousMouseState, button) == ButtonState.Pressed;
+
+        public static bool GetButtonDown(Buttons button)
+            => gamePadState.IsButtonDown(button) && !previousGamePadState.IsButtonDown(button);
+
+        public static bool GetButton(Buttons button)
+            => gamePadState.IsButtonDown(button);
+
+        public static bool GetButtonUp(Buttons button)
+            => !gamePadState.IsButtonDown(button) && previousGamePadState.IsButtonDown(button);
+
+        public static Vector2 GetLeftThumbstick()
+            => gamePadState.ThumbSticks.Left;
+
+        public static Vector2 GetRightThumbstick()
+            => gamePadState.ThumbSticks.Left;
 
         private static ButtonState MouseButtonToState(MouseState mouseState, MouseButton mouseButton)
         {
