@@ -46,7 +46,7 @@ namespace Fiourp
                 }
                 else
                 {
-                    TextBox.StopProgressiveDraw();
+                    TextBox.StopAllCoroutines();
                     TextBox.SetText(currentGeneratedString);
                 }
             }

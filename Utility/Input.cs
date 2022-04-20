@@ -50,7 +50,7 @@ namespace Fiourp
         {
             kbPreviousState = Keyboard.GetState();
             previousMouseState = Mouse.GetState();
-            previousGamePadState = GamePad.GetState(PlayerIndex.One);
+            previousGamePadState = GamePad.GetState(PlayerIndex.One, GamePadDeadZone.Circular);
         }
 
         public static bool GetKeyDown(Keys key)

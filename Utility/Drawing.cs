@@ -8,6 +8,7 @@ namespace Fiourp
     public static class Drawing
     {
         private static SpriteBatch spriteBatch;
+        private static GraphicsDevice device => Engine.Graphics.GraphicsDevice;
         public static Texture2D pointTexture;
         public static SpriteFont font;
         
@@ -22,6 +23,7 @@ namespace Fiourp
             Drawing.spriteBatch = spriteBatch;
             Drawing.font = font;
             pointTexture = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
+            pointTexture.Name = "Point Texture";
             pointTexture.SetData(new Color[] { Color.White });
         }
 

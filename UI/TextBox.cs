@@ -31,12 +31,15 @@ namespace Fiourp
         }
 
         public void ProgressiveDraw(string text, float timePerCharacter, bool formattedText = false)
-            => AddComponent(new Coroutine(TextDraw(formattedText ? text : GenerateText(text), timePerCharacter))); 
+            => AddComponent(new Coroutine(TextDraw(formattedText ? text : GenerateText(text), timePerCharacter)));
 
-        public void StopProgressiveDraw()
+        public void ProgressiveRemove(float timePerCharacter)
+            => AddComponent(new Coroutine(TextRemove(timePerCharacter)));
+
+        public void StopAllCoroutines()
         {
-            if (GetComponent(out Coroutine couroutine))
-                RemoveComponent(couroutine);
+            foreach (Coroutine c in GetComponents<Coroutine>())
+                RemoveComponent(c);
         }
 
         private IEnumerator TextDraw(string text, float timePerCharacter)
@@ -44,6 +47,15 @@ namespace Fiourp
             foreach(char c in text)
             {
                 Text += c;
+                yield return new Coroutine.WaitForSeconds(timePerCharacter);
+            }
+        }
+
+        private IEnumerator TextRemove(float timePerCharacter)
+        {
+            for (int i = Text.Length - 1; i >= 0; i--)
+            {
+                Text = Text.Remove(i);
                 yield return new Coroutine.WaitForSeconds(timePerCharacter);
             }
         }
@@ -83,7 +95,7 @@ namespace Fiourp
 
         public void Reset()
         {
-            StopProgressiveDraw();
+            StopAllCoroutines();
             Text = "";
         }
 

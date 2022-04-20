@@ -129,7 +129,30 @@ namespace Fiourp
                 renderers.Remove(renderer);
         }
 
-        public bool GetComponent<T>(out T component)
+        public T GetComponent<T>() where T : Component
+        {
+            foreach(Component c in components)
+            {
+                if(c is T t)
+                    return t;
+            }
+
+            return null;
+        }
+
+        public List<T> GetComponents<T>() where T : Component
+        {
+            List<T> result = new();
+            foreach (Component c in components)
+            {
+                if (c is T t)
+                    result.Add(t);
+            }
+
+            return result;
+        }
+
+        public bool TryGetComponent<T>(out T component) where T : Component
         {
             foreach(Component c in components)
                 if(c is T t)
@@ -138,7 +161,7 @@ namespace Fiourp
                     return true;
                 }
 
-            component = default(T);
+            component = null;
             return false;
         }
 

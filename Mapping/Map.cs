@@ -58,12 +58,19 @@ namespace Fiourp
         public void UIRender()
         {
             for (int i = Data.UIElements.Count - 1; i >= 0; i--)
-                if (i < Data.UIElements.Count && Data.UIElements[i].Active)
+                if (i < Data.UIElements.Count && Data.UIElements[i].Active && !Data.UIElements[i].Overlay)
                     Data.UIElements[i].Render();
 
             for(int i = Data.Entities.Count - 1; i >= 0; i--)
                 if(i < Data.Entities.Count && Data.Entities[i].Active)
                     Data.Entities[i].UIChildRender();
+        }
+
+        public void UIOverlayRender()
+        {
+            for (int i = Data.UIElements.Count - 1; i >= 0; i--)
+                if (i < Data.UIElements.Count && Data.UIElements[i].Active && Data.UIElements[i].Overlay)
+                    Data.UIElements[i].Render();
         }
 
         public Entity Instantiate(Entity entity)

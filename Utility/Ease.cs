@@ -23,7 +23,7 @@ namespace Fiourp
         /// </summary>
         /// <param name="t">value</param>
         /// <returns></returns>
-        public static float Reverse(float t)
-            => -t + 1;
+        public static float Reverse(float t, float coef = 1)
+            => -t + coef;
     }
 }
