@@ -59,7 +59,7 @@ namespace Fiourp
                         }
                         else if (ridingActors.Contains(actor))
                         {
-                            actor.MoveX(moveX, null);
+                            actor.MoveX(moveX);
                             actor.LiftSpeed = new Vector2(moveX / Engine.Deltatime, actor.LiftSpeed.Y);
                         }
                     }
@@ -76,7 +76,7 @@ namespace Fiourp
                         }
                         else if (ridingActors.Contains(actor))
                         {
-                            actor.MoveX(moveX, null);
+                            actor.MoveX(moveX);
                             actor.LiftSpeed = new Vector2(moveX / Engine.Deltatime, actor.LiftSpeed.Y);
                         }
                     }
@@ -100,7 +100,7 @@ namespace Fiourp
                         }
                         else if (ridingActors.Contains(actor))
                         {
-                            actor.MoveY(moveY, null);
+                            actor.MoveY(moveY);
                             actor.LiftSpeed = new Vector2(actor.LiftSpeed.X, moveY / Engine.Deltatime);
                         }
                     }
@@ -117,7 +117,7 @@ namespace Fiourp
                         }
                         else if (ridingActors.Contains(actor))
                         {
-                            actor.MoveY(moveY, null);
+                            actor.MoveY(moveY);
                             actor.LiftSpeed = new Vector2(actor.LiftSpeed.X, moveY / Engine.Deltatime);
                         }
                     }

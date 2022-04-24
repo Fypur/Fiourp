@@ -69,6 +69,13 @@ namespace Fiourp
             }
         }
 
+        public Entity(Vector2 position)
+        {
+            Pos = position;
+            Width = 0;
+            Height = 0;
+        }
+
         public virtual void Update()
         {
             for (int i = components.Count - 1; i >= 0; i--)
@@ -121,6 +128,15 @@ namespace Fiourp
             return component;
         }
 
+        public void RemoveComponent<T>() where T : Component
+        {
+            foreach(Component component in components)
+                if (component is T)
+                {
+                    RemoveComponent(component);
+                }
+        }
+
         public void RemoveComponent(Component component)
         {
             components.Remove(component);
@@ -129,15 +145,28 @@ namespace Fiourp
                 renderers.Remove(renderer);
         }
 
-        public T GetComponent<T>() where T : Component
+        public bool GetComponent<T>() where T : Component
+        {
+            foreach (Component c in components)
+                if (c is T t)
+                    return true;
+
+            return false;
+        }
+
+        public bool GetComponent<T>(out T component) where T : Component
         {
             foreach(Component c in components)
             {
                 if(c is T t)
-                    return t;
+                {
+                    component = t;
+                    return true;
+                }
             }
 
-            return null;
+            component = null;
+            return false;
         }
 
         public List<T> GetComponents<T>() where T : Component
@@ -177,5 +206,8 @@ namespace Fiourp
             Children.Remove(child);
             childrenPositionOffset.Remove(child.Pos - Pos);
         }
+
+        public void Destroy()
+            => Engine.CurrentMap.Destroy(this);
     }
 }

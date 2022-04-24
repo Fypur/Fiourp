@@ -33,8 +33,11 @@ namespace Fiourp
         public static void Draw(Texture2D texture, Vector2 position, Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin, Vector2 scale, SpriteEffects spriteEffects = SpriteEffects.None, float layerDepth = 0)
             => spriteBatch.Draw(texture, position, sourceRectangle, color, rotation, origin, scale, spriteEffects, layerDepth);
 
-        public static void Draw(Texture2D texture, Vector2 position, Vector2 size, float rotation, Vector2 scale, float layerDepth)
+        public static void Draw(Texture2D texture, Vector2 position, Vector2 size, float rotation, float layerDepth)
             => spriteBatch.Draw(texture, new Rectangle(position.ToPoint(), size.ToPoint()), null, Color.White, rotation, Vector2.Zero, SpriteEffects.None, layerDepth);
+
+        public static void Draw(Texture2D texture, Vector2 position, Vector2 size, Color color, float rotation, Vector2 origin, SpriteEffects effects, float layerDepth)
+            => spriteBatch.Draw(texture, new Rectangle(position.ToPoint(), size.ToPoint()), null, color, rotation, origin, effects, layerDepth);
 
         public static void Draw(Texture2D texture, Rectangle destinationRectangle)
            => spriteBatch.Draw(texture, destinationRectangle, Color.White);
@@ -153,7 +156,10 @@ namespace Fiourp
                     };
                     for (int y = 0; y < tileSize * 5; y += tileSize)
                         for(int x = 0; x < tileSize * 4; x += tileSize)
+                        {
                             d[tileNames[y / 8, x / 8]] = tileset.CropTo(new Vector2(x, y), new Vector2(tileSize));
+                            d[tileNames[y / 8, x / 8]].Name = tileNames[y / 8, x / 8];
+                        }
                     break;
 
                 case TileSetType.RandomOf4:

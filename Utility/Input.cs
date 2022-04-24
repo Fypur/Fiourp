@@ -21,8 +21,9 @@ namespace Fiourp
         private static GamePadState gamePadState;
         private static GamePadState previousGamePadState;
 
+        public static Vector2 ScreenMousePos { get => mouseState.Position.ToVector2(); }
         public static Vector2 MousePos { get => Engine.Cam.ScreenToWorldPosition(Engine.Cam.ScreenToRenderTargetPosition(mouseState.Position.ToVector2())); }
-        public static Vector2 MousePosNoRenderTarget { get => Engine.Cam.ScreenToWorldPosition(Engine.Cam.ScreenToRenderTargetPosition(mouseState.Position.ToVector2()))
+        public static Vector2 MousePosNoRenderTarget { get => Input.MousePos
                 * Engine.Cam.RenderTargetScreenSizeCoef; }
 
         public enum MouseButton { Left, Right, Middle, Macro1, Macro2 }

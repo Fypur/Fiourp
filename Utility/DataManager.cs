@@ -128,5 +128,90 @@ namespace Fiourp
 
         private static int stringToInt(string str)
             => int.Parse(str, System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
+
+        public static Texture2D FlipXAndY(this Texture2D texture)
+        {
+            Texture2D flipped = new Texture2D(Engine.Graphics.GraphicsDevice, texture.Width, texture.Height);
+            Color[] data = new Color[texture.Width * texture.Height];
+            texture.GetData(data);
+
+            Color[] reversed = new Color[texture.Width * texture.Height];
+
+            for(int i = 0; i < data.Length; i++)
+                reversed[data.Length - 1 - i] = data[i];
+
+            flipped.Name = texture.Name + " FlippedXAndY";
+            flipped.SetData(reversed);
+            return flipped;
+        }
+
+        public static Texture2D FlipX(this Texture2D texture)
+        {
+            Texture2D flipped = new Texture2D(Engine.Graphics.GraphicsDevice, texture.Width, texture.Height);
+            Color[] data = new Color[texture.Width * texture.Height];
+            texture.GetData(data);
+
+            Color[] reversed = new Color[texture.Width * texture.Height];
+
+            for(int y = 0; y < texture.Height; y++)
+            {
+                for(int x = 0; x < texture.Width; x++)
+                {
+                    int coords = x + y * texture.Width;
+                    int reversedCoords = Math.Abs(x + 1 - texture.Width) + y * texture.Width;
+                    reversed[reversedCoords] = data[coords];
+                }
+            }
+
+            flipped.Name = texture.Name + " FlippedX";
+            flipped.SetData(reversed);
+            return flipped;
+        }
+
+        public static Texture2D FlipY(this Texture2D texture)
+        {
+            Texture2D flipped = new Texture2D(Engine.Graphics.GraphicsDevice, texture.Width, texture.Height);
+            Color[] data = new Color[texture.Width * texture.Height];
+            texture.GetData(data);
+
+            Color[] reversed = new Color[texture.Width * texture.Height];
+
+            for (int y = 0; y < texture.Height; y++)
+            {
+                for (int x = 0; x < texture.Width; x++)
+                {
+                    int coords = x + y * texture.Width;
+                    int reversedCoords = (texture.Height - 1 - y) * texture.Width + x;
+                    reversed[reversedCoords] = data[coords];
+                }
+            }
+
+            flipped.Name = texture.Name + " FlippedY";
+            flipped.SetData(reversed);
+            return flipped;
+        }
+
+        public static Texture2D Rotate90(this Texture2D texture)
+        {
+            Texture2D flipped = new Texture2D(Engine.Graphics.GraphicsDevice, texture.Width, texture.Height);
+            Color[] data = new Color[texture.Width * texture.Height];
+            texture.GetData(data);
+
+            Color[] reversed = new Color[texture.Width * texture.Height];
+
+            for (int y = 0; y < texture.Height; y++)
+            {
+                for (int x = 0; x < texture.Width; x++)
+                {
+                    int coords = x + y * texture.Width;
+                    int rotated = y - (x + 1 - texture.Width) * texture.Width;
+                    reversed[coords] = data[rotated];
+                }
+            }
+
+            flipped.Name = texture.Name + " Rotated90";
+            flipped.SetData(reversed);
+            return flipped;
+        }
     }
 }

@@ -22,6 +22,7 @@ namespace Fiourp
         public Action OnChange;
 
         public Texture2D Texture;
+        public NineSliceSettings NineSliceSettings;
         public float Rotation = 0;
 
         public Color Color = Color.White;
@@ -46,13 +47,18 @@ namespace Fiourp
 
         #region Constructors
 
-        public static Sprite None => new Sprite(null);
+        public static Sprite None => new Sprite();
 
         public Sprite() { }
 
         public Sprite(Texture2D texture)
         {
             Texture = texture;
+        }
+
+        public Sprite(NineSliceSettings nineSliceSettings)
+        {
+            NineSliceSettings = nineSliceSettings;
         }
 
         public Sprite(Texture2D texture, Vector2 origin)
@@ -144,6 +150,29 @@ namespace Fiourp
         {
             if (Texture == null)
                 return;
+
+            if(NineSliceSettings != null)
+            {
+                NineSliceSettings n = NineSliceSettings;
+                DrawNineSlice(n.TopLeft, ParentEntity.Pos, Size(n.TopLeft));
+                DrawNineSlice(n.TopRight, ParentEntity.Pos + new Vector2(ParentEntity.Width - n.TopRight.Width, 0), Size(n.TopRight));
+                DrawNineSlice(n.BottomLeft, ParentEntity.Pos + new Vector2(0, ParentEntity.Height - n.BottomLeft.Height), Size(n.BottomLeft));
+                DrawNineSlice(n.BottomRight, ParentEntity.Pos + new Vector2(ParentEntity.Width - n.BottomRight.Width, ParentEntity.Height - n.BottomRight.Height), Size(n.BottomRight));
+
+                DrawNineSlice(n.Top, ParentEntity.Pos + new Vector2(n.TopLeft.Width, 0), new Vector2(ParentEntity.Width - n.TopLeft.Width - n.TopRight.Width, n.Top.Height));
+                DrawNineSlice(n.Bottom, ParentEntity.Pos + new Vector2(n.BottomLeft.Width, ParentEntity.Height - n.Bottom.Height), new Vector2(ParentEntity.Width - n.BottomLeft.Width - n.BottomRight.Width, n.Bottom.Height));
+                DrawNineSlice(n.Right, ParentEntity.Pos + new Vector2(ParentEntity.Width - n.TopRight.Width, n.TopRight.Height), new Vector2(n.Right.Width, ParentEntity.Height - n.TopRight.Height - n.BottomRight.Height));
+                DrawNineSlice(n.Left, ParentEntity.Pos + new Vector2(0, n.TopLeft.Height), new Vector2(n.Left.Width, ParentEntity.Height - n.TopLeft.Height - n.BottomLeft.Height));
+
+                DrawNineSlice(n.Fill, ParentEntity.Pos + Size(n.TopLeft), ParentEntity.Size - Size(n.TopLeft) - Size(n.BottomRight));
+
+                return;
+
+                static Vector2 Size(Texture2D texture) => new Vector2(texture.Width, texture.Height);
+
+                void DrawNineSlice(Texture2D texture, Vector2 position, Vector2 size)
+                    => Drawing.Draw(texture, position, size * Scale, Color, Rotation, Origin, Effect, LayerDepth);
+            }
 
             if (Texture == Drawing.pointTexture)
             {

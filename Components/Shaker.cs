@@ -14,20 +14,23 @@ namespace Fiourp
         public float Time;
         public bool ShakeSprite;
         public static Random Random = new Random();
+        public Func<Vector2> UpdatedInitPos;
 
         private Vector2 initPos;
 
-        public Shaker(float time, float intensity, bool shakeSprite = false)
+        public Shaker(float time, float intensity, Func<Vector2> movingPos = null, bool shakeSprite = false)
         { 
             Time = time;
             Intensity = intensity;
             ShakeSprite = shakeSprite;
+            UpdatedInitPos = movingPos;
         }
 
         public override void Added()
         {
             initPos = ParentEntity.ExactPos;
-            initPos = ParentEntity.Sprite.Offset;
+            if(ShakeSprite)
+                initPos = ParentEntity.Sprite.Offset;
             ParentEntity.AddComponent(new Coroutine(Shake()));
         }
 
@@ -37,6 +40,7 @@ namespace Fiourp
             {
                 while (Time > 0)
                 {
+                    initPos = UpdatedInitPos == null ? initPos : UpdatedInitPos();
                     Vector2 random = new Vector2(RandomFloat(-1, 1), RandomFloat(-1, 1)) * Intensity;
                     random = Vector2.Clamp(ParentEntity.Sprite.Offset + random, initPos - new Vector2(Intensity), initPos + new Vector2(Intensity)) - ParentEntity.Sprite.Offset;
 
@@ -53,6 +57,7 @@ namespace Fiourp
             {
                 while (Time > 0)
                 {
+                    initPos = UpdatedInitPos == null ? initPos : UpdatedInitPos();
                     Vector2 random = new Vector2(RandomFloat(-1, 1), RandomFloat(-1, 1)) * Intensity;
                     random = Vector2.Clamp(ParentEntity.ExactPos + random, initPos - new Vector2(Intensity), initPos + new Vector2(Intensity)) - ParentEntity.ExactPos;
 
@@ -60,6 +65,8 @@ namespace Fiourp
                         s.Move(random);
                     else if (ParentEntity is Actor a)
                         a.Move(random);
+                    else if (ParentEntity is Camera cam)
+                        cam.Pos += random;
                     else
                         ParentEntity.Pos += random;
 
@@ -71,8 +78,10 @@ namespace Fiourp
                     so.MoveTo(initPos);
                 else if (ParentEntity is Actor ac)
                     ac.MoveTo(initPos);
+                else if(ParentEntity is Camera cam)
+                    cam.Pos = initPos;
                 else
-                    ParentEntity.Pos += initPos;
+                    ParentEntity.Pos = initPos;
                 Destroy();
             }
         }

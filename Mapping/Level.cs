@@ -28,7 +28,7 @@ namespace Fiourp
             ParentMap = data.ParentMap;
 
             Organisation = data.Organisation;
-            Size = GetLevelSize();
+            Size = data.Size;
             Corners = GetLevelCorners();
 
             entityData = data.Entities;
@@ -179,10 +179,6 @@ namespace Fiourp
 
             return tileSet["inside"];
         }
-
-        public Vector2 GetLevelSize()
-            => new Vector2(TileWidth * Organisation.GetLength(1),
-                    TileHeight * Organisation.GetLength(0));
 
         public override string ToString()
             => $"Position: {Pos} \nSize: {Size}";

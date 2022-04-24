@@ -3,15 +3,14 @@ using System;
 
 namespace Fiourp
 {
-    public class Camera
+    public class Camera : Entity
     {
         public Rectangle Bounds = Rectangle.Empty;
         private bool hasChanged;
         public bool FollowsPlayer;
-        private Timer timer;
 
         private Vector2 pos;
-        public Vector2 Pos
+        public new Vector2 Pos
         {
             get => pos;
 
@@ -22,6 +21,18 @@ namespace Fiourp
             }
         }
 
+        public Vector2 NoBoundsPos
+        {
+            get => pos;
+            set
+            {
+                if(pos == value) return;
+                pos = value;
+                hasChanged = true;
+            }
+        }
+
+        public override Vector2 ExactPos { get => Pos; set => Pos = value; }
 
         private float rot;
         public float Rotation
@@ -71,7 +82,9 @@ namespace Fiourp
         public float RenderTargetScreenSizeCoef { get => Engine.ScreenSize.X / Engine.RenderTarget.Width; }
 
         public Camera(Vector2 position, float rotation, float zoomLevel, Rectangle? bounds = null)
+            : base(position)
         {
+            //TODO: Auto Scroll for Chase Sequence
             Engine.Cam = this;
 
             Pos = position;
@@ -82,44 +95,50 @@ namespace Fiourp
                 SetBoundaries((Rectangle)bounds);
         }
         
-        public void Update()
+        public override void Update()
         {
-            if(timer != null)
-                timer.Update();
+            base.Update();
 
-            if (Engine.Player != null && FollowsPlayer && (timer == null || timer.Value <= 0))
+            if (Engine.Player != null && FollowsPlayer && (!GetComponent(out Timer timer) || timer.Value <= 0) && !GetComponent<Shaker>())
                 Follow(Engine.Player, 3, 3, new Rectangle(new Vector2(-Engine.ScreenSize.X / 6, -Engine.ScreenSize.Y / 12).ToPoint(),
                     new Vector2(Engine.ScreenSize.X / 3, Engine.ScreenSize.Y / 6).ToPoint()));
         }
 
-        public void Follow(Entity actor, float xSmooth, float ySmooth, Rectangle strictFollowBounds)
+        public Vector2 Follow(Entity actor, float xSmooth, float ySmooth, Rectangle strictFollowBounds)
+            => Pos = FollowedPos(actor, xSmooth, ySmooth, strictFollowBounds, Bounds);
+
+        public Vector2 FollowedPos(Entity actor, float xSmooth, float ySmooth, Rectangle strictFollowBounds, Rectangle bounds)
         {
-            //TODO: Better Camera Follow: Don't let player get too far from center
             strictFollowBounds.Location += Pos.ToPoint();
-            Vector2 inBoundsActorPos = InBoundsPos(actor.Pos);
+            Vector2 inBoundsActorPos = InBoundsPos(actor.Pos, bounds);
 
             if (strictFollowBounds.Contains(actor.Pos))
-            {
-                Pos = new Vector2(MathHelper.Lerp(Pos.X, inBoundsActorPos.X, Engine.Deltatime * xSmooth),
+                return new Vector2(MathHelper.Lerp(Pos.X, inBoundsActorPos.X, Engine.Deltatime * xSmooth),
                     MathHelper.Lerp(Pos.Y, inBoundsActorPos.Y, Engine.Deltatime * ySmooth));
-            }
             else
-            {
-                Pos = new Vector2(MathHelper.Lerp(Pos.X, inBoundsActorPos.X, Engine.Deltatime * xSmooth),
+                return new Vector2(MathHelper.Lerp(Pos.X, inBoundsActorPos.X, Engine.Deltatime * xSmooth),
                     MathHelper.Lerp(Pos.Y, inBoundsActorPos.Y, Engine.Deltatime * ySmooth * 2.5f));
-            }
         }
 
         public void Move(Vector2 offset, float time, Func<float, float> easingFunction = null)
         {
             Vector2 initPos = Pos;
             Vector2 newPos = Pos + offset;
-            timer = new Timer(time, false, (t) =>
+            AddComponent(new Timer(time, true, (t) =>
 
                 Pos = Vector2.Lerp(initPos, newPos,
                      (easingFunction ?? Ease.None).Invoke(Ease.Reverse(t.Value / t.MaxValue))),
 
-                () => Pos = newPos);
+                () => Pos = newPos));
+        }
+
+        public void Shake(float time, float intensity)
+        {
+            AddComponent(new Shaker(time, intensity, () =>
+                FollowedPos(Engine.Player, 3, 3,
+                new Rectangle(new Vector2(-Engine.ScreenSize.X / 6 + intensity, -Engine.ScreenSize.Y / 12).ToPoint(),
+                        new Vector2(Engine.ScreenSize.X / 3 - intensity, Engine.ScreenSize.Y / 6 + 20).ToPoint()),
+                Bounds), false));
         }
 
         public Vector2 InBoundsPos(Vector2 position, out bool changed)

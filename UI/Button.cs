@@ -17,13 +17,15 @@ namespace Fiourp
         public Button(Vector2 position, int width, int height, Sprite sprite, Action onPressed) : base(position, width, height, sprite)
         {
             OnClick = onPressed;
+            Sprite.NineSliceSettings = new NineSliceSettings(DataManager.GetTexture("9Slice/Button/corner"), DataManager.GetTexture("9Slice/Button/top"), Drawing.pointTexture);
+            Debug.Log(Pos);
         }
 
         public override void Update()
         {
             base.Update();
 
-            bool mouseIn = Rect.Contains(Input.MousePosNoRenderTarget);
+            bool mouseIn = Rect.Contains(Input.ScreenMousePos);
 
             if (!hovered && mouseIn)
             {

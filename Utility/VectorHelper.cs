@@ -7,8 +7,11 @@ namespace Fiourp
 {
     public static class VectorHelper
     {
-        public static float GetAngle(Vector2 vector)
+        public static float ToAngle(this Vector2 vector)
             => (float)Math.Atan2(vector.Y, vector.X);
+
+        public static float ToAngleDegrees(this Vector2 vector)
+            => MathHelper.ToDegrees((float)Math.Atan2(vector.Y, vector.X));
 
         //3 Different methods
         /*public static float GetAngle(Vector2 from, Vector2 to)

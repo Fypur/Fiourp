@@ -12,14 +12,16 @@ namespace Fiourp
         public string Text;
         public string FontID;
         public float TextScale;
+        public bool Centered;
         public enum Style { Normal, Bold, Italic }
 
-        public TextBox(string text, string fontID, Vector2 position, int width, int height, float fontSize = 3)
+        public TextBox(string text, string fontID, Vector2 position, int width, int height, float fontSize = 3, bool centered = false)
             : base(position, width, height, null)
         {
             FontID = fontID;
             TextScale = fontSize;
             Text = GenerateText(text);
+            Centered = centered;
         }
 
         public TextBox(string text, string fontID, float timePerCharacter, Vector2 position, int width, int height, float fontSize = 3)

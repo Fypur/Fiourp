@@ -57,7 +57,13 @@ namespace Fiourp
             }
         }
 
-        public void MoveX(float amount, Action CallbackOnCollision = null)
+        public void MoveX(float amount, Action CallbackOnCollision)
+            => MoveX(amount, (entity) => CallbackOnCollision());
+
+        public void MoveY(float amount, Action CallbackOnCollision)
+            => MoveY(amount, (entity) => CallbackOnCollision());
+
+        public void MoveX(float amount, Action<Entity> CallbackOnCollision = null)
         {
             xRemainder += amount;
             int move = (int)Math.Round(xRemainder);
@@ -72,14 +78,14 @@ namespace Fiourp
 
                 while (move != 0)
                 {
-                    if (!Collider.CollideAt(Pos + new Vector2(sign, 0)))
+                    if (!Collider.CollideAt(new List<Entity>(Engine.CurrentMap.Data.Solids), Pos + new Vector2(sign, 0), out Entity collided))
                     {
                         Pos.X += sign;
                         move -= sign;
                     }
                     else
                     {
-                        CallbackOnCollision?.Invoke();
+                        CallbackOnCollision?.Invoke(collided);
                         break;
                     }
                 }
@@ -89,7 +95,7 @@ namespace Fiourp
             }
         }
 
-        public void MoveY(float amount, Action CallbackOnCollision = null)
+        public void MoveY(float amount, Action<Entity> CallbackOnCollision = null)
         {
             yRemainder += amount;
             int move = (int)Math.Round(yRemainder);
@@ -105,14 +111,14 @@ namespace Fiourp
 
                 while (move != 0)
                 {
-                    if (!Collider.CollideAt(Pos + new Vector2(0, sign)))
+                    if (!Collider.CollideAt(new List<Entity>(Engine.CurrentMap.Data.Solids), Pos + new Vector2(0, sign), out Entity collided))
                     {
                         Pos.Y += sign;
                         move -= sign;
                     }
                     else
                     {
-                        CallbackOnCollision?.Invoke();
+                        CallbackOnCollision?.Invoke(collided);
                         break;
                     }
                 }

@@ -82,5 +82,44 @@ namespace Fiourp
 
             return p;
         }
+
+        public void CopyFrom(ParticleType pt)
+        {
+            Color = pt.Color;
+            Color2 = pt.Color2;
+            SpeedMin = pt.SpeedMin;
+            SpeedMax = pt.SpeedMax;
+            SpeedMultiplier = pt.SpeedMultiplier;
+            LifeMin = pt.LifeMin;
+            LifeMax = pt.LifeMax;
+            Acceleration = pt.Acceleration;
+            Friction = pt.Friction;
+            Size = pt.Size;
+            SizeRange = pt.SizeRange;
+            SizeChange = pt.SizeChange;
+            Direction = pt.Direction;
+            DirectionRange = pt.DirectionRange;
+        }
+
+        public ParticleType Copy()
+        {
+            ParticleType PT = new ParticleType();
+            PT.Color = Color;
+            PT.Color2 = Color2;
+            PT.SpeedMin = SpeedMin;
+            PT.SpeedMax = SpeedMax;
+            PT.SpeedMultiplier = SpeedMultiplier;
+            PT.LifeMin = LifeMin;
+            PT.LifeMax = LifeMax;
+            PT.Acceleration = Acceleration;
+            PT.Friction = Friction;
+            PT.Size = Size;
+            PT.SizeRange = SizeRange;
+            PT.SizeChange = SizeChange;
+            PT.Direction = Direction;
+            PT.DirectionRange = DirectionRange;
+            return PT;
+
+        }
     }
 }

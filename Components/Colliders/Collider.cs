@@ -76,7 +76,7 @@ namespace Fiourp
 
         public bool CollideAt(List<Entity> checkedEntities, Vector2 position, out Entity collidedEntity)
         {
-            Vector2 oldPos = ParentEntity.ExactPos;
+            Vector2 oldPos = ParentEntity.Pos;
             ParentEntity.Pos = position;
             collidedEntity = null;
 
