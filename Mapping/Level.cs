@@ -59,6 +59,20 @@ namespace Fiourp
             }
         }
 
+        /// <summary>
+        /// Use this when tiles are already present in entityData
+        /// </summary>
+        public void LoadNoAutoTile()
+        {
+            Engine.CurrentMap.CurrentLevel = this;
+            enterAction?.Invoke();
+
+            foreach (Entity e in entityData)
+            {
+                ParentMap.Instantiate(e);
+            }
+        }
+
         public void Unload()
         {
             if(Engine.CurrentMap.CurrentLevel == this)

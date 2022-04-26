@@ -35,6 +35,13 @@ namespace Fiourp
             CurrentLevel.Load();
         }
 
+        public void LoadMapNoAutoTile(Level initLevel)
+        {
+            Engine.CurrentMap = this;
+            CurrentLevel = initLevel;
+            CurrentLevel.LoadNoAutoTile();
+        }
+
         public void Update()
         {
             for (int i = Data.Entities.Count - 1; i >= 0; i--)

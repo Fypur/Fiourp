@@ -27,8 +27,11 @@ namespace Fiourp
             pointTexture.SetData(new Color[] { Color.White });
         }
 
-        public static void Draw(Texture2D texture, Vector2 position, Color color)
+        public static void Draw(Texture2D texture, Vector2 position)
            => spriteBatch.Draw(texture, position, Color.White);
+
+        public static void Draw(Texture2D texture, Vector2 position, Color color)
+           => spriteBatch.Draw(texture, position, color);
 
         public static void Draw(Texture2D texture, Vector2 position, Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin, Vector2 scale, SpriteEffects spriteEffects = SpriteEffects.None, float layerDepth = 0)
             => spriteBatch.Draw(texture, position, sourceRectangle, color, rotation, origin, scale, spriteEffects, layerDepth);
@@ -128,45 +131,6 @@ namespace Fiourp
         {
             DebugEvent();
             DebugEvent = delegate { };
-        }
-
-        public static Texture2D CropTo(this Texture2D texture, Vector2 position, Vector2 size)
-        {
-            Color[] data = new Color[(int)(size.X * size.Y)];
-            Texture2D returned = new Texture2D(Engine.Graphics.GraphicsDevice, (int)size.X, (int)size.Y);
-            texture.GetData(0, new Rectangle(position.ToPoint(), size.ToPoint()), data, 0, (int)(size.X * size.Y));
-            returned.SetData(data);
-            return returned;
-        }
-
-        public enum TileSetType { OneOfEach, RandomOf4 }
-        public static Dictionary<string, Texture2D> GetTileSetTextures(Texture2D tileset, int tileSize, TileSetType type)
-        {
-            Dictionary<string, Texture2D> d = new();
-
-            switch (type)
-            {
-                case TileSetType.OneOfEach:
-                    string[,] tileNames = new string[,] {
-                        { "top", "bottom", "left", "right" },
-                        { "topLeftCorner", "topRightCorner", "bottomLeftCorner", "bottomRightCorner" },
-                        { "topLeftPoint", "topRightPoint", "bottomleftPoint", "bottomRightPoint" },
-                        { "upFullCorner", "downFullCorner", "leftFullCorner", "rightFullCorner" },
-                        { "verticalPillar", "horizontalPillar", "complete", "inside" }
-                    };
-                    for (int y = 0; y < tileSize * 5; y += tileSize)
-                        for(int x = 0; x < tileSize * 4; x += tileSize)
-                        {
-                            d[tileNames[y / 8, x / 8]] = tileset.CropTo(new Vector2(x, y), new Vector2(tileSize));
-                            d[tileNames[y / 8, x / 8]].Name = tileNames[y / 8, x / 8];
-                        }
-                    break;
-
-                case TileSetType.RandomOf4:
-                    return d;
-            }
-
-            return d;
         }
     }
 }

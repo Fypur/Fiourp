@@ -12,6 +12,10 @@ namespace Fiourp
             new Sprite(texture, new Rectangle(position.ToPoint(), new Point(width, height))))
         { }
 
+        public SolidTile(Vector2 position, int width, int height, Sprite sprite) : base(position, width, height,
+            sprite)
+        { }
+
         public SolidTile(Color color, Vector2 position, int width, int height) : base(position, width, height, color)
         { }
     }

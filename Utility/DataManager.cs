@@ -4,12 +4,16 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using MonoGame.Aseprite;
+using MonoGame.Aseprite.Documents;
+using MonoGame.Aseprite.Graphics;
 
 namespace Fiourp
 {
     public static class DataManager
     {
         public static ContentManager Content = Engine.Content;
+        public static ContentTypeReaderManager ContentTypeReader = new();
         public static string contentDirName = new DirectoryInfo(Content.RootDirectory).FullName;
 
         public static Dictionary<string, Texture2D> Textures = GetAllTextures();
@@ -39,7 +43,19 @@ namespace Fiourp
                 string name = file.FullName.Substring(file.FullName.LastIndexOf("Graphics\\") + 9);
                 name = name.Replace('\\', '/');
                 string key = name.Substring(0, name.Length - 4);
-                d[key] = Content.Load<Texture2D>("Graphics/" + key);
+
+                object loaded = Content.Load<Object>("Graphics/" + key);
+
+                if (loaded is Texture2D texture)
+                    d[key] = texture;
+                else if (loaded is AsepriteDocument asepriteDoc)
+                {
+                    Texture2D[] textures = asepriteDoc.Load();
+                    if(textures.Length == 1)
+                        d[key] = textures[0];
+                    for(int i = 1; i < textures.Length + 1; i++)
+                        d[key + i] = textures[i - 1];
+                }
             }
             
             foreach (DirectoryInfo direct in dir.GetDirectories())
@@ -79,7 +95,12 @@ namespace Fiourp
                     continue;
 
                 string key = fileName.Substring(0, fileName.Length - 4);
-                textures.Add(Content.Load<Texture2D>("Graphics/" + key));
+                object loaded = Content.Load<Object>("Graphics/" + key);
+
+                if (loaded is Texture2D texture)
+                    textures.Add(texture);
+                else if (loaded is AsepriteDocument asepriteDoc)
+                    textures.AddRange(asepriteDoc.Load());
             }
 
             foreach (DirectoryInfo direct in dir.GetDirectories())
@@ -120,14 +141,84 @@ namespace Fiourp
             foreach (System.Xml.XmlElement element in doc["Sprites"]["Tilesets"])
             {
                 if (element.Name == "OneOfEach")
-                    d[stringToInt(element.GetAttribute("id"))] = Drawing.GetTileSetTextures(Content.Load<Texture2D>(dir.FullName + "/" + element.GetAttribute("path")), stringToInt(element.GetAttribute("tileSize")), Drawing.TileSetType.OneOfEach);
+                {
+                    object loaded = Content.Load<Object>(dir.FullName + "/" + element.GetAttribute("path"));
+
+                    Texture2D texture;
+                    if (loaded is Texture2D txt)
+                        texture = txt;
+                    else if (loaded is AsepriteDocument asepriteDoc)
+                        texture = asepriteDoc.Load()[0];
+                    else
+                        throw new Exception("Tileset was not found under the right format");
+
+                    d[stringToInt(element.GetAttribute("id"))] = GetTileSetTextures(texture, stringToInt(element.GetAttribute("tileSize")), TileSetType.OneOfEach);
+                }
             }
 
             return d;
         }
 
+        public enum TileSetType { OneOfEach, RandomOf4 }
+        public static Dictionary<string, Texture2D> GetTileSetTextures(Texture2D tileset, int tileSize, TileSetType type)
+        {
+            Dictionary<string, Texture2D> d = new();
+
+            switch (type)
+            {
+                case TileSetType.OneOfEach:
+                    string[,] tileNames = new string[,] {
+                        { "top", "bottom", "left", "right" },
+                        { "topLeftCorner", "topRightCorner", "bottomLeftCorner", "bottomRightCorner" },
+                        { "topLeftPoint", "topRightPoint", "bottomleftPoint", "bottomRightPoint" },
+                        { "upFullCorner", "downFullCorner", "leftFullCorner", "rightFullCorner" },
+                        { "verticalPillar", "horizontalPillar", "complete", "inside" }
+                    };
+                    for (int y = 0; y < tileSize * 5; y += tileSize)
+                        for (int x = 0; x < tileSize * 4; x += tileSize)
+                        {
+                            d[tileNames[y / 8, x / 8]] = tileset.CropTo(new Vector2(x, y), new Vector2(tileSize));
+                            d[tileNames[y / 8, x / 8]].Name = tileNames[y / 8, x / 8];
+                        }
+                    break;
+
+                case TileSetType.RandomOf4:
+                    return d;
+            }
+
+            return d;
+        }
+
+        public static Texture2D CropTo(this Texture2D texture, Vector2 position, Vector2 size)
+        {
+            Color[] data = new Color[(int)(size.X * size.Y)];
+            Texture2D returned = new Texture2D(Engine.Graphics.GraphicsDevice, (int)size.X, (int)size.Y);
+            texture.GetData(0, new Rectangle(position.ToPoint(), size.ToPoint()), data, 0, (int)(size.X * size.Y));
+            returned.SetData(data);
+            return returned;
+        }
+
         private static int stringToInt(string str)
             => int.Parse(str, System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
+
+        public static Texture2D Load(string path)
+        {
+            object loaded = Content.Load<Object>(path);
+            if (loaded is Texture2D txt)
+                return txt;
+            else if (loaded is AsepriteDocument asepriteDoc)
+                return asepriteDoc.Load()[0];
+            else
+                throw new Exception("File was not found under the right format");
+        }
+
+        public static Texture2D[] Load(this AsepriteDocument doc) 
+        {
+            Texture2D[] result = new Texture2D[doc.Frames.Count];
+            for (int i = 0; i < doc.Frames.Count; i++)
+                result[i] = doc.Texture.CropTo(new Vector2(doc.Frames[i].X, doc.Frames[i].Y), new Vector2(doc.Frames[i].Width, doc.Frames[i].Height));
+            return result;
+        }
 
         public static Texture2D FlipXAndY(this Texture2D texture)
         {

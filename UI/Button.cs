@@ -17,8 +17,7 @@ namespace Fiourp
         public Button(Vector2 position, int width, int height, Sprite sprite, Action onPressed) : base(position, width, height, sprite)
         {
             OnClick = onPressed;
-            Sprite.NineSliceSettings = new NineSliceSettings(DataManager.GetTexture("9Slice/Button/corner"), DataManager.GetTexture("9Slice/Button/top"), Drawing.pointTexture);
-            Debug.Log(Pos);
+            /*Sprite.NineSliceSettings = new NineSliceSettings(DataManager.GetTexture("9Slice/Button/corner"), DataManager.GetTexture("9Slice/Button/top"), Drawing.pointTexture);*/
         }
 
         public override void Update()
