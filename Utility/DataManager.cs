@@ -140,20 +140,20 @@ namespace Fiourp
 
             foreach (System.Xml.XmlElement element in doc["Sprites"]["Tilesets"])
             {
+                object loaded = Content.Load<Object>(dir.FullName + "/" + element.GetAttribute("path"));
+
+                Texture2D texture;
+                if (loaded is Texture2D txt)
+                    texture = txt;
+                else if (loaded is AsepriteDocument asepriteDoc)
+                    texture = asepriteDoc.Load()[0];
+                else
+                    throw new Exception("Tileset was not found under the right format");
+
                 if (element.Name == "OneOfEach")
-                {
-                    object loaded = Content.Load<Object>(dir.FullName + "/" + element.GetAttribute("path"));
-
-                    Texture2D texture;
-                    if (loaded is Texture2D txt)
-                        texture = txt;
-                    else if (loaded is AsepriteDocument asepriteDoc)
-                        texture = asepriteDoc.Load()[0];
-                    else
-                        throw new Exception("Tileset was not found under the right format");
-
                     d[stringToInt(element.GetAttribute("id"))] = GetTileSetTextures(texture, stringToInt(element.GetAttribute("tileSize")), TileSetType.OneOfEach);
-                }
+                else if(element.Name == "RandomOf4")
+                    d[stringToInt(element.GetAttribute("id"))] = GetTileSetTextures(texture, stringToInt(element.GetAttribute("tileSize")), TileSetType.RandomOf4);
             }
 
             return d;
@@ -174,20 +174,37 @@ namespace Fiourp
                         { "upFullCorner", "downFullCorner", "leftFullCorner", "rightFullCorner" },
                         { "verticalPillar", "horizontalPillar", "complete", "inside" }
                     };
-                    for (int y = 0; y < tileSize * 5; y += tileSize)
-                        for (int x = 0; x < tileSize * 4; x += tileSize)
+                    for (int y = 0; y < 5; y++)
+                        for (int x = 0; x < 4; x++)
                         {
-                            d[tileNames[y / 8, x / 8]] = tileset.CropTo(new Vector2(x, y), new Vector2(tileSize));
-                            d[tileNames[y / 8, x / 8]].Name = tileNames[y / 8, x / 8];
+                            d[tileNames[y, x]] = tileset.CropTo(new Vector2(x * tileSize, y * tileSize), new Vector2(tileSize));
+                            d[tileNames[y, x]].Name = tileNames[y, x];
                         }
                     break;
 
                 case TileSetType.RandomOf4:
-                    return d;
-            }
+                    string[] tileNamesR4 = new string[] {
+                        "top", "bottom", "left", "right", "topLeftCorner", "topRightCorner", "bottomLeftCorner", "bottomRightCorner", "topLeftPoint", "topRightPoint", "bottomLeftPoint", "bottomRightPoint", "upFullCorner", "downFullCorner", "leftFullCorner", "rightFullCorner", "verticalPillar", "horizontalPillar", "complete", "padding", "inside" };
+                    for(int y = 0; y < tileNamesR4.Length; y++)
+                        for(int x = 0; x < 4; x++)
+                        {
+                            d[tileNamesR4[y] + x] = tileset.CropTo(new Vector2(x * tileSize, y * tileSize), new Vector2(tileSize));
+                            d[tileNamesR4[y] + x].Name = tileNamesR4[y] + x;
+                        }
+                    break;
+            };
 
             return d;
         }
+
+        /// <summary>
+        /// Returns a random texture between four of the identified tile
+        /// </summary>
+        /// <param name="tileset">Tileset must be of type RandomOf4</param>
+        /// <param name="identifier">The specified tile identifier</param>
+        /// <returns></returns>
+        public static Texture2D GetRandomTilesetTexture(Dictionary<string, Texture2D> tileset, string identifier, Random random = null)
+            => tileset[identifier + (random == null ? Rand.NextInt(0, 4) : random.Next(0, 4))];
 
         public static Texture2D CropTo(this Texture2D texture, Vector2 position, Vector2 size)
         {

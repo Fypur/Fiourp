@@ -148,9 +148,6 @@ namespace Fiourp
 
         public override void Render()
         {
-            if (Texture == null)
-                return;
-
             if(NineSliceSettings != null)
             {
                 NineSliceSettings n = NineSliceSettings;
@@ -171,8 +168,11 @@ namespace Fiourp
                 static Vector2 Size(Texture2D texture) => new Vector2(texture.Width, texture.Height);
 
                 void DrawNineSlice(Texture2D texture, Vector2 position, Vector2 size)
-                    => Drawing.Draw(texture, position, size * Scale, Color, Rotation, Origin, Effect, LayerDepth);
+                    => Drawing.Draw(texture, position + Offset, size * Scale, Color, Rotation, Origin, Effect, LayerDepth);
             }
+
+            if (Texture == null)
+                return;
 
             if (Texture == Drawing.pointTexture)
             {

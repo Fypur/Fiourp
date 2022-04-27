@@ -16,8 +16,6 @@ namespace Fiourp
 
         public List<Particle> Particles = new();
 
-        private static Random random = new Random();
-
         public ParticleSystem()
         { }
 
@@ -64,7 +62,7 @@ namespace Fiourp
         {
             for (int i = 0; i < amount; i++)
             {
-                Vector2 position = new Vector2(NextFloat(rectangle.X, rectangle.Right), NextFloat(rectangle.Y, rectangle.Bottom));
+                Vector2 position = new Vector2(Rand.NextFloat(rectangle.X, rectangle.Right), Rand.NextFloat(rectangle.Y, rectangle.Bottom));
                 Particles.Add(particle.Create(followed, position, direction, color));
             }
         }
@@ -98,8 +96,5 @@ namespace Fiourp
                 else
                     Particles.RemoveAt(i);
         }
-
-        public float NextFloat(float min, float max)
-            => (float) (random.NextDouble() * (max - min) + min);
     }
 }

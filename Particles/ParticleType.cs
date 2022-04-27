@@ -36,8 +36,6 @@ namespace Fiourp
 
         public enum FadeModes { None, Linear, Smooth, EndLinear, EndSmooth };
 
-        private static Random random = new Random();
-
         public ParticleType()
         {
             Texture = Drawing.pointTexture;
@@ -71,14 +69,14 @@ namespace Fiourp
 
         public Particle Create(Entity followed, Vector2 position, float direction, Color color)
         {
-            Particle p = new Particle(this, followed, position, Size - 0.5f * SizeRange + (float)random.NextDouble() * SizeRange);
+            Particle p = new Particle(this, followed, position, Size - 0.5f * SizeRange + Rand.NextDouble() * SizeRange);
 
             p.Followed = followed;
-            p.StartLifeTime = p.LifeTime = (float)random.NextDouble() * (LifeMax - LifeMin) + LifeMin;
+            p.StartLifeTime = p.LifeTime = Rand.NextFloat(LifeMin, LifeMax);
             p.StartColor = p.Sprite.Color = color;
 
-            float dir = direction - 0.5f * DirectionRange + (float)random.NextDouble() * DirectionRange;
-            p.Velocity = VectorHelper.AngleToVector(dir) * ((float)random.NextDouble() * (SpeedMax - SpeedMin) + SpeedMin);
+            float dir = direction - 0.5f * DirectionRange + Rand.NextDouble() * DirectionRange;
+            p.Velocity = VectorHelper.AngleToVector(dir) * Rand.NextFloat(SpeedMin, SpeedMax);
 
             return p;
         }

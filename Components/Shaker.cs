@@ -13,7 +13,6 @@ namespace Fiourp
         public float Intensity;
         public float Time;
         public bool ShakeSprite;
-        public static Random Random = new Random();
         public Func<Vector2> UpdatedInitPos;
 
         private Vector2 initPos;
@@ -41,7 +40,7 @@ namespace Fiourp
                 while (Time > 0)
                 {
                     initPos = UpdatedInitPos == null ? initPos : UpdatedInitPos();
-                    Vector2 random = new Vector2(RandomFloat(-1, 1), RandomFloat(-1, 1)) * Intensity;
+                    Vector2 random = new Vector2(Rand.NextFloat(-1, 1), Rand.NextFloat(-1, 1)) * Intensity;
                     random = Vector2.Clamp(ParentEntity.Sprite.Offset + random, initPos - new Vector2(Intensity), initPos + new Vector2(Intensity)) - ParentEntity.Sprite.Offset;
 
                     ParentEntity.Sprite.Offset += random;
@@ -58,7 +57,7 @@ namespace Fiourp
                 while (Time > 0)
                 {
                     initPos = UpdatedInitPos == null ? initPos : UpdatedInitPos();
-                    Vector2 random = new Vector2(RandomFloat(-1, 1), RandomFloat(-1, 1)) * Intensity;
+                    Vector2 random = new Vector2(Rand.NextFloat(-1, 1), Rand.NextFloat(-1, 1)) * Intensity;
                     random = Vector2.Clamp(ParentEntity.ExactPos + random, initPos - new Vector2(Intensity), initPos + new Vector2(Intensity)) - ParentEntity.ExactPos;
 
                     if (ParentEntity is MovingSolid s)
@@ -85,8 +84,5 @@ namespace Fiourp
                 Destroy();
             }
         }
-
-        private float RandomFloat(float min, float max)
-            => (float)Random.NextDouble() * (max - min) + min;
     }
 }
