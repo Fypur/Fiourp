@@ -176,7 +176,7 @@ namespace Fiourp
 
             if (Texture == Drawing.pointTexture)
             {
-                Rectangle rect = ParentEntity.Rect;
+                Rectangle rect = ParentEntity.Bounds;
                 rect.Location += Offset.ToPoint();
                 Drawing.Draw(Texture, rect, Color, Rotation, Origin, Scale, Effect, LayerDepth);
             }

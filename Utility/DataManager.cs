@@ -184,13 +184,32 @@ namespace Fiourp
 
                 case TileSetType.RandomOf4:
                     string[] tileNamesR4 = new string[] {
-                        "top", "bottom", "left", "right", "topLeftCorner", "topRightCorner", "bottomLeftCorner", "bottomRightCorner", "topLeftPoint", "topRightPoint", "bottomLeftPoint", "bottomRightPoint", "upFullCorner", "downFullCorner", "leftFullCorner", "rightFullCorner", "verticalPillar", "horizontalPillar", "complete", "padding", "inside" };
+                        "top", "bottom", "left", "right", "topLeftCorner", "topRightCorner", "bottomLeftCorner", "bottomRightCorner", "topLeftPoint", "topRightPoint", "bottomLeftPoint", "bottomRightPoint", "upFullCorner", "downFullCorner", "leftFullCorner", "rightFullCorner", "verticalPillar", "horizontalPillar", "complete" };
+                    string[] tileNamesR4Other = new string[] { "oppositePointsTopLeft", "oppositePointsTopRight", "allPoints", "inside",
+                    "doublePointTop", "doublePointBottom", "doublePointLeft", "doublePointRight",
+                    "triplePointTopLeft", "triplePointTopRight", "triplePointBottomLeft", "triplePointBottomRight", };
+
                     for(int y = 0; y < tileNamesR4.Length; y++)
                         for(int x = 0; x < 4; x++)
                         {
                             d[tileNamesR4[y] + x] = tileset.CropTo(new Vector2(x * tileSize, y * tileSize), new Vector2(tileSize));
                             d[tileNamesR4[y] + x].Name = tileNamesR4[y] + x;
                         }
+
+                    for (int y = 0; y < tileNamesR4Other.Length / 4; y++)
+                        for (int x = 0; x < 4; x++)
+                        {
+                            d[tileNamesR4Other[y * 4 + x]] = tileset.CropTo(new Vector2(x * tileSize, (y + tileNamesR4.Length) * tileSize), new Vector2(tileSize));
+                            d[tileNamesR4Other[y * 4 + x ]].Name = tileNamesR4Other[y * 4 + x];
+                        }
+
+                    for (int y = 0; y < 2; y++)
+                        for (int x = 0; x < 4; x++)
+                        {
+                            d["padding" + (y * 4 + x + 1)] = tileset.CropTo(new Vector2(x * tileSize, (y + tileNamesR4.Length + tileNamesR4Other.Length / 4) * tileSize), new Vector2(tileSize));
+                            d["padding" + (y * 4 + x + 1)].Name = "padding" + (y * 4 + x + 1) ;
+                        }
+
                     break;
             };
 

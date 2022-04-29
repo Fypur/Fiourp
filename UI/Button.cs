@@ -24,7 +24,7 @@ namespace Fiourp
         {
             base.Update();
 
-            bool mouseIn = Rect.Contains(Input.ScreenMousePos);
+            bool mouseIn = Bounds.Contains(Input.ScreenMousePos);
 
             if (!hovered && mouseIn)
             {

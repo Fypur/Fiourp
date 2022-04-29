@@ -58,6 +58,9 @@ namespace Fiourp
             FadeMode = FadeModes.None;
         }
 
+        public ParticleType(ParticleType particle)
+            => CopyFrom(particle);
+
         public Particle Create(Entity followed, Vector2 position)
             => Create(followed, position, Direction, Color);
 
@@ -83,6 +86,7 @@ namespace Fiourp
 
         public void CopyFrom(ParticleType pt)
         {
+            Texture = pt.Texture;
             Color = pt.Color;
             Color2 = pt.Color2;
             SpeedMin = pt.SpeedMin;
@@ -102,6 +106,7 @@ namespace Fiourp
         public ParticleType Copy()
         {
             ParticleType PT = new ParticleType();
+            PT.Texture = Texture;
             PT.Color = Color;
             PT.Color2 = Color2;
             PT.SpeedMin = SpeedMin;

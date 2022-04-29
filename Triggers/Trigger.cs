@@ -25,8 +25,8 @@ namespace Fiourp
             : this(position, new Vector2(width, height), triggerers, sprite)
         { }
 
-        public Trigger(Rectangle triggerRect, List<Type> triggerers, Sprite sprite)
-            : this(triggerRect.Location.ToVector2(), triggerRect.Size.ToVector2(), triggerers, sprite)
+        public Trigger(Rectangle bounds, List<Type> triggerers, Sprite sprite)
+            : this(bounds.Location.ToVector2(), bounds.Size.ToVector2(), triggerers, sprite)
         { }
 
         public override void Update()

@@ -8,6 +8,7 @@ namespace Fiourp
         public Rectangle Bounds = Rectangle.Empty;
         private bool hasChanged;
         public bool FollowsPlayer;
+        public bool Locked;
 
         private Vector2 pos;
         public new Vector2 Pos
@@ -99,7 +100,7 @@ namespace Fiourp
         {
             base.Update();
 
-            if (Engine.Player != null && FollowsPlayer && (!GetComponent(out Timer timer) || timer.Value <= 0) && !GetComponent<Shaker>())
+            if (Engine.Player != null && FollowsPlayer && !Locked && (!GetComponent(out Timer timer) || timer.Value <= 0) && !GetComponent<Shaker>())
                 Follow(Engine.Player, 3, 3, new Rectangle(new Vector2(-Engine.ScreenSize.X / 6, -Engine.ScreenSize.Y / 12).ToPoint(),
                     new Vector2(Engine.ScreenSize.X / 3, Engine.ScreenSize.Y / 6).ToPoint()));
         }
@@ -107,12 +108,12 @@ namespace Fiourp
         public Vector2 Follow(Entity actor, float xSmooth, float ySmooth, Rectangle strictFollowBounds)
             => Pos = FollowedPos(actor, xSmooth, ySmooth, strictFollowBounds, Bounds);
 
-        public Vector2 FollowedPos(Entity actor, float xSmooth, float ySmooth, Rectangle strictFollowBounds, Rectangle bounds)
+        public Vector2 FollowedPos(Entity followed, float xSmooth, float ySmooth, Rectangle strictFollowBounds, Rectangle bounds)
         {
             strictFollowBounds.Location += Pos.ToPoint();
-            Vector2 inBoundsActorPos = InBoundsPos(actor.Pos, bounds);
+            Vector2 inBoundsActorPos = InBoundsPos(followed.Pos, bounds);
 
-            if (strictFollowBounds.Contains(actor.Pos))
+            if (strictFollowBounds.Contains(followed.Pos))
                 return new Vector2(MathHelper.Lerp(Pos.X, inBoundsActorPos.X, Engine.Deltatime * xSmooth),
                     MathHelper.Lerp(Pos.Y, inBoundsActorPos.Y, Engine.Deltatime * ySmooth));
             else
