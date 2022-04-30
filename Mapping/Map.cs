@@ -53,30 +53,30 @@ namespace Fiourp
         {
             for (int i = Data.Entities.Count - 1; i >= 0; i--)
             {
-                if(i < Data.Entities.Count && Data.Entities[i].Active && Data.Entities[i].Tag != Entity.Tags.UI)
+                if(i < Data.Entities.Count && Data.Entities[i].Visible && Data.Entities[i].Tag != Entity.Tags.UI)
                     Data.Entities[i].Render();
             }
 
             for (int i = Data.Triggers.Count - 1; i >= 0; i--)
-                if (i < Data.Triggers.Count && Data.Triggers[i].Active)
+                if (i < Data.Triggers.Count && Data.Triggers[i].Visible)
                     Data.Triggers[i].Render();
         }
 
         public void UIRender()
         {
             for (int i = Data.UIElements.Count - 1; i >= 0; i--)
-                if (i < Data.UIElements.Count && Data.UIElements[i].Active && !Data.UIElements[i].Overlay)
+                if (i < Data.UIElements.Count && Data.UIElements[i].Visible && !Data.UIElements[i].Overlay)
                     Data.UIElements[i].Render();
 
             for(int i = Data.Entities.Count - 1; i >= 0; i--)
-                if(i < Data.Entities.Count && Data.Entities[i].Active)
+                if(i < Data.Entities.Count && Data.Entities[i].Visible)
                     Data.Entities[i].UIChildRender();
         }
 
         public void UIOverlayRender()
         {
             for (int i = Data.UIElements.Count - 1; i >= 0; i--)
-                if (i < Data.UIElements.Count && Data.UIElements[i].Active && Data.UIElements[i].Overlay)
+                if (i < Data.UIElements.Count && Data.UIElements[i].Visible && Data.UIElements[i].Overlay)
                     Data.UIElements[i].Render();
         }
 

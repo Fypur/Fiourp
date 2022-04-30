@@ -11,18 +11,26 @@ namespace Fiourp
         
         public Vector2 Size { get => trigger.Size; set => trigger.Size = value; }
         public List<Type> Triggerers { get => trigger.Triggerers; set => trigger.Triggerers = value; }
-        public Action<Entity> OnTriggerEnter { get => trigger.OnTriggerEnterAction; set => trigger.OnTriggerEnterAction = value; }
-        public Action<Entity> OnTriggerStay { get => trigger.OnTriggerStayAction; set => trigger.OnTriggerStayAction = value; }
-        public Action<Entity> OnTriggerExit { get => trigger.OnTriggerExitAction; set => trigger.OnTriggerExitAction = value; }
 
-        private TriggerEntity trigger;
+        private Trigger trigger;
 
-        public TriggerComponent(Vector2 localPosition, float width, float height, List<Type> triggerers,
-            Action<Entity> OnTriggerEnter, Action<Entity> OnTriggerStay, Action<Entity> OnTriggerExit)
+        public TriggerComponent(Vector2 localPosition, float width, float height, List<Type> triggerers)
         {
             LocalPosition = localPosition;
-            trigger = new TriggerEntity(localPosition, new Vector2(width, height), triggerers, OnTriggerEnter,
-                OnTriggerStay, OnTriggerExit);
+            trigger = new Trigger(localPosition, new Vector2(width, height), triggerers, Sprite.None);
+            trigger.OnTriggerEnterAction = OnTriggerEnter;
+            trigger.OnTriggerStayAction = OnTriggerStay;
+            trigger.OnTriggerExitAction = OnTriggerExit;
+        }
+
+        public TriggerComponent(Vector2 localPosition, float radius, List<Type> triggerers)
+        {
+            LocalPosition = localPosition;
+            trigger = new Trigger(localPosition, new Vector2(radius * 2, radius * 2), triggerers, Sprite.None);
+            trigger.Collider = (Collider)trigger.AddComponent(new CircleCollider(localPosition, radius));
+            trigger.OnTriggerEnterAction = OnTriggerEnter;
+            trigger.OnTriggerStayAction = OnTriggerStay;
+            trigger.OnTriggerExitAction = OnTriggerExit;
         }
 
         public override void Added()
@@ -40,5 +48,9 @@ namespace Fiourp
         {
             trigger.Render();
         }
+
+        public virtual void OnTriggerEnter(Entity entity) { }
+        public virtual void OnTriggerStay(Entity entity) { }
+        public virtual void OnTriggerExit(Entity entity) { }
     }
 }

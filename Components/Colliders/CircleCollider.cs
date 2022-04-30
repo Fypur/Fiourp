@@ -11,12 +11,17 @@ namespace Fiourp
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="position">Position in LOCAL space</param>
+        /// <param name="localPosition">Position in LOCAL space</param>
         /// <param name="radius"></param>
-        public CircleCollider(Vector2 position, float radius)
+        public CircleCollider(Vector2 localPosition, float radius)
         {
-            Pos = position;
+            Pos = localPosition;
             Radius = radius;
+        }
+
+        public override void Render()
+        {
+            Drawing.DrawCircleEdge(AbsolutePosition, Radius, 0.1f, Color.Blue, 1);
         }
 
         public override bool Collide(BoxCollider other)

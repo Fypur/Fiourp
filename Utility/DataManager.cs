@@ -239,11 +239,21 @@ namespace Fiourp
 
         public static Texture2D Load(string path)
         {
+            Textures.TryGetValue(path, out Texture2D texture);
+            if(texture != null)
+                return texture;
+
             object loaded = Content.Load<Object>(path);
-            if (loaded is Texture2D txt)
+            if (loaded is Texture2D txt) 
+            {
+                Textures[path] = txt;
                 return txt;
+            }
             else if (loaded is AsepriteDocument asepriteDoc)
-                return asepriteDoc.Load()[0];
+            {
+                Textures[path] = asepriteDoc.Load()[0];
+                return Textures[path];
+            }
             else
                 throw new Exception("File was not found under the right format");
         }

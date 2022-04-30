@@ -5,12 +5,16 @@ using System.Text;
 
 namespace Fiourp
 {
-    public abstract class Trigger : Entity
+    public class Trigger : Entity
     {
         public List<Type> Triggerers;
 
         private string name;
         private List<Entity> enteredEntities = new List<Entity>();
+
+        public Action<Entity> OnTriggerEnterAction;
+        public Action<Entity> OnTriggerStayAction;
+        public Action<Entity> OnTriggerExitAction;
 
         public Trigger(Vector2 position, Vector2 size, List<Type> triggerers, Sprite sprite)
             : base(position, (int)size.X, (int)size.Y, sprite)
@@ -72,10 +76,10 @@ namespace Fiourp
             base.Render();
         } 
 
-        public virtual void OnTriggerEnter(Entity entity) { }
+        public virtual void OnTriggerEnter(Entity entity) { OnTriggerEnterAction?.Invoke(entity); }
 
-        public virtual void OnTriggerStay(Entity entity) { }
+        public virtual void OnTriggerStay(Entity entity) { OnTriggerStayAction?.Invoke(entity); }
 
-        public virtual void OnTriggerExit(Entity entity) { }
+        public virtual void OnTriggerExit(Entity entity) { OnTriggerExitAction?.Invoke(entity); }
     }
 }

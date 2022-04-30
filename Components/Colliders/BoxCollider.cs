@@ -13,12 +13,12 @@ namespace Fiourp
         /// <summary>
         ///
         /// </summary>
-        /// <param name="position">Position in LOCAL space</param>
+        /// <param name="localPosition">Position in LOCAL space</param>
         /// <param name="width"></param>
         /// <param name="height"></param>
-        public BoxCollider(Vector2 position, int width, int height)
+        public BoxCollider(Vector2 localPosition, int width, int height)
         {
-            Pos = position;
+            Pos = localPosition;
             this.width = width;
             this.height = height;
         }

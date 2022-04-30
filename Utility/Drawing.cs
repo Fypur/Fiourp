@@ -51,6 +51,17 @@ namespace Fiourp
         public static void Draw(Rectangle rect, Color color)
             => spriteBatch.Draw(pointTexture, rect, color);
 
+        public static void DrawCircleEdge(Vector2 position, float radius, float theta, Color color, int thickness)
+        {
+            Vector2 previous = position + new Vector2(radius, 0); ;
+            for (float x = theta; x < 2 * Math.PI; x += theta)
+            {
+                Vector2 pos = position + new Vector2((float)(Math.Cos(x) * radius), (float)(Math.Sin(x) * radius));
+                DrawLine(pos, previous, color, thickness);
+                previous = pos;
+            }
+        }
+
         public static void DrawString(string text, Vector2 position, Color color, Vector2 origin)
             => spriteBatch.DrawString(font, text, position, color, 0, origin,
                 1, SpriteEffects.None, 1);
@@ -76,7 +87,7 @@ namespace Fiourp
             float distance = Vector2.Distance(begin, end);
             var angle = (float)Math.Atan2(end.Y - begin.Y, end.X - begin.X);
             var scale = new Vector2(distance, thickness);
-            spriteBatch.Draw(pointTexture, begin, null, color, angle, new Vector2(0f, 0.5f), scale, SpriteEffects.None, 0);
+            spriteBatch.Draw(pointTexture, begin, null, color, angle, new Vector2(0f, 0.5f), scale, SpriteEffects.None, 1);
         }
 
         public static void DrawEdge(Rectangle rectangle, int lineWidth, Color color)

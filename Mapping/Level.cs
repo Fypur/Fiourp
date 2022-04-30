@@ -94,16 +94,16 @@ namespace Fiourp
                     if(Organisation[y, x] != 0)
                     {
                         if (GetOrganisation(x - 1, y) == 0 && GetOrganisation(x, y - 1) == 0 && GetOrganisation(x - 1, y - 1) == 0)
-                            points.Add(new Vector2(x * TileWidth, y * TileHeight));
+                            points.Add(Pos + new Vector2(x * TileWidth, y * TileHeight));
 
                         if (GetOrganisation(x + 1, y) == 0 && GetOrganisation(x, y - 1) == 0 && GetOrganisation(x + 1, y - 1) == 0)
-                            points.Add(new Vector2((x + 1) * TileWidth, y * TileHeight));
+                            points.Add(Pos + new Vector2((x + 1) * TileWidth, y * TileHeight));
 
                         if (GetOrganisation(x - 1, y) == 0 && GetOrganisation(x, y + 1) == 0 && GetOrganisation(x - 1, y + 1) == 0)
-                            points.Add(new Vector2(x * TileWidth, (y + 1) * TileHeight));
+                            points.Add(Pos + new Vector2(x * TileWidth, (y + 1) * TileHeight));
 
                         if (GetOrganisation(x + 1, y) == 0 && GetOrganisation(x, y + 1) == 0 && GetOrganisation(x + 1, y + 1) == 0)
-                            points.Add(new Vector2((x + 1) * TileWidth, (y + 1) * TileHeight));
+                            points.Add(Pos + new Vector2((x + 1) * TileWidth, (y + 1) * TileHeight));
                     }
                 }
             }

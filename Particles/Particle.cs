@@ -36,6 +36,7 @@ namespace Fiourp
             if(LifeTime <= 0)
             {
                 Active = false;
+                Visible = false;
                 return;
             }
 

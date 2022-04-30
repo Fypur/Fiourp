@@ -32,7 +32,7 @@ namespace Fiourp
         public SpriteEffects Effect = SpriteEffects.None;
         public float LayerDepth = 0;
 
-        public Rectangle? Rect = null;
+        public Rectangle? Bounds = null;
         public bool Centered;
 
         private Dictionary<string, Animation> animations = new();
@@ -42,7 +42,7 @@ namespace Fiourp
         private float animTimer;
 
         public override string ToString()
-            => $"Texture: {Texture.Name}, {Color}, layerDepth: {LayerDepth}, Rect: {Rect}, Origin {Origin}, " +
+            => $"Texture: {Texture.Name}, {Color}, layerDepth: {LayerDepth}, Rect: {Bounds}, Origin {Origin}, " +
                 $"Scale: {Scale}, Rotation {Rotation}, SpriteEffects: {Effect}";
 
         #region Constructors
@@ -76,7 +76,7 @@ namespace Fiourp
         public Sprite(Color color, Rectangle? rect, float layerDepth = 0)
         {
             Texture = Drawing.pointTexture;
-            Rect = rect;
+            Bounds = rect;
             Color = color;
             LayerDepth = layerDepth;
         }
@@ -84,13 +84,13 @@ namespace Fiourp
         public Sprite(Texture2D texture, Rectangle rect)
         {
             Texture = texture;
-            Rect = rect;
+            Bounds = rect;
         }
 
         public Sprite(Texture2D texture, Rectangle rect, float rotation)
         {
             Texture = texture;
-            Rect = rect;
+            Bounds = rect;
             Rotation = MathHelper.ToRadians(rotation);
         }
 
@@ -263,7 +263,7 @@ namespace Fiourp
             s.Scale = Scale;
             s.Effect = Effect;
             s.LayerDepth = LayerDepth;
-            s.Rect = Rect;
+            s.Bounds = Bounds;
             s.Centered = Centered ;
             s.animations = animations;
             s.animating = animating ;

@@ -5,7 +5,7 @@ namespace Fiourp
 {
     public class Camera : Entity
     {
-        public Rectangle Bounds = Rectangle.Empty;
+        public new Rectangle Bounds = Rectangle.Empty;
         private bool hasChanged;
         public bool FollowsPlayer;
         public bool Locked;
