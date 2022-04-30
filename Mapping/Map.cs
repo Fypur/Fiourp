@@ -12,6 +12,10 @@ namespace Fiourp
         public MapData Data;
         public Level CurrentLevel;
 
+        public ParticleSystem ForegroundSystem = new ParticleSystem();
+        public ParticleSystem MiddlegroundSystem = new ParticleSystem();
+        public ParticleSystem BackgroundSystem = new ParticleSystem();
+
         public static Map CurrentMap { get => Engine.CurrentMap; }
 
         /// <summary>
@@ -47,19 +51,31 @@ namespace Fiourp
             for (int i = Data.Entities.Count - 1; i >= 0; i--)
                 if (i < Data.Entities.Count && Data.Entities[i].Active)
                     Data.Entities[i].Update();
+
+            BackgroundSystem.Update();
+            MiddlegroundSystem.Update();
+            ForegroundSystem.Update();
         }
 
         public void Render()
         {
+            BackgroundSystem.Render();
+
+            for(int i = Data.Decorations.Count - 1; i >= 0; i--)
+            {
+                if(i < Data.Decorations.Count && Data.Decorations[i].Visible)
+                    Data.Decorations[i].Render();
+            }
+
+            MiddlegroundSystem.Render();
+
             for (int i = Data.Entities.Count - 1; i >= 0; i--)
             {
-                if(i < Data.Entities.Count && Data.Entities[i].Visible && Data.Entities[i].Tag != Entity.Tags.UI)
+                if(i < Data.Entities.Count && Data.Entities[i].Visible && Data.Entities[i].Tag != Entity.Tags.UI && Data.Entities[i].Tag != Entity.Tags.Decoration)
                     Data.Entities[i].Render();
             }
 
-            for (int i = Data.Triggers.Count - 1; i >= 0; i--)
-                if (i < Data.Triggers.Count && Data.Triggers[i].Visible)
-                    Data.Triggers[i].Render();
+            ForegroundSystem.Render();
         }
 
         public void UIRender()
@@ -92,6 +108,8 @@ namespace Fiourp
                 Data.Triggers.Add((Trigger)entity);
             else if (entity is UIElement)
                 Data.UIElements.Add((UIElement)entity);
+            else if (entity is Tile)
+                Data.Decorations.Add((Tile)entity);
             return entity;
         }
 

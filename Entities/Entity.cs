@@ -16,7 +16,7 @@ namespace Fiourp
         public bool Visible = true;
 
         public Tags Tag;
-        public enum Tags { Unknown, Actor, Solid, Trigger, UI }
+        public enum Tags { Unknown, Actor, Solid, Trigger, UI, Decoration }
 
         public virtual Vector2 ExactPos { get => Pos; set => Pos = value; }
         public Vector2 MiddleExactPos => ExactPos + HalfSize;
@@ -46,18 +46,15 @@ namespace Fiourp
             else
                 Engine.CurrentMap.Data.EntitiesByType[t].Add(this);
 
-            #region Tag set
-
             Tag = this switch
             {
                 Actor => Tags.Actor,
                 Solid => Tags.Solid,
                 Trigger => Tags.Trigger,
                 UIElement => Tags.UI,
+                Tile => Tags.Decoration,
                 _ => Tags.Unknown
             };
-
-            #endregion
 
             Collider = new BoxCollider(Vector2.Zero, width, height);
             AddComponent(Collider);

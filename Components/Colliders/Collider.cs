@@ -9,6 +9,7 @@ namespace Fiourp
         public bool Collidable = true;
 
         public Vector2 Pos;
+        public Color DebugColor = Color.Blue;
 
         public abstract bool Collide(Vector2 point);
         public abstract bool Collide(BoxCollider other);
@@ -24,7 +25,7 @@ namespace Fiourp
 
         public virtual void Render() 
         {
-            Drawing.DrawEdge(Bounds, 1, Color.Blue);
+            Drawing.DrawEdge(Bounds, 1, DebugColor);
         }
 
         #region Collide Methods

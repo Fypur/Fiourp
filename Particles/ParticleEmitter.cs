@@ -5,33 +5,64 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Fiourp.Particles
+namespace Fiourp
 {
     public class ParticleEmitter : Component
     {
         public ParticleSystem ParticleSystem;
         public ParticleType ParticleType;
         public Vector2 LocalPosition;
+        public Rectangle LocalBounds;
         public int Amount;
-        private float timer;
 
-        public ParticleEmitter(ParticleSystem particleSystem, ParticleType particleType, Vector2 localPosition, float timer, int amount = 1) : base()
+        private float timer = float.NaN;
+
+        public ParticleEmitter(ParticleSystem particleSystem, ParticleType particleType, Vector2 localPosition, int amount) : base()
         {
-            this.timer = timer;
+            ParticleSystem = particleSystem;
+            ParticleType = particleType;
+            LocalPosition = localPosition;
             Amount = amount;
+        }
+
+        public ParticleEmitter(ParticleSystem particleSystem, ParticleType particleType, Vector2 localPosition, int amount, float time) : base()
+        {
+            ParticleSystem = particleSystem;
+            ParticleType = particleType;
+            LocalPosition = localPosition;
+            Amount = amount;
+            timer = time;
+        }
+
+        public ParticleEmitter(ParticleSystem particleSystem, ParticleType particleType, Rectangle localBounds, int amount) : base()
+        {
+            ParticleSystem = particleSystem;
+            ParticleType = particleType;
+            LocalBounds = localBounds;
+            Amount = amount;
+        }
+
+        public ParticleEmitter(ParticleSystem particleSystem, ParticleType particleType, Rectangle localBounds, int amount, float time) : base()
+        {
+            ParticleSystem = particleSystem;
+            ParticleType = particleType;
+            LocalBounds = localBounds;
+            Amount = amount;
+            timer = time;
+        }
+
+        public override void Added()
+        {
+            if (timer != float.NaN)
+                ParentEntity.AddComponent(new Timer(timer, true, null, () => Destroy()));
         }
 
         public override void Update()
         {
-            timer -= Engine.Deltatime;
-
-            if(timer <= 0)
-            {
-                Destroy();
-                return;
-            }
-
-            Emit();
+            if(LocalBounds != Rectangle.Empty)
+                ParticleSystem.Emit(ParticleType, new Rectangle(ParentEntity.Pos.ToPoint() + LocalBounds.Location, LocalBounds.Size), Amount);
+            else
+                ParticleSystem.Emit(ParticleType, ParentEntity.Pos + LocalPosition, Amount);
         }
 
         public void Emit()

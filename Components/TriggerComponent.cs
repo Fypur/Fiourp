@@ -27,7 +27,7 @@ namespace Fiourp
         {
             LocalPosition = localPosition;
             trigger = new Trigger(localPosition, new Vector2(radius * 2, radius * 2), triggerers, Sprite.None);
-            trigger.Collider = (Collider)trigger.AddComponent(new CircleCollider(localPosition, radius));
+            trigger.Collider = (Collider)trigger.AddComponent(new CircleCollider(Vector2.Zero, radius));
             trigger.OnTriggerEnterAction = OnTriggerEnter;
             trigger.OnTriggerStayAction = OnTriggerStay;
             trigger.OnTriggerExitAction = OnTriggerExit;

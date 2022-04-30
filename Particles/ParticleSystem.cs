@@ -9,10 +9,7 @@ namespace Fiourp
 {
     public class ParticleSystem
     {
-        public float SpeedMultiplier = 1;
-        public Color? TowardsColor = null;
-
-        public bool DestroyOnEnd;
+        public float LayerDepth = 0;
 
         public List<Particle> Particles = new();
 
@@ -58,11 +55,20 @@ namespace Fiourp
                 Particles.Add(particle.Create(followed, position, direction, color));
         }
 
+        public void Emit(ParticleType particle, Rectangle rectangle, int amount)
+        {
+            for (int i = 0; i < amount; i++)
+            {
+                Vector2 position = new Vector2(Rand.NextFloat(rectangle.X, rectangle.Right - particle.Size / 2), Rand.NextFloat(rectangle.Y, rectangle.Bottom - particle.Size / 2));
+                Particles.Add(particle.Create(position));
+            }
+        }
+
         public void Emit(ParticleType particle, int amount, Rectangle rectangle, Entity followed, float direction, Color color)
         {
             for (int i = 0; i < amount; i++)
             {
-                Vector2 position = new Vector2(Rand.NextFloat(rectangle.X, rectangle.Right), Rand.NextFloat(rectangle.Y, rectangle.Bottom));
+                Vector2 position = new Vector2(Rand.NextFloat(rectangle.X, rectangle.Right - particle.Size / 2), Rand.NextFloat(rectangle.Y, rectangle.Bottom - particle.Size / 2));
                 Particles.Add(particle.Create(followed, position, direction, color));
             }
         }
@@ -90,11 +96,9 @@ namespace Fiourp
 
         public void Render()
         {
-            for (int i = Particles.Count - 1; i >= 0; i--)
-                if(Particles[i].Active)
-                    Particles[i].Render();
-                else
-                    Particles.RemoveAt(i);
+            foreach(Particle particle in Particles)
+                if(particle.Active)
+                    particle.Render();
         }
     }
 }

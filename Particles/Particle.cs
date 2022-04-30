@@ -27,6 +27,7 @@ namespace Fiourp
             Followed = followed;
             LifeTime = StartLifeTime;
             StartSize = Size;
+            Collider.DebugColor = Color.LightBlue;
         }
 
         public override void Update()
