@@ -113,6 +113,9 @@ namespace Fiourp
         public virtual void OnDestroy()
         { }
 
+        public virtual bool CollidingConditions(Collider other)
+            => true;
+
         public Component AddComponent(Component component)
         {
             component.ParentEntity = this;

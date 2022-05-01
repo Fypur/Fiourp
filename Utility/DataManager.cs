@@ -16,25 +16,19 @@ namespace Fiourp
         public static ContentTypeReaderManager ContentTypeReader = new();
         public static string contentDirName = new DirectoryInfo(Content.RootDirectory).FullName;
 
-        public static Dictionary<string, Texture2D> Textures = GetAllTextures();
+        public static Dictionary<string, Texture2D> Textures = new();
 
         public static Dictionary<int, Dictionary<string, Texture2D>> Tilesets;
+        public static Dictionary<string,Texture2D> Objects = new();
 
         public static Dictionary<string, Dictionary<string, SpriteFont>> Fonts = GetFonts();
 
         public static Texture2D GetTexture(string textureID)
             => Textures[textureID];
 
-        public static void Initialize(string XMLPath) { Tilesets = GetAllTileSets(XMLPath); }
+        public static void Initialize(string XMLPath) { Tilesets = GetAllTileSets(XMLPath); GetAllGraphicsFiles(""); }
 
-        public static Dictionary<string, Texture2D> GetAllTextures()
-        {
-            Dictionary<string, Texture2D> dict = new Dictionary<string, Texture2D>();
-            GetAllGraphicsFiles("", dict);
-            return dict;
-        }
-
-        private static void GetAllGraphicsFiles(string folderName, Dictionary<string, Texture2D> d)
+        private static void GetAllGraphicsFiles(string folderName)
         {
             DirectoryInfo dir = new DirectoryInfo(Content.RootDirectory + "\\Graphics\\" + folderName);
 
@@ -45,24 +39,32 @@ namespace Fiourp
                 string key = name.Substring(0, name.Length - 4);
 
                 object loaded = Content.Load<Object>("Graphics/" + key);
+                bool isObject = file.FullName.Contains("Graphics\\Objects");
 
                 if (loaded is Texture2D texture)
-                    d[key] = texture;
+                    AddTexture(key, texture);
                 else if (loaded is AsepriteDocument asepriteDoc)
                 {
                     Texture2D[] textures = asepriteDoc.Load();
                     if(textures.Length == 1)
-                        d[key] = textures[0];
+                        AddTexture(key, textures[0]);
                     for(int i = 1; i < textures.Length + 1; i++)
-                        d[key + i] = textures[i - 1];
+                        AddTexture(key + i, textures[i - 1]);
+                }
+
+                void AddTexture(string key, Texture2D texture)
+                {
+                    if (isObject)
+                        Objects[key.Substring(key.LastIndexOf("Objects/") + 8)] = texture;
+                    Textures[key] = texture;
                 }
             }
             
             foreach (DirectoryInfo direct in dir.GetDirectories())
-                GetAllGraphicsFiles(direct.FullName.Substring(contentDirName.Length + "Graphics\\".Length), d);
+                GetAllGraphicsFiles(direct.FullName.Substring(contentDirName.Length + "Graphics\\".Length));
         }
 
-        public static Dictionary<string, T> GetAllGraphicsFilesInFolder<T>(string folderName)
+        public static Dictionary<string, T> GetAllFilesInFolder<T>(string folderName)
         {
             DirectoryInfo dir = new DirectoryInfo(Content.RootDirectory + "\\Graphics\\" + folderName);
 

@@ -148,7 +148,7 @@ namespace Fiourp
 
         public override void Render()
         {
-            if(NineSliceSettings != null)
+            if(NineSliceSettings != NineSliceSettings.Empty)
             {
                 NineSliceSettings n = NineSliceSettings;
 

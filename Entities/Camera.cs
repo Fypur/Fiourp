@@ -6,6 +6,8 @@ namespace Fiourp
     public class Camera : Entity
     {
         public new Rectangle Bounds = Rectangle.Empty;
+        public static Rectangle StrictFollowBounds = new Rectangle(new Vector2(-Engine.ScreenSize.X / 6, -Engine.ScreenSize.Y / 12).ToPoint(), new Vector2(Engine.ScreenSize.X / 3, Engine.ScreenSize.Y / 6).ToPoint());
+
         private bool hasChanged;
         public bool FollowsPlayer;
         public bool Locked;
@@ -101,8 +103,7 @@ namespace Fiourp
             base.Update();
 
             if (Engine.Player != null && FollowsPlayer && !Locked && (!GetComponent(out Timer timer) || timer.Value <= 0) && !GetComponent<Shaker>())
-                Follow(Engine.Player, 3, 3, new Rectangle(new Vector2(-Engine.ScreenSize.X / 6, -Engine.ScreenSize.Y / 12).ToPoint(),
-                    new Vector2(Engine.ScreenSize.X / 3, Engine.ScreenSize.Y / 6).ToPoint()));
+                Follow(Engine.Player, 3, 3, StrictFollowBounds);
         }
 
         public Vector2 Follow(Entity actor, float xSmooth, float ySmooth, Rectangle strictFollowBounds)
@@ -136,9 +137,7 @@ namespace Fiourp
         public void Shake(float time, float intensity)
         {
             AddComponent(new Shaker(time, intensity, () =>
-                FollowedPos(Engine.Player, 3, 3,
-                new Rectangle(new Vector2(-Engine.ScreenSize.X / 6 + intensity, -Engine.ScreenSize.Y / 12).ToPoint(),
-                        new Vector2(Engine.ScreenSize.X / 3 - intensity, Engine.ScreenSize.Y / 6 + 20).ToPoint()),
+                FollowedPos(Engine.Player, 3, 3, StrictFollowBounds,
                 Bounds), false));
         }
 

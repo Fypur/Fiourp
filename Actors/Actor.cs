@@ -70,8 +70,8 @@ namespace Fiourp
 
             if (move != 0)
             {
-                foreach (JumpThru jumpthru in Engine.CurrentMap.Data.GetEntities<JumpThru>())
-                    jumpthru.Collider.Collidable = false;
+                /*foreach (JumpThru jumpthru in Engine.CurrentMap.Data.GetEntities<JumpThru>())
+                    jumpthru.Collider.Collidable = false;*/
 
                 xRemainder -= move;
                 int sign = Math.Sign(amount);
@@ -90,8 +90,8 @@ namespace Fiourp
                     }
                 }
 
-                foreach (JumpThru jumpthru in Engine.CurrentMap.Data.GetEntities<JumpThru>())
-                    jumpthru.Collider.Collidable = true;
+                /*foreach (JumpThru jumpthru in Engine.CurrentMap.Data.GetEntities<JumpThru>())
+                    jumpthru.Collider.Collidable = true;*/
             }
         }
 
@@ -105,9 +105,9 @@ namespace Fiourp
                 yRemainder -= move;
                 int sign = Math.Sign(amount);
 
-                if (sign == -1)
+                /*if (sign == -1)
                     foreach (JumpThru jumpthru in Engine.CurrentMap.Data.GetEntities<JumpThru>())
-                        jumpthru.Collider.Collidable = false;
+                        jumpthru.Collider.Collidable = false;*/
 
                 while (move != 0)
                 {
@@ -123,9 +123,9 @@ namespace Fiourp
                     }
                 }
 
-                if (sign == -1)
+                /*if (sign == -1)
                     foreach (JumpThru jumpthru in Engine.CurrentMap.Data.GetEntities<JumpThru>())
-                        jumpthru.Collider.Collidable = true;
+                        jumpthru.Collider.Collidable = true;*/
             }
         }
 

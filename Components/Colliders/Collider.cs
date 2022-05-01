@@ -10,6 +10,7 @@ namespace Fiourp
 
         public Vector2 Pos;
         public Color DebugColor = Color.Blue;
+        private Func<Collider, bool> Conditions;
 
         public abstract bool Collide(Vector2 point);
         public abstract bool Collide(BoxCollider other);
@@ -23,6 +24,9 @@ namespace Fiourp
         public abstract float Top { get; set; }
         public abstract float Bottom { get; set; }
 
+        public override void Added()
+            => Conditions = ParentEntity.CollidingConditions;
+
         public virtual void Render() 
         {
             Drawing.DrawEdge(Bounds, 1, DebugColor);
@@ -31,12 +35,7 @@ namespace Fiourp
         #region Collide Methods
         public bool Collide(Collider other)
         {
-            if (!other.Collidable)
-                return false;
-            
-            if(other.ParentEntity is JumpThru && other.AbsoluteTop != AbsoluteBottom - 1)
-                return false;
-            if (ParentEntity is JumpThru && AbsoluteTop != other.AbsoluteBottom - 1)
+            if (!other.Collidable || !Conditions(other) || !other.Conditions(this))
                 return false;
 
             if (other is BoxCollider box)

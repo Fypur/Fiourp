@@ -11,8 +11,9 @@ namespace Fiourp
     public class Shaker : Component
     {
         public float Intensity;
-        public float Time;
         public bool ShakeSprite;
+        private float Time;
+        private float timeMaxValue;
         public Func<Vector2> UpdatedInitPos;
 
         private Vector2 initPos;
@@ -20,6 +21,7 @@ namespace Fiourp
         public Shaker(float time, float intensity, Func<Vector2> movingPos = null, bool shakeSprite = false)
         { 
             Time = time;
+            timeMaxValue = Time;
             Intensity = intensity;
             ShakeSprite = shakeSprite;
             UpdatedInitPos = movingPos;
@@ -58,14 +60,14 @@ namespace Fiourp
                 {
                     initPos = UpdatedInitPos == null ? initPos : UpdatedInitPos();
                     Vector2 random = new Vector2(Rand.NextFloat(-1, 1), Rand.NextFloat(-1, 1)) * Intensity;
-                    random = Vector2.Clamp(ParentEntity.ExactPos + random, initPos - new Vector2(Intensity), initPos + new Vector2(Intensity)) - ParentEntity.ExactPos;
+                    random = Vector2.Clamp(ParentEntity.ExactPos + random, initPos - new Vector2(Intensity) * (Time / timeMaxValue), initPos + new Vector2(Intensity) * (Time / timeMaxValue)) - ParentEntity.ExactPos;
 
                     if (ParentEntity is MovingSolid s)
                         s.Move(random);
                     else if (ParentEntity is Actor a)
                         a.Move(random);
                     else if (ParentEntity is Camera cam)
-                        cam.Pos += random;
+                        cam.NoBoundsPos += random;
                     else
                         ParentEntity.Pos += random;
 
@@ -78,7 +80,7 @@ namespace Fiourp
                 else if (ParentEntity is Actor ac)
                     ac.MoveTo(initPos);
                 else if(ParentEntity is Camera cam)
-                    cam.Pos = initPos;
+                    cam.NoBoundsPos = initPos;
                 else
                     ParentEntity.Pos = initPos;
                 Destroy();
