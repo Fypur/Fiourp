@@ -151,17 +151,40 @@ namespace Fiourp
             if(NineSliceSettings != null)
             {
                 NineSliceSettings n = NineSliceSettings;
+
                 DrawNineSlice(n.TopLeft, ParentEntity.Pos, Size(n.TopLeft));
                 DrawNineSlice(n.TopRight, ParentEntity.Pos + new Vector2(ParentEntity.Width - n.TopRight.Width, 0), Size(n.TopRight));
                 DrawNineSlice(n.BottomLeft, ParentEntity.Pos + new Vector2(0, ParentEntity.Height - n.BottomLeft.Height), Size(n.BottomLeft));
                 DrawNineSlice(n.BottomRight, ParentEntity.Pos + new Vector2(ParentEntity.Width - n.BottomRight.Width, ParentEntity.Height - n.BottomRight.Height), Size(n.BottomRight));
 
-                DrawNineSlice(n.Top, ParentEntity.Pos + new Vector2(n.TopLeft.Width, 0), new Vector2(ParentEntity.Width - n.TopLeft.Width - n.TopRight.Width, n.Top.Height));
-                DrawNineSlice(n.Bottom, ParentEntity.Pos + new Vector2(n.BottomLeft.Width, ParentEntity.Height - n.Bottom.Height), new Vector2(ParentEntity.Width - n.BottomLeft.Width - n.BottomRight.Width, n.Bottom.Height));
-                DrawNineSlice(n.Right, ParentEntity.Pos + new Vector2(ParentEntity.Width - n.TopRight.Width, n.TopRight.Height), new Vector2(n.Right.Width, ParentEntity.Height - n.TopRight.Height - n.BottomRight.Height));
-                DrawNineSlice(n.Left, ParentEntity.Pos + new Vector2(0, n.TopLeft.Height), new Vector2(n.Left.Width, ParentEntity.Height - n.TopLeft.Height - n.BottomLeft.Height));
+                if (n.Repeat)
+                {
+                    for (int i = 0; i < ParentEntity.Width - n.TopLeft.Width - n.TopRight.Width; i += n.Top.Width)
+                        DrawNineSlice(n.Top, ParentEntity.Pos + new Vector2(n.TopLeft.Width + i, 0), Size(n.Top));
 
-                DrawNineSlice(n.Fill, ParentEntity.Pos + Size(n.TopLeft), ParentEntity.Size - Size(n.TopLeft) - Size(n.BottomRight));
+                    for (int i = 0; i < ParentEntity.Width - n.BottomLeft.Width - n.BottomRight.Width; i += n.Bottom.Width)
+                        DrawNineSlice(n.Bottom, ParentEntity.Pos + new Vector2(n.BottomLeft.Width + i, ParentEntity.Height - n.Bottom.Height), Size(n.Bottom));
+
+                    for (int i = 0; i < ParentEntity.Height - n.TopRight.Height - n.BottomRight.Height; i += n.Right.Height)
+                        DrawNineSlice(n.Right, ParentEntity.Pos + new Vector2(ParentEntity.Width - n.TopRight.Width, n.TopRight.Height + i), Size(n.Right));
+
+                    for (int i = 0; i < ParentEntity.Height - n.TopLeft.Height - n.BottomLeft.Height; i += n.Left.Height)
+                        DrawNineSlice(n.Left, ParentEntity.Pos + new Vector2(0, n.TopLeft.Height + i), Size(n.Left));
+
+                    for (int x = n.TopLeft.Width; x <= ParentEntity.Width - n.TopLeft.Width - n.BottomRight.Width; x += n.Fill.Width)
+                        for (int y = n.TopLeft.Height; y <= ParentEntity.Height - n.TopLeft.Height - n.BottomRight.Height; y += n.Fill.Height)
+                            DrawNineSlice(n.Fill, ParentEntity.Pos + new Vector2(x, y), Size(n.Fill));
+
+                }
+                else
+                {
+                    DrawNineSlice(n.Top, ParentEntity.Pos + new Vector2(n.TopLeft.Width, 0), new Vector2(ParentEntity.Width - n.TopLeft.Width - n.TopRight.Width, n.Top.Height));
+                    DrawNineSlice(n.Bottom, ParentEntity.Pos + new Vector2(n.BottomLeft.Width, ParentEntity.Height - n.Bottom.Height), new Vector2(ParentEntity.Width - n.BottomLeft.Width - n.BottomRight.Width, n.Bottom.Height));
+                    DrawNineSlice(n.Right, ParentEntity.Pos + new Vector2(ParentEntity.Width - n.TopRight.Width, n.TopRight.Height), new Vector2(n.Right.Width, ParentEntity.Height - n.TopRight.Height - n.BottomRight.Height));
+                    DrawNineSlice(n.Left, ParentEntity.Pos + new Vector2(0, n.TopLeft.Height), new Vector2(n.Left.Width, ParentEntity.Height - n.TopLeft.Height - n.BottomLeft.Height));
+
+                    DrawNineSlice(n.Fill, ParentEntity.Pos + Size(n.TopLeft), ParentEntity.Size - Size(n.TopLeft) - Size(n.BottomRight));
+                }
 
                 return;
 

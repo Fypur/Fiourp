@@ -13,8 +13,10 @@ namespace Fiourp
         public Texture2D Top, Left, Right, Bottom;
         public Texture2D Fill;
 
+        public bool Repeat;
+
         public NineSliceSettings(Texture2D topLeft, Texture2D topRight, Texture2D bottomLeft, Texture2D bottomRight,
-            Texture2D top, Texture2D left, Texture2D right, Texture2D bottom, Texture2D fill) 
+            Texture2D top, Texture2D left, Texture2D right, Texture2D bottom, Texture2D fill, bool repeat) 
         {
             TopLeft = topLeft;
             TopRight = topRight;
@@ -25,9 +27,10 @@ namespace Fiourp
             Right = right;
             Bottom = bottom;
             Fill = fill;
+            Repeat = repeat;
         }
 
-        public NineSliceSettings(Texture2D corners, Texture2D top, Texture2D fill)
+        public NineSliceSettings(Texture2D corners, Texture2D top, Texture2D fill, bool repeat)
         {
             TopLeft = corners;
             TopRight = corners.FlipX();
@@ -40,6 +43,8 @@ namespace Fiourp
             Bottom = top.FlipY();
 
             Fill = fill;
+
+            Repeat = repeat;
         }
 
         public override string ToString()
