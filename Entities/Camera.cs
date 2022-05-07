@@ -134,6 +134,9 @@ namespace Fiourp
                 () => Pos = newPos));
         }
 
+        public void LightShake()
+            => Shake(0.2f, 1);
+
         public void Shake(float time, float intensity)
         {
             AddComponent(new Shaker(time, intensity, () =>

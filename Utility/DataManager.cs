@@ -232,6 +232,7 @@ namespace Fiourp
             Color[] data = new Color[(int)(size.X * size.Y)];
             Texture2D returned = new Texture2D(Engine.Graphics.GraphicsDevice, (int)size.X, (int)size.Y);
             texture.GetData(0, new Rectangle(position.ToPoint(), size.ToPoint()), data, 0, (int)(size.X * size.Y));
+            data[0].A = data[0].A;
             returned.SetData(data);
             return returned;
         }

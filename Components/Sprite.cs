@@ -173,7 +173,8 @@ namespace Fiourp
 
                     for (int x = n.TopLeft.Width; x <= ParentEntity.Width - n.TopLeft.Width - n.BottomRight.Width; x += n.Fill.Width)
                         for (int y = n.TopLeft.Height; y <= ParentEntity.Height - n.TopLeft.Height - n.BottomRight.Height; y += n.Fill.Height)
-                            DrawNineSlice(n.Fill, ParentEntity.Pos + new Vector2(x, y), Size(n.Fill));
+                            DrawNineSlice(n.Fill, ParentEntity.Pos + new Vector2(x, y), 
+                                new Vector2(Math.Min(n.Fill.Width, ParentEntity.Width - n.Right.Width - x), Math.Min(n.Fill.Height, ParentEntity.Height - n.Bottom.Height - y)));
 
                 }
                 else
@@ -191,7 +192,10 @@ namespace Fiourp
                 static Vector2 Size(Texture2D texture) => new Vector2(texture.Width, texture.Height);
 
                 void DrawNineSlice(Texture2D texture, Vector2 position, Vector2 size)
-                    => Drawing.Draw(texture, position + Offset, size * Scale, Color, Rotation, Origin, Effect, LayerDepth);
+                {
+                    Drawing.Draw(texture, position + Offset, size * Scale, Color, Rotation, Origin, Effect, LayerDepth);
+                    /*Drawing.DrawEdge(new Rectangle(position.ToPoint(), size.ToPoint()), 1, new Color(){ R = 255, G = 255, B = 255, A = 50 });*/
+                }
             }
 
             if (Texture == null)
@@ -255,19 +259,31 @@ namespace Fiourp
         {
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(File.ReadAllText(path));
+            LoadFolderXML("", doc["Sprites"]["Animations"]);
+        }
 
-            foreach(XmlElement element in doc["Sprites"]["Animations"])
+        private static void LoadFolderXML(string path, XmlElement parent)
+        {
+            foreach(XmlElement element in parent)
             {
-                AllAnimData[element.Name] = new();
-
-                foreach(XmlElement anim in element)
+                if(element.Name == "Folder")
                 {
-                    string id = anim.GetAttribute("id");
-                    if (anim.Name == "Anim")
-                        AllAnimData[element.Name].Animations[anim.GetAttribute("id")] = new Animation(DataManager.LoadAllGraphicsWithName(anim.GetAttribute("id")), float.Parse(anim.GetAttribute("delay"), System.Globalization.CultureInfo.InvariantCulture.NumberFormat), anim.GetAttribute("goto"));
-                    else if (anim.Name == "Loop")
-                        AllAnimData[element.Name].Animations[anim.GetAttribute("id")] = new Animation(DataManager.LoadAllGraphicsWithName(anim.GetAttribute("id")), float.Parse(anim.GetAttribute("delay"), System.Globalization.CultureInfo.InvariantCulture.NumberFormat), anim.GetAttribute("id"));
+                    LoadFolderXML(path + "/" + element.GetAttribute("path"), element);
+                    continue;
                 }
+
+                AllAnimData[element.Name] = new();
+                path += "/" + element.GetAttribute("path");
+
+                foreach (XmlElement anim in element)
+                {
+                    if (anim.Name == "Anim")
+                        AllAnimData[element.Name].Animations[anim.GetAttribute("id")] = new Animation(DataManager.LoadAllGraphicsWithName(anim.GetAttribute("path"), path), float.Parse(anim.GetAttribute("delay"), System.Globalization.CultureInfo.InvariantCulture.NumberFormat), anim.GetAttribute("goto"));
+                    else if (anim.Name == "Loop")
+                        AllAnimData[element.Name].Animations[anim.GetAttribute("id")] = new Animation(DataManager.LoadAllGraphicsWithName(anim.GetAttribute("path"), path), float.Parse(anim.GetAttribute("delay"), System.Globalization.CultureInfo.InvariantCulture.NumberFormat), anim.GetAttribute("id"));
+                }
+
+                path = path.Remove(path.LastIndexOf("/" + element.GetAttribute("path")));
             }
         }
 

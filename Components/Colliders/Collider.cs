@@ -32,7 +32,6 @@ namespace Fiourp
             Drawing.DrawEdge(Bounds, 1, DebugColor);
         }
 
-        #region Collide Methods
         public bool Collide(Collider other)
         {
             if (!other.Collidable || !Conditions(other) || !other.Conditions(this))
@@ -123,9 +122,6 @@ namespace Fiourp
 
         public bool CollideAt(Entity entity, Vector2 position)
             => CollideAt(new List<Entity>() { entity }, position);
-        #endregion
-
-        #region Points
 
         public float CenterX
         {
@@ -188,7 +184,5 @@ namespace Fiourp
         public float AbsoluteTop { get => ParentEntity.Pos.Y + Top; }
         public float AbsoluteBottom { get => ParentEntity.Pos.Y + Bottom; }
         public Rectangle Bounds { get => new Rectangle((int)AbsoluteLeft, (int)AbsoluteTop, (int)Width, (int)Height); }
-
-        #endregion
     }
 }

@@ -76,6 +76,9 @@ namespace Fiourp
             base.Render();
         } 
 
+        public bool Contains(Entity entity)
+            => enteredEntities.Contains(entity);
+
         public virtual void OnTriggerEnter(Entity entity) { OnTriggerEnterAction?.Invoke(entity); }
 
         public virtual void OnTriggerStay(Entity entity) { OnTriggerStayAction?.Invoke(entity); }

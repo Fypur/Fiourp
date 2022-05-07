@@ -111,7 +111,9 @@ namespace Fiourp
         }
 
         public virtual void OnDestroy()
-        { }
+        {
+            Engine.CurrentMap.Data.EntitiesByType[GetType()].Remove(this);
+        }
 
         public virtual bool CollidingConditions(Collider other)
             => true;
