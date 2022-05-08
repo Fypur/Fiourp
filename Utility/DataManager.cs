@@ -218,6 +218,18 @@ namespace Fiourp
             return d;
         }
 
+        public static Dictionary<Point, Texture2D> GetTileSetTextures(Texture2D tileset, int tileSize)
+        {
+            Dictionary<Point, Texture2D> tiles = new();
+            for(int x = 0; x < tileset.Width; x += tileSize)
+                for (int y = 0; y < tileset.Height; y += tileSize)
+                {
+                    tiles[new Point(x, y)] = tileset.CropTo(new Vector2(x, y), new Vector2(tileSize));
+                    tiles[new Point(x, y)].Name = new Point(x, y).ToString();
+                }
+        return tiles;
+        }
+
         /// <summary>
         /// Returns a random texture between four of the identified tile
         /// </summary>
@@ -247,10 +259,10 @@ namespace Fiourp
                 return texture;
 
             object loaded = Content.Load<Object>(path);
-            if (loaded is Texture2D txt) 
+            if (loaded is Texture2D tex) 
             {
-                Textures[path] = txt;
-                return txt;
+                Textures[path] = tex;
+                return tex;
             }
             else if (loaded is AsepriteDocument asepriteDoc)
             {

@@ -70,5 +70,8 @@ namespace Fiourp
 
             return new Vector2(X, Y);
         }
+
+        public static Vector2 Normalized(this Vector2 vector)
+            => Vector2.Normalize(vector);
     }
 }
