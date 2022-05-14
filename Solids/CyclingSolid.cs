@@ -39,15 +39,14 @@ namespace Fiourp
         }
 
         public CyclingSolid(Vector2 position, int width, int height, Sprite sprite, bool goingForwards, Vector2[] positions, float[] timesBetweenPositions, Func<float, float> easingfunction)
-            : base(InitPos(position, positions, timesBetweenPositions, width, height, goingForwards, out int currentIndex, out float currentTime), width, height, sprite)
+            : base(InitPos(position, positions, timesBetweenPositions, width, height, goingForwards, out int currentIndex, out float currentTime, out bool direction), width, height, sprite)
         {
             if (timesBetweenPositions.Length != positions.Length - 1)
                 throw new Exception("Times between positions and positions amounts are not synced");
-            Contract.EndContractBlock();
 
             moving = true;
-            increment = goingForwards;
-            nextIndex = currentIndex + (goingForwards ? 1 : -1);
+            increment = direction;
+            nextIndex = currentIndex + (increment ? 1 : -1);
 
             Positions = positions;
             Times = timesBetweenPositions;
@@ -83,8 +82,11 @@ namespace Fiourp
             AddComponent(movingTimer);
     }
 
-        private static Vector2 InitPos(Vector2 position, Vector2[] positions, float[] timesBetweenPositions, int width, int height, bool goingForwards, out int currentIndex, out float currentTime)
+        private static Vector2 InitPos(Vector2 position, Vector2[] positions, float[] timesBetweenPositions, int width, int height, bool goingForwards, out int currentIndex, out float currentTime, out bool direction)
         {
+            if (timesBetweenPositions.Length  != positions.Length - 1)
+                throw new Exception("Times between positions and positions amounts are not synced");
+
             position += new Vector2(width / 2, height / 2);
             currentIndex = -1;
             float minDistance = float.PositiveInfinity;
@@ -106,13 +108,22 @@ namespace Fiourp
                 }
             }
 
-            final -= new Vector2(width / 2, height / 2);
             int nextIndex = currentIndex + (goingForwards ? 1 : -1);
 
+            Vector2 beginPos = positions[currentIndex];
             Vector2 nextPos = positions[nextIndex];
 
-            currentTime = Vector2.Distance(positions[currentIndex], final) / Vector2.Distance(positions[currentIndex], nextPos) * timesBetweenPositions[currentIndex + (goingForwards ? 0 : -1)];
+            currentTime = Vector2.Distance(beginPos, final) / Vector2.Distance(beginPos, nextPos) * timesBetweenPositions[currentIndex + (goingForwards ? 0 : -1)];
 
+            direction = goingForwards;
+            if(final == nextPos)
+            {
+                currentTime = 0;
+                currentIndex = nextIndex;
+                direction = !goingForwards;
+            }
+
+            final -= new Vector2(width / 2, height / 2);
             return final;
         }
 

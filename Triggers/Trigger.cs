@@ -23,6 +23,7 @@ namespace Fiourp
             Size = size;
             Triggerers = triggerers;
             name = GetType().Name;
+            Collider.DebugColor = Color.White;
         }
 
         public Trigger(Vector2 position, int width, int height, List<Type> triggerers, Sprite sprite)

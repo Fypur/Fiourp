@@ -12,7 +12,7 @@ namespace Fiourp
         public Vector2 Size { get => trigger.Size; set => trigger.Size = value; }
         public List<Type> Triggerers { get => trigger.Triggerers; set => trigger.Triggerers = value; }
 
-        private Trigger trigger;
+        public Trigger trigger;
 
         public TriggerComponent(Vector2 localPosition, float width, float height, List<Type> triggerers)
         {

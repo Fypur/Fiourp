@@ -53,7 +53,7 @@ namespace Fiourp
                         Actor actor = Engine.CurrentMap.Data.Actors[i];
                         if (Collider.Collide(actor))
                         {
-                            actor.MoveX(Pos.X + Width - actor.ExactPos.X, actor.Squish);
+                            actor.MoveX(Pos.X + Width - actor.Pos.X, actor.Squish);
                             actor.LiftSpeed = new Vector2(moveX / Engine.Deltatime, actor.LiftSpeed.Y);
                             
                         }
@@ -71,7 +71,7 @@ namespace Fiourp
                         Actor actor = Engine.CurrentMap.Data.Actors[i];
                         if (Collider.Collide(actor))
                         {
-                            actor.MoveX(Pos.X - actor.ExactPos.X - actor.Width, actor.Squish);
+                            actor.MoveX(Pos.X - actor.Pos.X - actor.Width, actor.Squish);
                             actor.LiftSpeed = new Vector2(moveX / Engine.Deltatime, actor.LiftSpeed.Y);
                         }
                         else if (ridingActors.Contains(actor))
@@ -95,7 +95,7 @@ namespace Fiourp
                         Actor actor = Engine.CurrentMap.Data.Actors[i];
                         if (Collider.Collide(actor))
                         {
-                            actor.MoveY(Pos.Y + Height - actor.ExactPos.Y, actor.Squish);
+                            actor.MoveY(Pos.Y + Height - actor.Pos.Y, actor.Squish);
                             actor.LiftSpeed = new Vector2(actor.LiftSpeed.X, moveY / Engine.Deltatime);
                         }
                         else if (ridingActors.Contains(actor))
@@ -112,7 +112,7 @@ namespace Fiourp
                         Actor actor = Engine.CurrentMap.Data.Actors[i];
                         if (Collider.Collide(actor))
                         {
-                            actor.MoveY(Pos.Y - actor.ExactPos.Y - actor.Height, actor.Squish);
+                            actor.MoveY(Pos.Y - actor.Pos.Y - actor.Height, actor.Squish);
                             actor.LiftSpeed = new Vector2(actor.LiftSpeed.X, moveY / Engine.Deltatime);
                         }
                         else if (ridingActors.Contains(actor))

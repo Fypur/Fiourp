@@ -24,9 +24,6 @@ namespace Fiourp
         public abstract float Top { get; set; }
         public abstract float Bottom { get; set; }
 
-        public override void Added()
-            => Conditions = ParentEntity.CollidingConditions;
-
         public virtual void Render() 
         {
             Drawing.DrawEdge(Bounds, 1, DebugColor);
@@ -34,7 +31,7 @@ namespace Fiourp
 
         public bool Collide(Collider other)
         {
-            if (!other.Collidable || !Conditions(other) || !other.Conditions(this))
+            if (!other.Collidable || !ParentEntity.CollidingConditions(other) || !other.ParentEntity.CollidingConditions(this))
                 return false;
 
             if (other is BoxCollider box)

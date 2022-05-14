@@ -63,9 +63,7 @@ namespace Fiourp
                     cachedEventDescriptions.Add(path, eventDescription);
                     return eventDescription;
                 default:
-#if DEBUG
                     throw new Exception("Event problems");
-#endif
             }
         }
 

@@ -105,6 +105,7 @@ namespace Fiourp
 
         public static void DebugString()
         {
+#if DEBUG
             Vector2 pos = Vector2.Zero;
 
             if(Debug.Count * font.MeasureString("A").Y + DebugForever.Count * font.MeasureString("A").Y > Engine.ScreenSize.Y)
@@ -125,10 +126,13 @@ namespace Fiourp
             }
 
             Debug.Clear();
+#endif
         }
 
         public static void DebugPoint(int scale)
         {
+#if DEBUG
+
             foreach(Tuple<Vector2, Color> pos in DebugPos)
                 DrawPoint(pos.Item1 * scale, 1, pos.Item2);
 
@@ -136,12 +140,16 @@ namespace Fiourp
                 DrawPoint(pos.Item1 * scale, 1, pos.Item2);
 
             DebugPosUpdate.Clear();
+#endif
+
         }
 
         public static void DebugEvents()
         {
+#if DEBUG
             DebugEvent();
             DebugEvent = delegate { };
+#endif
         }
     }
 }
