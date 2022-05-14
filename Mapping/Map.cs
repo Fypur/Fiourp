@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
+using System;
 
 namespace Fiourp
 {
@@ -69,11 +70,21 @@ namespace Fiourp
 
             MiddlegroundSystem.Render();
 
-            for (int i = Data.Entities.Count - 1; i >= 0; i--)
+            int maxLayer = 2;
+            List<Entity> loopedEntities = new List<Entity>(Data.Entities);
+            for(int l = 0; l <= maxLayer; l++)
             {
-                if(i < Data.Entities.Count && Data.Entities[i].Visible && Data.Entities[i].Tag != Entity.Tags.UI && Data.Entities[i].Tag != Entity.Tags.Decoration)
-                    Data.Entities[i].Render();
+                for (int i = loopedEntities.Count - 1; i >= 0; i--)
+                {
+                    maxLayer = Math.Max(loopedEntities[i].Layer, maxLayer);
+                    if (i < loopedEntities.Count && loopedEntities[i].Visible && loopedEntities[i].Tag != Entity.Tags.UI && loopedEntities[i].Tag != Entity.Tags.Decoration && loopedEntities[i].Layer == l)
+                    {
+                        loopedEntities[i].Render();
+                        loopedEntities.RemoveAt(i);
+                    }
+                }
             }
+            
 
             ForegroundSystem.Render();
         }

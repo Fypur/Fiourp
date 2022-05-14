@@ -17,6 +17,7 @@ namespace Fiourp
 
         public Tags Tag;
         public enum Tags { Unknown, Actor, Solid, Trigger, UI, Decoration }
+        public int Layer = 2;
 
         public virtual Vector2 ExactPos { get => Pos; set => Pos = value; }
         public Vector2 MiddleExactPos => ExactPos + HalfSize;
@@ -147,7 +148,7 @@ namespace Fiourp
                 renderers.Remove(renderer);
         }
 
-        public bool GetComponent<T>() where T : Component
+        public bool HasComponent<T>() where T : Component
         {
             foreach (Component c in components)
                 if (c is T t)
@@ -156,7 +157,7 @@ namespace Fiourp
             return false;
         }
 
-        public bool GetComponent<T>(out T component) where T : Component
+        public bool HasComponent<T>(out T component) where T : Component
         {
             foreach(Component c in components)
             {
@@ -169,6 +170,15 @@ namespace Fiourp
 
             component = null;
             return false;
+        }
+
+        public T GetComponent<T>() where T : Component
+        {
+            foreach (Component c in components)
+                if (c is T t)
+                    return (T)c;
+
+            return null;
         }
 
         public List<T> GetComponents<T>() where T : Component
@@ -207,6 +217,21 @@ namespace Fiourp
         {
             Children.Remove(child);
             childrenPositionOffset.Remove(child.Pos - Pos);
+        }
+
+        public bool HasChild<T>(out T component) where T : Entity
+        {
+            foreach (Entity c in Children)
+            {
+                if (c is T t)
+                {
+                    component = t;
+                    return true;
+                }
+            }
+
+            component = null;
+            return false;
         }
 
         public void Destroy()

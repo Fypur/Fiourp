@@ -71,10 +71,11 @@ namespace Fiourp
             if (move != 0)
             {
                 xRemainder -= move;
-                int sign = Math.Sign(amount);
+                int sign = Math.Sign(move);
 
                 while (move != 0)
                 {
+                    //Console.WriteLine($"XRemainder: {xRemainder}; move: {move}; sign: {sign}");
                     if (!Collider.CollideAt(new List<Entity>(Engine.CurrentMap.Data.Solids), Pos + new Vector2(sign, 0), out Entity collided))
                     {
                         Pos.X += sign;
@@ -97,7 +98,7 @@ namespace Fiourp
             if (move != 0)
             {
                 yRemainder -= move;
-                int sign = Math.Sign(amount);
+                int sign = Math.Sign(move);
 
                 while (move != 0)
                 {

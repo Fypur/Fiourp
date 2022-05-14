@@ -44,7 +44,7 @@ namespace Fiourp
 
             if (Paused && PausedFunc())
             {
-                Paused = true;
+                Paused = false;
                 PausedFunc = () => false;
             }
         }
@@ -57,6 +57,7 @@ namespace Fiourp
 
         public void PauseUntil(Func<bool> pausedUntil)
         {
+            PausedFunc = pausedUntil;
             Paused = true;
         }
     }
