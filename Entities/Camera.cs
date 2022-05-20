@@ -87,7 +87,6 @@ namespace Fiourp
         public Camera(Vector2 position, float rotation, float zoomLevel, Rectangle? bounds = null)
             : base(position)
         {
-            //TODO: Auto Scroll for Chase Sequence
             Engine.Cam = this;
 
             Pos = position;

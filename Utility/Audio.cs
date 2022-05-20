@@ -21,9 +21,12 @@ namespace Fiourp
 
         private static void Load()
         {
-            system.loadBankFile("FMOD/Banks/Master.bank", LOAD_BANK_FLAGS.NORMAL, out Bank b);
-            system.loadBankFile("FMOD/Banks/Master.strings.bank", LOAD_BANK_FLAGS.NORMAL, out Bank b1);
-            system.loadBankFile("FMOD/Banks/GamingAvance.bank", LOAD_BANK_FLAGS.NORMAL, out Bank b2);
+            foreach(string path in DataManager.GetAllFMODBanksPaths())
+            {
+                RESULT result = system.loadBankFile(path, LOAD_BANK_FLAGS.NORMAL, out _);
+                if (result != RESULT.OK)
+                    throw new Exception("Bank Loading failed: " + result);
+            }
         }
 
         public static EventInstance PlayEvent(string eventName)
@@ -63,7 +66,7 @@ namespace Fiourp
                     cachedEventDescriptions.Add(path, eventDescription);
                     return eventDescription;
                 default:
-                    throw new Exception("Event problems");
+                    throw new Exception("Event problems: " + system.getEvent(path, out _));
             }
         }
 

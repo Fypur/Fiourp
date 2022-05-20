@@ -46,9 +46,6 @@ namespace Fiourp
                 Particles.Add(particle);
         }
 
-        public void Emit(ParticleType particle, Vector2 position)
-            => Particles.Add(particle.Create(position));
-
         public void Emit(ParticleType particle, int amount, Vector2 position, Entity followed, float direction, Color color)
         {
             for(int i = 0; i < amount; i++)

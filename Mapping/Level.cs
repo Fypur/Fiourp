@@ -111,6 +111,11 @@ namespace Fiourp
             return points.ToArray();
         }
 
+        public void DestroyOnUnload(Entity entity)
+            => entityData.Add(entity);
+        public void DontDestroyOnUnload(Entity entity)
+            => entityData.Remove(entity);
+
         public int GetOrganisation(int x, int y, int returnIfEmpty = 0)
         {
             if(x >= 0 && x < Organisation.GetLength(1) && y >= 0 && y < Organisation.GetLength(0))

@@ -41,12 +41,14 @@ namespace Fiourp
         public override void Update()
         {
             trigger.Pos = ParentEntity.Pos + LocalPosition;
-            trigger.Update();
+            if(trigger.Active)
+                trigger.Update();
         }
 
         public override void Render()
         {
-            trigger.Render();
+            if(trigger.Visible)
+                trigger.Render();
         }
 
         public virtual void OnTriggerEnter(Entity entity) { }

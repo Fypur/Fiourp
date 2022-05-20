@@ -281,6 +281,20 @@ namespace Fiourp
             return result;
         }
 
+        public static string[] GetAllFMODBanksPaths()
+        {
+            DirectoryInfo dir = new DirectoryInfo(Content.RootDirectory + "\\Audio\\Desktop");
+            List<string> paths = new();
+
+            foreach(FileInfo f in dir.GetFiles())
+            {
+                if (f.Extension == ".bank")
+                    paths.Add(f.FullName);
+            }
+
+            return paths.ToArray();
+        }
+
         public static Texture2D FlipXAndY(this Texture2D texture)
         {
             Texture2D flipped = new Texture2D(Engine.Graphics.GraphicsDevice, texture.Width, texture.Height);
