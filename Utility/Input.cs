@@ -6,10 +6,11 @@ using System.Text;
 
 namespace Fiourp
 {
+    public enum MouseButton { Left, Right, Middle, Macro1, Macro2 }
     public static class Input
     {
-        public static State CurrentState { get => new State(kbState, mouseState); set { kbState = value.KbState; mouseState = value.MouseState; } }
-        public static State OldState { get => new State(kbPreviousState, previousMouseState); set { kbPreviousState = value.KbState; previousMouseState = value.MouseState; } }
+        public static State CurrentState { get => new State(kbState, mouseState, gamePadState); set { kbState = value.KbState; mouseState = value.MouseState; gamePadState = value.GamePadState; } }
+        public static State OldState { get => new State(kbPreviousState, previousMouseState, previousGamePadState); set { kbPreviousState = value.KbState; previousMouseState = value.MouseState; previousGamePadState = value.GamePadState; } }
 
         private static KeyboardState kbState;
         private static KeyboardState kbPreviousState;
@@ -17,25 +18,25 @@ namespace Fiourp
         private static MouseState mouseState;
         private static MouseState previousMouseState;
 
-        public static bool GamePadConnected;
         private static GamePadState gamePadState;
         private static GamePadState previousGamePadState;
+        public static bool GamePadConnected => gamePadState.IsConnected;
 
         public static Vector2 ScreenMousePos { get => mouseState.Position.ToVector2(); }
         public static Vector2 MousePos { get => Engine.Cam.ScreenToWorldPosition(Engine.Cam.ScreenToRenderTargetPosition(mouseState.Position.ToVector2())); }
         public static Vector2 MousePosNoRenderTarget { get => Input.MousePos
                 * Engine.Cam.RenderTargetScreenSizeCoef; }
 
-        public enum MouseButton { Left, Right, Middle, Macro1, Macro2 }
-
         public class State
         {
             public KeyboardState KbState;
             public MouseState MouseState;
-            public State(KeyboardState kbState, MouseState mouseState)
+            public GamePadState GamePadState;
+            public State(KeyboardState kbState, MouseState mouseState, GamePadState gamePadState)
             {
                 KbState = kbState;
                 MouseState = mouseState;
+                GamePadState = gamePadState;
             }
         }
 
@@ -44,7 +45,6 @@ namespace Fiourp
             kbState = Keyboard.GetState();
             mouseState = Mouse.GetState();
             gamePadState = GamePad.GetState(1);
-            GamePadConnected = gamePadState.IsConnected;
         }
 
         public static void UpdateOldState() 
@@ -81,6 +81,15 @@ namespace Fiourp
         public static bool GetButtonUp(Buttons button)
             => !gamePadState.IsButtonDown(button) && previousGamePadState.IsButtonDown(button);
 
+        public static bool GetControlDown(Control control)
+            => control.IsDown();
+
+        public static bool GetControl(Control control)
+            => control.Is();
+
+        public static bool GetControlUp(Control control)
+            => control.IsUp();
+
         public static Vector2 GetLeftThumbstick()
             => gamePadState.ThumbSticks.Left;
 
@@ -104,6 +113,118 @@ namespace Fiourp
             }
 
             return mouseState.LeftButton;
+        }
+    }
+
+    public class Control
+    {
+        public Keys? Key;
+        public MouseButton? MouseButton;
+        public Buttons? ControllerButton;
+        public Control(Keys key) { Key = key; }
+        public Control(MouseButton mouseButton) { MouseButton = mouseButton; }
+        public Control(Buttons controllerButton) { ControllerButton = controllerButton; }
+
+        public bool IsDown()
+        {
+            if (Key is Keys k)
+                return Input.GetKeyDown(k);
+            if (MouseButton is MouseButton m)
+                return Input.GetMouseButtonDown(m);
+            if (ControllerButton is Buttons b)
+                return Input.GetButtonDown(b);
+            return false;
+        }
+
+        public bool Is()
+        {
+            if (Key is Keys k)
+                return Input.GetKey(k);
+            if (MouseButton is MouseButton m)
+                return Input.GetMouseButton(m);
+            if (ControllerButton is Buttons b)
+                return Input.GetButton(b);
+            return false;
+        }
+
+        public bool IsUp()
+        {
+            if (Key is Keys k)
+                return Input.GetKeyUp(k);
+            if (MouseButton is MouseButton m)
+                return Input.GetMouseButtonUp(m);
+            if (ControllerButton is Buttons b)
+                return Input.GetButtonUp(b);
+            return false;
+        }
+    }
+
+    public class ControlList
+    {
+        public List<Control> Controls;
+        public ControlList(params Control[] controls) { Controls = new List<Control>(controls); }
+
+        public ControlList(params object[] controls)
+        {
+            Controls = new();
+            foreach (object control in controls)
+            {
+                if (control is Keys k)
+                    Controls.Add(new Control(k));
+                else if(control is MouseButton m)
+                    Controls.Add(new Control(m));
+                else if (control is Buttons b)
+                    Controls.Add(new Control(b));
+#if DEBUG
+                else
+                    throw new Exception("Object given as control is not a valid control");
+#endif
+            }
+        }
+
+        public bool IsDown()
+        {
+            bool returned = false;
+            foreach (Control c in Controls)
+            {
+                if (c.IsUp())
+                    return false;
+
+                if (c.Is())
+                {
+                    if (c.IsDown())
+                    {
+                        returned = true;
+                        continue;
+                    }
+                    else
+                        return false;
+                }
+            }
+
+            return returned;
+        }
+
+        public bool Is()
+        {
+            foreach (Control c in Controls)
+                if (c.Is())
+                    return true;
+            return false;
+        }
+
+        public bool IsUp()
+        {
+            bool returned = false;
+            foreach (Control c in Controls)
+            {
+                if(c.Is())
+                    return false;
+                if (c.IsUp())
+                    returned = true;
+            }
+
+            return returned;
         }
     }
 }

@@ -15,8 +15,6 @@ namespace Fiourp
         public static ContentManager Content;
 
         public static Vector2 ScreenSize;
-        public static Vector2 ScreenSizeX;
-        public static Vector2 ScreenSizeY;
         public static float Deltatime;
 
         public static Camera Cam;
@@ -33,8 +31,6 @@ namespace Fiourp
             graphicsDevice.ApplyChanges();
 
             ScreenSize = new Vector2(graphicsDevice.PreferredBackBufferWidth, graphicsDevice.PreferredBackBufferHeight);
-            ScreenSizeX = new Vector2(ScreenSize.X, 0);
-            ScreenSizeY = new Vector2(0, ScreenSize.Y);
 
             RenderTarget = renderTarget;
 

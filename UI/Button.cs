@@ -42,12 +42,12 @@ namespace Fiourp
                 }
             }
 
-            if (Input.GetMouseButtonDown(Input.MouseButton.Left) && mouseIn)
+            if (Input.GetMouseButtonDown(MouseButton.Left) && mouseIn)
             {
                 pressed = true;
                 OnHold();
             }
-            else if (pressed && Input.GetMouseButtonUp(Input.MouseButton.Left))
+            else if (pressed && Input.GetMouseButtonUp(MouseButton.Left))
             {
                 if (mouseIn)
                 {

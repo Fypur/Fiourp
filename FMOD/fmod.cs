@@ -20,8 +20,11 @@ namespace FMOD
     public partial class VERSION
     {
         public const int    number = 0x00020205;
-#if 
+#if WIN64
         public const string dll    = "FMOD/64/fmod";
+#endif
+#if WIN32
+    public const string dll    = "FMOD/64/fmod";
 #endif
     }
 
@@ -695,7 +698,7 @@ namespace FMOD
         public float EarlyLateMix;
         public float WetLevel;
 
-        #region wrapperinternal
+#region wrapperinternal
         public REVERB_PROPERTIES(float decayTime, float earlyDelay, float lateDelay, float hfReference,
             float hfDecayRatio, float diffusion, float density, float lowShelfFrequency, float lowShelfGain,
             float highCut, float earlyLateMix, float wetLevel)
@@ -713,7 +716,7 @@ namespace FMOD
             EarlyLateMix = earlyLateMix;
             WetLevel = wetLevel;
         }
-        #endregion
+#endregion
     }
 #pragma warning restore 414
 
@@ -903,11 +906,11 @@ namespace FMOD
             return FMOD5_System_Create(out system.handle, VERSION.number);
         }
 
-        #region importfunctions
+#region importfunctions
         [DllImport(VERSION.dll)]
         private static extern RESULT FMOD5_System_Create(out IntPtr system, uint headerversion);
 
-        #endregion
+#endregion
     }
 
     /*
@@ -925,13 +928,13 @@ namespace FMOD
             return FMOD5_Memory_GetStats(out currentalloced, out maxalloced, blocking);
         }
 
-        #region importfunctions
+#region importfunctions
         [DllImport(VERSION.dll)]
         private static extern RESULT FMOD5_Memory_Initialize(IntPtr poolmem, int poollen, MEMORY_ALLOC_CALLBACK useralloc, MEMORY_REALLOC_CALLBACK userrealloc, MEMORY_FREE_CALLBACK userfree, MEMORY_TYPE memtypeflags);
         [DllImport(VERSION.dll)]
         private static extern RESULT FMOD5_Memory_GetStats  (out int currentalloced, out int maxalloced, bool blocking);
 
-        #endregion
+#endregion
     }
 
     public struct Debug
@@ -944,11 +947,11 @@ namespace FMOD
             }
         }
 
-        #region importfunctions
+#region importfunctions
         [DllImport(VERSION.dll)]
         private static extern RESULT FMOD5_Debug_Initialize(DEBUG_FLAGS flags, DEBUG_MODE mode, DEBUG_CALLBACK callback, byte[] filename);
 
-        #endregion
+#endregion
     }
 
     public struct Thread
@@ -958,10 +961,10 @@ namespace FMOD
             return FMOD5_Thread_SetAttributes(type, affinity, priority, stacksize);
         }
 
-        #region importfunctions
+#region importfunctions
         [DllImport(VERSION.dll)]
         private static extern RESULT FMOD5_Thread_SetAttributes(THREAD_TYPE type, THREAD_AFFINITY affinity, THREAD_PRIORITY priority, THREAD_STACK_SIZE stacksize);
-        #endregion
+#endregion
     }
 
     /*
@@ -1476,7 +1479,7 @@ namespace FMOD
             return FMOD5_System_GetUserData(this.handle, out userdata);
         }
 
-        #region importfunctions
+#region importfunctions
         [DllImport(VERSION.dll)]
         private static extern RESULT FMOD5_System_Release                   (IntPtr system);
         [DllImport(VERSION.dll)]
@@ -1667,9 +1670,9 @@ namespace FMOD
         private static extern RESULT FMOD5_System_SetUserData               (IntPtr system, IntPtr userdata);
         [DllImport(VERSION.dll)]
         private static extern RESULT FMOD5_System_GetUserData               (IntPtr system, out IntPtr userdata);
-        #endregion
+#endregion
 
-        #region wrapperinternal
+#region wrapperinternal
 
         public IntPtr handle;
 
@@ -1677,7 +1680,7 @@ namespace FMOD
         public bool hasHandle()     { return this.handle != IntPtr.Zero; }
         public void clearHandle()   { this.handle = IntPtr.Zero; }
 
-        #endregion
+#endregion
     }
 
 
@@ -1898,7 +1901,7 @@ namespace FMOD
             return FMOD5_Sound_GetUserData(this.handle, out userdata);
         }
 
-        #region importfunctions
+#region importfunctions
         [DllImport(VERSION.dll)]
         private static extern RESULT FMOD5_Sound_Release                 (IntPtr sound);
         [DllImport(VERSION.dll)]
@@ -1985,9 +1988,9 @@ namespace FMOD
         private static extern RESULT FMOD5_Sound_SetUserData             (IntPtr sound, IntPtr userdata);
         [DllImport(VERSION.dll)]
         private static extern RESULT FMOD5_Sound_GetUserData             (IntPtr sound, out IntPtr userdata);
-        #endregion
+#endregion
 
-        #region wrapperinternal
+#region wrapperinternal
 
         public IntPtr handle;
 
@@ -1995,7 +1998,7 @@ namespace FMOD
         public bool hasHandle()     { return this.handle != IntPtr.Zero; }
         public void clearHandle()   { this.handle = IntPtr.Zero; }
 
-        #endregion
+#endregion
     }
 
     /*
@@ -2409,7 +2412,7 @@ namespace FMOD
             return FMOD5_Channel_GetUserData(this.handle, out userdata);
         }
 
-        #region importfunctions
+#region importfunctions
         [DllImport(VERSION.dll)]
         private static extern RESULT FMOD5_Channel_SetFrequency         (IntPtr channel, float frequency);
         [DllImport(VERSION.dll)]
@@ -2564,9 +2567,9 @@ namespace FMOD
         private static extern RESULT FMOD5_Channel_SetUserData          (IntPtr channel, IntPtr userdata);
         [DllImport(VERSION.dll)]
         private static extern RESULT FMOD5_Channel_GetUserData          (IntPtr channel, out IntPtr userdata);
-        #endregion
+#endregion
 
-        #region wrapperinternal
+#region wrapperinternal
 
         public IntPtr handle;
 
@@ -2574,7 +2577,7 @@ namespace FMOD
         public bool hasHandle()     { return this.handle != IntPtr.Zero; }
         public void clearHandle()   { this.handle = IntPtr.Zero; }
 
-        #endregion
+#endregion
     }
 
     /*
@@ -2893,7 +2896,7 @@ namespace FMOD
             return FMOD5_ChannelGroup_GetUserData(this.handle, out userdata);
         }
 
-        #region importfunctions
+#region importfunctions
         [DllImport(VERSION.dll)]
         private static extern RESULT FMOD5_ChannelGroup_Release             (IntPtr channelgroup);
         [DllImport(VERSION.dll)]
@@ -3036,9 +3039,9 @@ namespace FMOD
         private static extern RESULT FMOD5_ChannelGroup_SetUserData         (IntPtr channelgroup, IntPtr userdata);
         [DllImport(VERSION.dll)]
         private static extern RESULT FMOD5_ChannelGroup_GetUserData         (IntPtr channelgroup, out IntPtr userdata);
-        #endregion
+#endregion
 
-        #region wrapperinternal
+#region wrapperinternal
 
         public IntPtr handle;
 
@@ -3046,7 +3049,7 @@ namespace FMOD
         public bool hasHandle()         { return this.handle != IntPtr.Zero; }
         public void clearHandle()       { this.handle = IntPtr.Zero; }
 
-        #endregion
+#endregion
     }
 
     /*
@@ -3139,7 +3142,7 @@ namespace FMOD
             return FMOD5_SoundGroup_GetUserData(this.handle, out userdata);
         }
 
-        #region importfunctions
+#region importfunctions
         [DllImport(VERSION.dll)]
         private static extern RESULT FMOD5_SoundGroup_Release               (IntPtr soundgroup);
         [DllImport(VERSION.dll)]
@@ -3174,9 +3177,9 @@ namespace FMOD
         private static extern RESULT FMOD5_SoundGroup_SetUserData           (IntPtr soundgroup, IntPtr userdata);
         [DllImport(VERSION.dll)]
         private static extern RESULT FMOD5_SoundGroup_GetUserData           (IntPtr soundgroup, out IntPtr userdata);
-        #endregion
+#endregion
 
-        #region wrapperinternal
+#region wrapperinternal
 
         public IntPtr handle;
 
@@ -3184,7 +3187,7 @@ namespace FMOD
         public bool hasHandle()       { return this.handle != IntPtr.Zero; }
         public void clearHandle()     { this.handle = IntPtr.Zero; }
 
-        #endregion
+#endregion
     }
 
     /*
@@ -3394,7 +3397,7 @@ namespace FMOD
             return FMOD5_DSP_GetCPUUsage(this.handle, out exclusive, out inclusive);
         }
 
-        #region importfunctions
+#region importfunctions
         [DllImport(VERSION.dll)]
         private static extern RESULT FMOD5_DSP_Release                   (IntPtr dsp);
         [DllImport(VERSION.dll)]
@@ -3481,9 +3484,9 @@ namespace FMOD
         public static extern RESULT FMOD5_DSP_GetMeteringInfo            (IntPtr dsp, out DSP_METERING_INFO inputInfo, out DSP_METERING_INFO outputInfo);
         [DllImport(VERSION.dll)]
         public static extern RESULT FMOD5_DSP_GetCPUUsage                (IntPtr dsp, out uint exclusive, out uint inclusive);
-        #endregion
+#endregion
 
-        #region wrapperinternal
+#region wrapperinternal
 
         public IntPtr handle;
 
@@ -3491,7 +3494,7 @@ namespace FMOD
         public bool hasHandle()     { return this.handle != IntPtr.Zero; }
         public void clearHandle()   { this.handle = IntPtr.Zero; }
 
-        #endregion
+#endregion
     }
 
     /*
@@ -3538,7 +3541,7 @@ namespace FMOD
             return FMOD5_DSPConnection_GetUserData(this.handle, out userdata);
         }
 
-        #region importfunctions
+#region importfunctions
         [DllImport(VERSION.dll)]
         private static extern RESULT FMOD5_DSPConnection_GetInput        (IntPtr dspconnection, out IntPtr input);
         [DllImport(VERSION.dll)]
@@ -3557,9 +3560,9 @@ namespace FMOD
         private static extern RESULT FMOD5_DSPConnection_SetUserData     (IntPtr dspconnection, IntPtr userdata);
         [DllImport(VERSION.dll)]
         private static extern RESULT FMOD5_DSPConnection_GetUserData     (IntPtr dspconnection, out IntPtr userdata);
-        #endregion
+#endregion
 
-        #region wrapperinternal
+#region wrapperinternal
 
         public IntPtr handle;
 
@@ -3567,7 +3570,7 @@ namespace FMOD
         public bool hasHandle()          { return this.handle != IntPtr.Zero; }
         public void clearHandle()        { this.handle = IntPtr.Zero; }
 
-        #endregion
+#endregion
     }
 
     /*
@@ -3662,7 +3665,7 @@ namespace FMOD
             return FMOD5_Geometry_GetUserData(this.handle, out userdata);
         }
 
-        #region importfunctions
+#region importfunctions
         [DllImport(VERSION.dll)]
         private static extern RESULT FMOD5_Geometry_Release              (IntPtr geometry);
         [DllImport(VERSION.dll)]
@@ -3703,9 +3706,9 @@ namespace FMOD
         private static extern RESULT FMOD5_Geometry_SetUserData          (IntPtr geometry, IntPtr userdata);
         [DllImport(VERSION.dll)]
         private static extern RESULT FMOD5_Geometry_GetUserData          (IntPtr geometry, out IntPtr userdata);
-        #endregion
+#endregion
 
-        #region wrapperinternal
+#region wrapperinternal
 
         public IntPtr handle;
 
@@ -3713,7 +3716,7 @@ namespace FMOD
         public bool hasHandle()     { return this.handle != IntPtr.Zero; }
         public void clearHandle()   { this.handle = IntPtr.Zero; }
 
-        #endregion
+#endregion
     }
 
     /*
@@ -3762,7 +3765,7 @@ namespace FMOD
             return FMOD5_Reverb3D_GetUserData(this.handle, out userdata);
         }
 
-        #region importfunctions
+#region importfunctions
         [DllImport(VERSION.dll)]
         private static extern RESULT FMOD5_Reverb3D_Release             (IntPtr reverb3d);
         [DllImport(VERSION.dll)]
@@ -3781,9 +3784,9 @@ namespace FMOD
         private static extern RESULT FMOD5_Reverb3D_SetUserData         (IntPtr reverb3d, IntPtr userdata);
         [DllImport(VERSION.dll)]
         private static extern RESULT FMOD5_Reverb3D_GetUserData         (IntPtr reverb3d, out IntPtr userdata);
-        #endregion
+#endregion
 
-        #region wrapperinternal
+#region wrapperinternal
 
         public IntPtr handle;
 
@@ -3791,10 +3794,10 @@ namespace FMOD
         public bool hasHandle()     { return this.handle != IntPtr.Zero; }
         public void clearHandle()   { this.handle = IntPtr.Zero; }
 
-        #endregion
+#endregion
     }
 
-    #region Helper Functions
+#region Helper Functions
     [StructLayout(LayoutKind.Sequential)]
     public struct StringWrapper
     {
@@ -3970,5 +3973,5 @@ namespace FMOD
 #pragma warning restore 618
     }
 
-    #endregion
+#endregion
 }
