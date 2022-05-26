@@ -9,16 +9,19 @@ namespace Fiourp
 {
     public class Button : UIElement
     {
-        public Action OnClick;
+        public Action OnClickAction;
 
         private bool hovered;
         private bool pressed;
 
-        public Button(Vector2 position, int width, int height, bool centered, Sprite sprite, Action onPressed, List<UIElement> children) : base(position, width, height, centered, sprite, children)
+        public Button(Vector2 position, int width, int height, bool centered, Sprite sprite, Action onPressed) : base(position, width, height, centered, sprite)
         {
-            OnClick = onPressed;
+            OnClickAction = onPressed;
             /*Sprite.NineSliceSettings = new NineSliceSettings(DataManager.GetTexture("9Slice/Button/corner"), DataManager.GetTexture("9Slice/Button/top"), Drawing.pointTexture);*/
         }
+
+        public Button(Vector2 position, int width, int height, bool centered, Sprite sprite) : base(position, width, height, centered, sprite)
+        { }
 
         public override void Update()
         {
@@ -51,7 +54,7 @@ namespace Fiourp
             {
                 if (mouseIn)
                 {
-                    OnClick?.Invoke();
+                    OnClick();
                     ClickAnimation();
                 }
 
@@ -59,6 +62,8 @@ namespace Fiourp
                 OnLeaveHold();
             }
         }
+
+        public virtual void OnClick() { OnClickAction?.Invoke(); }
 
         public virtual void ClickAnimation()
         {

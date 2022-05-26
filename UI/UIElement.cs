@@ -55,13 +55,13 @@ namespace Fiourp
             }
         }
 
-        public UIElement(Vector2 position, int width, int height, Sprite sprite, List<UIElement> children) : base(position, width, height, sprite)
+        public UIElement(Vector2 position, int width, int height, Sprite sprite) : base(position, width, height, sprite)
         {
             RemoveComponent(Collider);
             Centered = false;
         }
 
-        public UIElement(Vector2 position, int width, int height, bool centered, Sprite sprite, List<UIElement> children) : base(position, width, height, sprite)
+        public UIElement(Vector2 position, int width, int height, bool centered, Sprite sprite) : base(position, width, height, sprite)
         {
             RemoveComponent(Collider);
             Centered = centered;
@@ -69,17 +69,27 @@ namespace Fiourp
             {
                 CenteredPos = position;
             }
-
-            AddElements(children);    
         }
 
-        public void AddElements(List<UIElement> uIElements)
+        public void AddElements(List<UIElement> uiElements)
         {
-            if (uIElements == null)
+            if (uiElements == null)
                 return;
 
-            foreach(UIElement element in uIElements)
+            foreach(UIElement element in uiElements)
                 AddChild(element);
         }
+
+        public void RemoveElements(List<UIElement> uiElements)
+        {
+            if (uiElements == null)
+                return;
+
+            foreach (UIElement element in uiElements)
+                Children.Remove(element);
+        }
+
+        public void RemoveAllElements()
+            => Children.Clear();
     }
 }

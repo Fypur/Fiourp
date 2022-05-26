@@ -17,7 +17,7 @@ namespace Fiourp
         private ControlList skipDialogControls;
         
         public DialogueBox(string[] dialogue, ControlList skipDialogueControls)
-            : base(new Vector2(140, 20), 1000, 300, new Sprite(Color.White, new Rectangle(140, 20, 1000, 300), 0.9f), null)
+            : base(new Vector2(140, 20), 1000, 300, new Sprite(Color.White, new Rectangle(140, 20, 1000, 300), 0.9f))
         {
             Dialogue = dialogue;
             this.skipDialogControls = skipDialogueControls;

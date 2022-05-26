@@ -20,7 +20,7 @@ namespace Fiourp
         public enum Style { Normal, Bold, Italic }
 
         public TextBox(string text, string fontID, Vector2 position, int width, int height, Color color, float fontSize = 3, bool centered = false)
-            : base(position, width, height, false, null, null)
+            : base(position, width, height, false, null)
         {
             FontID = fontID;
             TextScale = fontSize;
@@ -31,7 +31,7 @@ namespace Fiourp
         }
 
         public TextBox(string text, string fontID, float timePerCharacter, Vector2 position, int width, int height, float fontSize = 3)
-            : base(position, width, height, null, null)
+            : base(position, width, height, null)
         {
             CustomCenter = true;
             FontID = fontID;
