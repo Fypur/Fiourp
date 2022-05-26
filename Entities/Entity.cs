@@ -82,6 +82,9 @@ namespace Fiourp
 
             for (int i = Children.Count - 1; i >= 0; i--)
             {
+                if (Children.Count <= i)
+                    return;
+
                 Children[i].Pos = Pos + childrenPositionOffset[i];
                 if (Children[i].Active)
                     Children[i].Update();
@@ -228,6 +231,12 @@ namespace Fiourp
         {
             Children.Remove(child);
             childrenPositionOffset.Remove(child.Pos - Pos);
+        }
+
+        public void ClearChildren()
+        {
+            Children.Clear();
+            childrenPositionOffset.Clear();
         }
 
         public bool HasChild<T>(out T component) where T : Entity

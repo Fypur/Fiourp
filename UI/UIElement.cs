@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,6 +11,11 @@ namespace Fiourp
         public bool Overlay;
         public bool Centered;
         protected bool CustomCenter;
+
+        public bool Selected;
+        public UIElement Left, Right, Up, Down;
+        public bool Selectable = true;
+        public bool JustSelected = false;
 
         public Vector2 CenteredPos
         {
@@ -71,6 +77,74 @@ namespace Fiourp
             }
         }
 
+        public override void Update()
+        {
+            base.Update();
+
+            if (Selected && !JustSelected)
+            {
+                UIElement newSelected = null;
+
+                if (Input.UpControls.IsDown() && Up != null && Up.Selectable)
+                    newSelected = Up;
+                else if (Input.DownControls.IsDown() && Down != null && Down.Selectable)
+                    newSelected = Down;
+                else if (Input.LeftControls.IsDown() && Left != null && Left.Selectable)
+                    newSelected = Left;
+                else if (Input.RightControls.IsDown() && Right != null && Right.Selectable)
+                    newSelected = Right;
+
+                if(newSelected != null)
+                {
+                    newSelected.Selected = true;
+                    newSelected.OnSelected();
+                    newSelected.JustSelected = true;
+                    OnLeaveSelected();
+                    Selected = false;
+                }
+            }
+
+            JustSelected = false;
+        }
+
+        public virtual void OnSelected() { }
+        public virtual void OnLeaveSelected() { }
+
+        public static void MakeList(List<UIElement> elements, bool vertical)
+        {
+            int offset = 0;
+            for (int i = 0; i < elements.Count; i++)
+            {
+                if (!elements[i].Selectable)
+                {
+                    offset++;
+                    continue;
+                }
+
+                if (i - 1 - offset >= 0)
+                {
+                    if(vertical)
+                        elements[i].Up = elements[i - 1 - offset];
+                    else
+                        elements[i].Left = elements[i - 1 - offset];
+                }
+                for(int j = i + 1; j < elements.Count; j++)
+                {
+                    if (elements[j].Selectable)
+                    {
+                        if(vertical)
+                            elements[i].Down = elements[j];
+                        else
+                            elements[i].Right = elements[j];
+                        i = j - 1;
+                        break;
+                    }
+                }
+
+                offset = 0;
+            }
+         }
+
         public void AddElements(List<UIElement> uiElements)
         {
             if (uiElements == null)
@@ -86,10 +160,10 @@ namespace Fiourp
                 return;
 
             foreach (UIElement element in uiElements)
-                Children.Remove(element);
+                RemoveChild(element);
         }
 
         public void RemoveAllElements()
-            => Children.Clear();
+            => ClearChildren();
     }
 }

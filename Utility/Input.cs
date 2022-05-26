@@ -27,6 +27,12 @@ namespace Fiourp
         public static Vector2 MousePosNoRenderTarget { get => Input.MousePos
                 * Engine.Cam.RenderTargetScreenSizeCoef; }
 
+        public static ControlList LeftControls = new ControlList(Keys.Left, Keys.A, Keys.Q);
+        public static ControlList RightControls = new ControlList(Keys.Right, Keys.D);
+        public static ControlList UpControls = new ControlList(Keys.Up, Keys.W, Keys.Z);
+        public static ControlList DownControls = new ControlList(Keys.Down, Keys.S);
+        public static ControlList Action1 = new ControlList(Keys.C, Keys.I, Keys.Space, Buttons.A);
+
         public class State
         {
             public KeyboardState KbState;

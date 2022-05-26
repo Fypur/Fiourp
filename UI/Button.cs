@@ -27,6 +27,14 @@ namespace Fiourp
         {
             base.Update();
 
+            if (Selected)
+            {
+                if (Input.Action1.IsDown() || Input.GetKeyDown(Microsoft.Xna.Framework.Input.Keys.Enter))
+                {
+                    OnClick();
+                }
+            }
+
             bool mouseIn = Bounds.Contains(Input.ScreenMousePos);
 
             if (!hovered && mouseIn)
@@ -55,7 +63,6 @@ namespace Fiourp
                 if (mouseIn)
                 {
                     OnClick();
-                    ClickAnimation();
                 }
 
                 pressed = false;
@@ -63,7 +70,17 @@ namespace Fiourp
             }
         }
 
-        public virtual void OnClick() { OnClickAction?.Invoke(); }
+        public override void OnSelected()
+        {
+            OnHover();
+        }
+
+        public override void OnLeaveSelected()
+        {
+            OnLeaveHover();
+        }
+
+        public virtual void OnClick() { OnClickAction?.Invoke(); ClickAnimation(); }
 
         public virtual void ClickAnimation()
         {
