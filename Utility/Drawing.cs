@@ -68,19 +68,27 @@ namespace Fiourp
         
         public static void DrawCenteredString(string text, Vector2 position, Color color)
             => spriteBatch.DrawString(font, text, position, color, 0, font.MeasureString(text) / 2,
-                1, SpriteEffects.None, 0.5f);
+                1, SpriteEffects.None, 0.25f);
 
         public static void DrawString(string text, Vector2 position, Color color, SpriteFont font)
             => spriteBatch.DrawString(font, text, position, color, 0, Vector2.Zero,
-                1, SpriteEffects.None, 0.5f);
+                1, SpriteEffects.None, 0.25f);
 
         public static void DrawString(string text, Vector2 position, Color color, SpriteFont font, Vector2 scale)
             => spriteBatch.DrawString(font, text, position, color, 0, Vector2.Zero,
-                scale, SpriteEffects.None, 0.5f);
+                scale, SpriteEffects.None, 0.25f);
 
         public static void DrawString(string text, Vector2 position, Color color, SpriteFont font, float scale)
             => spriteBatch.DrawString(font, text, position, color, 0, Vector2.Zero,
-                scale, SpriteEffects.None, 0.5f);
+                scale, SpriteEffects.None, 0.25f);
+
+        public static void DrawString(string text, Vector2 position, Color color, SpriteFont font, Vector2 origin, float scale, float rotation)
+            => spriteBatch.DrawString(font, text, position, color, rotation, origin,
+                scale, SpriteEffects.None, 0.25f);
+
+        public static void DrawString(string text, Vector2 position, Color color, SpriteFont font, Vector2 origin, Vector2 scale, float rotation)
+            => spriteBatch.DrawString(font, text, position, color, rotation, origin,
+                scale, SpriteEffects.None, 0.25f);
 
         public static void DrawLine(Vector2 begin, Vector2 end, Color color, int thickness = 1)
         {

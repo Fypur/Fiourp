@@ -73,5 +73,8 @@ namespace Fiourp
 
         public static Vector2 Normalized(this Vector2 vector)
             => Vector2.Normalize(vector);
+
+        public static Vector2 Pow(Vector2 vector, float power)
+            => new Vector2((float)Math.Pow(vector.X, power), (float)Math.Pow(vector.Y, power));
     }
 }

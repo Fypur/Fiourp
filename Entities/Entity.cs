@@ -29,8 +29,8 @@ namespace Fiourp
         public Collider Collider;
         public Sprite Sprite;
 
-        public List<Component> components = new List<Component>();
-        public List<Renderer> renderers = new List<Renderer>();
+        public List<Component> Components = new List<Component>();
+        public List<Renderer> Renderers = new List<Renderer>();
 
         public List<Entity> Children = new List<Entity>();
         private List<Vector2> childrenPositionOffset = new List<Vector2>();
@@ -76,8 +76,9 @@ namespace Fiourp
 
         public virtual void Update()
         {
-            for (int i = components.Count - 1; i >= 0; i--)
-                components[i].Update();
+            for (int i = Components.Count - 1; i >= 0; i--)
+                if(Components[i].Active)
+                    Components[i].Update();
 
             for (int i = Children.Count - 1; i >= 0; i--)
             {
@@ -89,15 +90,16 @@ namespace Fiourp
 
         public virtual void Render()
         {
-            for (int i = renderers.Count - 1; i >= 0; i--)
-                renderers[i].Render();
+            for (int i = Renderers.Count - 1; i >= 0; i--)
+                if(Renderers[i].Visible)
+                    Renderers[i].Render();
 
             for (int i = Children.Count - 1; i >= 0; i--)
-                if(Children[i].Active && !(Children[i] is UIElement))
+                if(Children[i].Active && Children[i].Tag != Tags.UI)
                     Children[i].Render();
 
             for (int i = Children.Count - 1; i >= 0; i--)
-                if (Children[i].Active && !(Children[i] is UIElement))
+                if (Children[i].Active && Children[i].Tag != Tags.UI)
                     Children[i].Render();
 
             if (Debug.DebugMode)
@@ -108,7 +110,10 @@ namespace Fiourp
         {
             for (int i = Children.Count - 1; i >= 0; i--)
                 if (Children[i].Active && Children[i] is UIElement)
+                {
                     Children[i].Render();
+                    Children[i].UIChildRender();
+                }
         }
 
         public virtual void OnDestroy()
@@ -123,17 +128,17 @@ namespace Fiourp
         {
             component.ParentEntity = this;
             component.Added();
-            components.Add(component);
+            Components.Add(component);
 
             if (component is Renderer renderer)
-                renderers.Add(renderer);
+                Renderers.Add(renderer);
 
             return component;
         }
 
         public void RemoveComponent<T>() where T : Component
         {
-            foreach(Component component in components)
+            foreach(Component component in Components)
                 if (component is T)
                 {
                     RemoveComponent(component);
@@ -142,15 +147,15 @@ namespace Fiourp
 
         public void RemoveComponent(Component component)
         {
-            components.Remove(component);
+            Components.Remove(component);
 
             if (component is Renderer renderer)
-                renderers.Remove(renderer);
+                Renderers.Remove(renderer);
         }
 
         public bool HasComponent<T>() where T : Component
         {
-            foreach (Component c in components)
+            foreach (Component c in Components)
                 if (c is T t)
                     return true;
 
@@ -159,7 +164,7 @@ namespace Fiourp
 
         public bool HasComponent<T>(out T component) where T : Component
         {
-            foreach(Component c in components)
+            foreach(Component c in Components)
             {
                 if(c is T t)
                 {
@@ -174,7 +179,7 @@ namespace Fiourp
 
         public T GetComponent<T>() where T : Component
         {
-            foreach (Component c in components)
+            foreach (Component c in Components)
                 if (c is T t)
                     return (T)c;
 
@@ -184,7 +189,7 @@ namespace Fiourp
         public List<T> GetComponents<T>() where T : Component
         {
             List<T> result = new();
-            foreach (Component c in components)
+            foreach (Component c in Components)
             {
                 if (c is T t)
                     result.Add(t);
@@ -195,7 +200,7 @@ namespace Fiourp
 
         public bool TryGetComponent<T>(out T component) where T : Component
         {
-            foreach(Component c in components)
+            foreach(Component c in Components)
                 if(c is T t)
                 {
                     component = t;
@@ -211,6 +216,12 @@ namespace Fiourp
             Children.Add(child);
             childrenPositionOffset.Add(child.Pos - Pos);
             return child;
+        }
+
+        public void AddChildren(List<Entity> children)
+        {
+            foreach(Entity child in children)
+                AddChild(child);
         }
 
         public void RemoveChild(Entity child)

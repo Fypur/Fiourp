@@ -6,6 +6,7 @@ namespace Fiourp
 {
     public abstract class Component
     {
+        public bool Active = true;
         public Entity ParentEntity;
 
         public virtual void Added() { }

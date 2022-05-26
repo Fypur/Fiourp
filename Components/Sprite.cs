@@ -30,7 +30,7 @@ namespace Fiourp
         public Vector2 Offset = Vector2.Zero;
         public Vector2 Scale = Vector2.One;
         public SpriteEffects Effect = SpriteEffects.None;
-        public float LayerDepth = 0.2f;
+        public float LayerDepth = 0.5f;
 
         public Rectangle? desinationRectangle = null;
         public Rectangle? SourceRectangle = null;

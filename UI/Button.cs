@@ -14,7 +14,7 @@ namespace Fiourp
         private bool hovered;
         private bool pressed;
 
-        public Button(Vector2 position, int width, int height, Sprite sprite, Action onPressed) : base(position, width, height, sprite)
+        public Button(Vector2 position, int width, int height, bool centered, Sprite sprite, Action onPressed, List<UIElement> children) : base(position, width, height, centered, sprite, children)
         {
             OnClick = onPressed;
             /*Sprite.NineSliceSettings = new NineSliceSettings(DataManager.GetTexture("9Slice/Button/corner"), DataManager.GetTexture("9Slice/Button/top"), Drawing.pointTexture);*/

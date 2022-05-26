@@ -8,9 +8,78 @@ namespace Fiourp
     public abstract class UIElement : Entity
     {
         public bool Overlay;
-        public UIElement(Vector2 position, int width, int height, Sprite sprite) : base(position, width, height, sprite)
+        public bool Centered;
+        protected bool CustomCenter;
+
+        public Vector2 CenteredPos
+        {
+            get => !Centered || CustomCenter ? Pos : Pos + HalfSize;
+            set
+            {
+                if (!Centered || CustomCenter)
+                    Pos = value;
+                else
+                    Pos = value - HalfSize;
+            }
+        }
+
+        public new int Width
+        {
+            get => base.Width;
+            set
+            {
+                if (!Centered || CustomCenter)
+                    base.Width = value;
+                else
+                {
+                    Vector2 oldPos = CenteredPos;
+                    base.Width = value;
+                    CenteredPos = oldPos;
+                }
+            }
+        }
+
+        public new int Height
+        {
+            get => base.Height;
+            set
+            {
+                if (!Centered || CustomCenter)
+                    base.Height = value;
+                else
+                {
+                    Vector2 oldPos = CenteredPos;
+                    base.Height = value;
+                    CenteredPos = oldPos;
+                }
+            }
+        }
+
+        public UIElement(Vector2 position, int width, int height, Sprite sprite, List<UIElement> children) : base(position, width, height, sprite)
         {
             RemoveComponent(Collider);
+            Centered = false;
+        }
+
+        public UIElement(Vector2 position, int width, int height, bool centered, Sprite sprite, List<UIElement> children) : base(position, width, height, sprite)
+        {
+            RemoveComponent(Collider);
+            Centered = centered;
+            if (centered)
+            {
+                CenteredPos = position;
+            }
+
+            AddElements(children);    
+        }
+
+        public void AddElements(List<UIElement> uIElements)
+        {
+            if (uIElements == null)
+                return;
+
+            foreach(UIElement element in uIElements)
+                AddChild(element);
         }
     }
 }
