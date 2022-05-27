@@ -11,6 +11,8 @@ namespace Fiourp
     public static class Options
     {
         public static Vector2 CurrentResolution;
+        public static int DefaultUISizeMultiplier = 4;
+        public static int CurrentScreenSizeMultiplier = DefaultUISizeMultiplier;
         private static Vector2 RenderTargetSize => Engine.RenderTarget.Bounds.Size.ToVector2();
         public static void FullScreen()
         {
@@ -30,6 +32,8 @@ namespace Fiourp
 
         public static void SetSize(int multiplier)
         {
+            CurrentScreenSizeMultiplier = multiplier;
+
             int oldMult = (int)(CurrentResolution.X / RenderTargetSize.X);
 
             foreach (UIElement element in Engine.CurrentMap.Data.UIElements)
@@ -44,6 +48,7 @@ namespace Fiourp
             void SetStats(UIElement element, int oldMult, int newMult)
             {
                 element.Pos = element.Pos / oldMult * newMult;
+                element.PreviousPos = element.Pos;
                 element.Size = element.Size / oldMult * newMult;
             }
 

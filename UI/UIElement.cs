@@ -62,17 +62,25 @@ namespace Fiourp
 
         public UIElement(Vector2 position, int width, int height, Sprite sprite) : base(position, width, height, sprite)
         {
+            Pos = Pos / Options.DefaultUISizeMultiplier * Options.CurrentScreenSizeMultiplier;
+            PreviousPos = Pos;
+            Size = Size / Options.DefaultUISizeMultiplier * Options.CurrentScreenSizeMultiplier;
+
             RemoveComponent(Collider);
             Centered = false;
         }
 
         public UIElement(Vector2 position, int width, int height, bool centered, Sprite sprite) : base(position, width, height, sprite)
         {
+            Pos = Pos / Options.DefaultUISizeMultiplier * Options.CurrentScreenSizeMultiplier;
+            PreviousPos = Pos;
+            Size = Size / Options.DefaultUISizeMultiplier * Options.CurrentScreenSizeMultiplier;
+
             RemoveComponent(Collider);
             Centered = centered;
             if (centered)
             {
-                CenteredPos = position;
+                CenteredPos = Pos;
             }
         }
 

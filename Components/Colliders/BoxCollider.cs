@@ -7,8 +7,8 @@ namespace Fiourp
 {
     public class BoxCollider : Collider
     {
-        private float width;
-        private float height;
+        private float widthPercentage;
+        private float heightPercentage;
 
         /// <summary>
         ///
@@ -19,10 +19,16 @@ namespace Fiourp
         public BoxCollider(Vector2 localPosition, int width, int height)
         {
             Pos = localPosition;
-            this.width = width;
-            this.height = height;
+            widthPercentage = width;
+            heightPercentage = height;
         }
-        
+
+        public override void Added()
+        {
+            widthPercentage = widthPercentage / ParentEntity.Width;
+            heightPercentage = heightPercentage / ParentEntity.Height;
+        }
+
         public override bool Collide(BoxCollider other)
             => Bounds.Intersects(other.Bounds);
 
@@ -32,12 +38,11 @@ namespace Fiourp
         public override bool Collide(Vector2 point)
             => Bounds.Contains(point);
 
-        public override float Width { get => width; set => width = value; }
-        public override float Height { get => height; set => height = value; }
+        public override float Width { get => widthPercentage * ParentEntity.Width; set => widthPercentage = value / ParentEntity.Width; }
+        public override float Height { get => heightPercentage * ParentEntity.Height; set => heightPercentage = value / ParentEntity.Height; }
         public override float Left { get => Pos.X; set => Pos.X = value; }
-        public override float Right { get => Pos.X + width; set => Pos.X = value - width; }
+        public override float Right { get => Pos.X + Width; set => Pos.X = value - Width; }
         public override float Top { get => Pos.Y; set => Pos.Y = value; }
-        public override float Bottom { get => Pos.Y + height; set => Pos.Y = value - height; }
-
+        public override float Bottom { get => Pos.Y + Height; set => Pos.Y = value - Height; }
     }
 }
