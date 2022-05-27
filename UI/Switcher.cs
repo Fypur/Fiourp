@@ -7,15 +7,23 @@ using System.Threading.Tasks;
 
 namespace Fiourp
 {
-    public class Switcher<T> : UIElement where T : Enum
+    public class Switcher : UIElement
     {
-        public T CurrentValue { get; private set; }
-        private int currentIndex; 
-        private T[] Values;
-        public Switcher(Vector2 position, int width, int height, bool centered, T startValue) : base(position, width, height, centered, new Sprite(Color.White))
+        public int CurrentIndex { get; protected set; }
+        public int MaxValue;
+
+        protected TextBox fieldTextBox;
+        public TextBox valueTextBox;
+        protected Dictionary<int, Action> actions;
+
+        public Switcher(Vector2 position, int width, int height, bool centered, string fieldName, int startValue, int numValues, Dictionary<int, Action> actions) : base(position, width, height, centered, new Sprite(Color.White))
         {
-            CurrentValue = startValue;
-            Values = (T[])Enum.GetValues(typeof(T));
+            CurrentIndex = startValue;
+            MaxValue = numValues;
+            this.actions = actions;
+            
+            fieldTextBox = (TextBox)AddChild(new TextBox(fieldName, "LexendDeca", Pos, width / 2, height, Color.Black, 1, true));
+            valueTextBox = (TextBox)AddChild(new TextBox(CurrentIndex.ToString(), "LexendDeca", Pos + HalfSize.OnlyX(), width / 2, height, Color.Black, 1, true));
         }
 
         public override void Update()
@@ -31,48 +39,42 @@ namespace Fiourp
                 GoRight();
         }
 
-        public void SetValue(T value)
+        public virtual void GoLeft()
         {
-            CurrentValue = value;
-            for(int i = 0; i < Values.Length; i++)
-            {
-                if(Values[i].Equals(value))
-                {
-                    currentIndex = i;
-                    break;
-                }
-            }
-        }
-
-        public void GoLeft()
-        {
-            if (currentIndex <= 0)
+            if (CurrentIndex <= 0)
             {
                 NotPossible();
                 return;
             }
 
-            currentIndex--;
-            CurrentValue = Values[currentIndex];
+            CurrentIndex--;
+            valueTextBox.Text = CurrentIndex.ToString();
+            if (actions != null && actions.ContainsKey(CurrentIndex))
+                actions[CurrentIndex]?.Invoke();
+            OnMove();
         }
 
-        public void GoRight()
+        public virtual void GoRight()
         {
-            if (currentIndex >= Values.Length)
+            if (CurrentIndex >= MaxValue - 1)
             {
                 NotPossible();
                 return;
             }
 
-            currentIndex++;
-            CurrentValue = Values[currentIndex];
+            CurrentIndex++;
+            valueTextBox.Text = CurrentIndex.ToString();
+            if (actions != null && actions.ContainsKey(CurrentIndex))
+                actions[CurrentIndex]?.Invoke();
+            OnMove();
         }
 
-        public void NotPossible()
+        public virtual void OnMove() { }
+
+        public virtual void NotPossible()
         {
             //TODO: Change this to shaking or smth
-            Sprite.Color = Color.Black;
-            AddComponent(new Timer(1, true, null, () => Sprite.Color = Color.White));
+            AddComponent(new Shaker(0.2f, 0.2f, null, false));
         }
     }
 }

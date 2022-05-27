@@ -97,9 +97,21 @@ namespace Fiourp
             yield return frames;
         }
 
+        public static IEnumerator WaitFramesThen(float frames, Action action)
+        {
+            yield return frames;
+            action();
+        }
+
         public static IEnumerator WaitSeconds(float seconds)
         {
             yield return new WaitForSeconds(seconds);
+        }
+
+        public static IEnumerator WaitSecondsThen(float seconds, Action action)
+        {
+            yield return new WaitForSeconds(seconds);
+            action();
         }
 
         public static IEnumerator WaitUntil(Func<bool> Until)

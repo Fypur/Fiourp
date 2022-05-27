@@ -15,7 +15,6 @@ namespace Fiourp
         public bool Selected;
         public UIElement Left, Right, Up, Down;
         public bool Selectable = true;
-        public bool JustSelected = false;
 
         public Vector2 CenteredPos
         {
@@ -81,7 +80,7 @@ namespace Fiourp
         {
             base.Update();
 
-            if (Selected && !JustSelected)
+            if (Selected)
             {
                 UIElement newSelected = null;
 
@@ -96,19 +95,22 @@ namespace Fiourp
 
                 if(newSelected != null)
                 {
-                    newSelected.Selected = true;
                     newSelected.OnSelected();
-                    newSelected.JustSelected = true;
                     OnLeaveSelected();
-                    Selected = false;
                 }
             }
-
-            JustSelected = false;
         }
 
-        public virtual void OnSelected() { }
-        public virtual void OnLeaveSelected() { }
+        public virtual void OnSelected()
+        {
+            AddComponent(new Coroutine(Coroutine.WaitFramesThen(1, () => Selected = true)));
+            Sprite.Color = new Color(Sprite.Color.ToVector3() - new Color(20, 20, 20).ToVector3());
+        }
+        public virtual void OnLeaveSelected() 
+        {
+            Selected = false;
+            Sprite.Color = new Color(Sprite.Color.ToVector3() + new Color(20, 20, 20).ToVector3());
+        }
 
         public static void MakeList(List<UIElement> elements, bool vertical)
         {

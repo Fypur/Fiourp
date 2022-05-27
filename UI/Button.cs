@@ -72,15 +72,22 @@ namespace Fiourp
 
         public override void OnSelected()
         {
+            base.OnSelected();
             OnHover();
         }
 
         public override void OnLeaveSelected()
         {
+            base.OnLeaveSelected();
             OnLeaveHover();
         }
 
-        public virtual void OnClick() { OnClickAction?.Invoke(); ClickAnimation(); }
+        public virtual void OnClick()
+        {
+            OnClickAction?.Invoke();
+            ClickAnimation();
+            Selected = false;
+        }
 
         public virtual void ClickAnimation()
         {
