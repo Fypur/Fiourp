@@ -33,7 +33,7 @@ namespace Fiourp
         public List<Renderer> Renderers = new List<Renderer>();
 
         public List<Entity> Children = new List<Entity>();
-        private List<Vector2> childrenPositionOffset = new List<Vector2>();
+        private Vector2 previousPos;
 
         public Entity(Vector2 position, int width, int height, Sprite sprite)
         {
@@ -72,6 +72,24 @@ namespace Fiourp
             Pos = position;
             Width = 0;
             Height = 0;
+
+            Tag = this switch
+            {
+                Actor => Tags.Actor,
+                Solid => Tags.Solid,
+                Trigger => Tags.Trigger,
+                UIElement => Tags.UI,
+                Tile => Tags.Decoration,
+                _ => Tags.Unknown
+            };
+        }
+
+        /// <summary>
+        /// Called after constructors when the Entity is Instantiated
+        /// </summary>
+        public virtual void Awake()
+        {
+            previousPos = Pos;
         }
 
         public virtual void Update()
@@ -82,13 +100,30 @@ namespace Fiourp
 
             for (int i = Children.Count - 1; i >= 0; i--)
             {
-                if (Children.Count <= i)
+                if (i >= Children.Count)
                     return;
 
-                Children[i].Pos = Pos + childrenPositionOffset[i];
+                if(Pos - previousPos != Vector2.Zero)
+                { }
+
+                Children[i].Pos += Pos - previousPos;
                 if (Children[i].Active)
                     Children[i].Update();
             }
+
+            for (int i = Children.Count - 1; i >= 0; i--)
+            {
+                if (i >= Children.Count)
+                    return;
+
+                if (Children[i].Active)
+                    Children[i].LateUpdate();
+            }
+        }
+
+        public virtual void LateUpdate()
+        {
+            previousPos = Pos;
         }
 
         public virtual void Render()
@@ -217,26 +252,23 @@ namespace Fiourp
         public Entity AddChild(Entity child)
         {
             Children.Add(child);
-            childrenPositionOffset.Add(child.Pos - Pos);
+            child.Awake();
             return child;
         }
 
         public void AddChildren(List<Entity> children)
         {
             foreach(Entity child in children)
+            {
                 AddChild(child);
+                child.Awake();
+            }
         }
 
         public void RemoveChild(Entity child)
         {
             Children.Remove(child);
-            childrenPositionOffset.Remove(child.Pos - Pos);
-        }
-
-        public void ClearChildren()
-        {
-            Children.Clear();
-            childrenPositionOffset.Clear();
+            child.OnDestroy();
         }
 
         public bool HasChild<T>(out T component) where T : Entity
@@ -254,7 +286,7 @@ namespace Fiourp
             return false;
         }
 
-        public void Destroy()
+        public void SelfDestroy()
             => Engine.CurrentMap.Destroy(this);
     }
 }

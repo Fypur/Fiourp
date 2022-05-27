@@ -28,6 +28,7 @@ namespace Fiourp
             CustomCenter = true;
             Centered = centered;
             Color = color;
+            Collider.DebugColor = Color.Cyan;
         }
 
         public TextBox(string text, string fontID, float timePerCharacter, Vector2 position, int width, int height, float fontSize = 3)
@@ -36,6 +37,7 @@ namespace Fiourp
             CustomCenter = true;
             FontID = fontID;
             TextScale = fontSize;
+            Collider.DebugColor = Color.Cyan;
             ProgressiveDraw(GenerateText(text), timePerCharacter);
         }
 

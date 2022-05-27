@@ -30,8 +30,30 @@ namespace Fiourp
 
         public static void SetSize(int multiplier)
         {
+            int oldMult = (int)(CurrentResolution.X / RenderTargetSize.X);
+
+            foreach (UIElement element in Engine.CurrentMap.Data.UIElements)
+                SetUIStatsForSize(element, oldMult, multiplier);
+
             SetScreenSize(RenderTargetSize * multiplier);
             CurrentResolution = Engine.ScreenSize;
+        }
+
+        private static void SetUIStatsForSize(UIElement element, int oldMult, int newMult)
+        {
+            void SetStats(UIElement element, int oldMult, int newMult)
+            {
+                element.Pos = element.Pos / oldMult * newMult;
+                element.Size = element.Size / oldMult * newMult;
+            }
+
+            SetStats(element, oldMult, newMult);
+            foreach (UIElement child in element.Children)
+            {
+                SetStats(child, oldMult, newMult);
+                foreach (UIElement child2 in child.Children)
+                    SetUIStatsForSize(child2, oldMult, newMult);
+            }
         }
 
         private static void SetScreenSize(Vector2 screenSize)

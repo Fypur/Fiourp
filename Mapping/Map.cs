@@ -56,6 +56,10 @@ namespace Fiourp
             BackgroundSystem.Update();
             MiddlegroundSystem.Update();
             ForegroundSystem.Update();
+
+            for (int i = Data.Entities.Count - 1; i >= 0; i--)
+                if (i < Data.Entities.Count && Data.Entities[i].Active)
+                    Data.Entities[i].LateUpdate();
         }
 
         public void Render()
@@ -110,6 +114,7 @@ namespace Fiourp
         public Entity Instantiate(Entity entity)
         {
             Data.Entities.Add(entity);
+            entity.Awake();
 
             if (entity is Solid)
                 Data.Solids.Add((Solid)entity);
@@ -127,7 +132,6 @@ namespace Fiourp
         public void Destroy(Entity entity)
         {
             entity.OnDestroy();
-
             Data.Entities.Remove(entity);
 
             if (entity is Solid)

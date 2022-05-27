@@ -166,6 +166,6 @@ namespace Fiourp
         }
 
         public void RemoveAllElements()
-            => ClearChildren();
+            => Children.Clear();
     }
 }
