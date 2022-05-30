@@ -12,8 +12,8 @@ namespace Fiourp
         public int CurrentIndex { get; protected set; }
         public int MaxValue;
 
-        protected TextBox fieldTextBox;
-        public TextBox valueTextBox;
+        public TextBox FieldTextBox;
+        protected TextBox ValueTextBox;
         protected Dictionary<int, Action> actions;
 
         public Switcher(Vector2 position, int width, int height, bool centered, string fieldName, int startValue, int numValues, Dictionary<int, Action> actions) : base(position, width, height, centered, new Sprite(Color.White))
@@ -22,8 +22,8 @@ namespace Fiourp
             MaxValue = numValues;
             this.actions = actions;
             
-            fieldTextBox = (TextBox)AddChild(new TextBox(fieldName, "LexendDeca", Pos, width / 2, height, Color.Black, 1, true));
-            valueTextBox = (TextBox)AddChild(new TextBox(CurrentIndex.ToString(), "LexendDeca", Pos + HalfSize.OnlyX(), width / 2, height, Color.Black, 1, true));
+            FieldTextBox = (TextBox)AddChild(new TextBox(fieldName, "LexendDeca", Pos, width / 2, height, Color.Black, 1, true));
+            ValueTextBox = (TextBox)AddChild(new TextBox(CurrentIndex.ToString(), "LexendDeca", Pos + HalfSize.OnlyX(), width / 2, height, Color.Black, 1, true));
         }
 
         public override void Update()
@@ -48,7 +48,7 @@ namespace Fiourp
             }
 
             CurrentIndex--;
-            valueTextBox.Text = CurrentIndex.ToString();
+            ValueTextBox.SetText(CurrentIndex.ToString());
             if (actions != null && actions.ContainsKey(CurrentIndex))
                 actions[CurrentIndex]?.Invoke();
             OnMove();
@@ -63,7 +63,7 @@ namespace Fiourp
             }
 
             CurrentIndex++;
-            valueTextBox.Text = CurrentIndex.ToString();
+            ValueTextBox.SetText(CurrentIndex.ToString());
             if (actions != null && actions.ContainsKey(CurrentIndex))
                 actions[CurrentIndex]?.Invoke();
             OnMove();

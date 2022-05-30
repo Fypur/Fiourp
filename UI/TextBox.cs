@@ -9,9 +9,10 @@ namespace Fiourp
 {
     public class TextBox : UIElement
     {
-        public string Text;
+        public string Text { get; private set; }
         public string FontID;
-        public float TextScale;
+        private float textScale;
+        public float TextScale { get => textScale / Options.DefaultUISizeMultiplier * Options.CurrentScreenSizeMultiplier; set => textScale = value; }
 
         public Color Color = Color.White;
 
@@ -23,12 +24,11 @@ namespace Fiourp
             : base(position, width, height, false, null)
         {
             FontID = fontID;
-            TextScale = fontSize;
+            textScale = fontSize;
             Text = GenerateText(text);
             CustomCenter = true;
             Centered = centered;
             Color = color;
-            Collider.DebugColor = Color.Cyan;
         }
 
         public TextBox(string text, string fontID, float timePerCharacter, Vector2 position, int width, int height, float fontSize = 3)
@@ -36,9 +36,14 @@ namespace Fiourp
         {
             CustomCenter = true;
             FontID = fontID;
-            TextScale = fontSize;
-            Collider.DebugColor = Color.Cyan;
+            textScale = fontSize;
             ProgressiveDraw(GenerateText(text), timePerCharacter);
+        }
+
+        public override void Awake()
+        {
+            Collider.DebugColor = Color.Cyan;
+            selectableField = false;
         }
 
         public void ProgressiveDraw(string text, float timePerCharacter, bool formattedText = false)

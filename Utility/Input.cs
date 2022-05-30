@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
@@ -31,7 +32,10 @@ namespace Fiourp
         public static ControlList RightControls = new ControlList(Keys.Right, Keys.D);
         public static ControlList UpControls = new ControlList(Keys.Up, Keys.W, Keys.Z);
         public static ControlList DownControls = new ControlList(Keys.Down, Keys.S);
-        public static ControlList Action1 = new ControlList(Keys.C, Keys.I, Keys.Space, Buttons.A);
+
+        public static ControlList UIAction1 = new ControlList(Keys.Enter, Buttons.A, Keys.C, Keys.Space, Keys.I);
+        public static ControlList UIActionBack = new ControlList(Keys.Escape, Buttons.B, Keys.X, Keys.O);
+        public static ControlList ButtonClear = new ControlList(Keys.V, Buttons.Y);
 
         public class State
         {
@@ -46,18 +50,52 @@ namespace Fiourp
             }
         }
 
-        public static void UpdateState() 
+        public static void UpdateState()
         {
             kbState = Keyboard.GetState();
             mouseState = Mouse.GetState();
             gamePadState = GamePad.GetState(1);
         }
 
-        public static void UpdateOldState() 
+        public static void UpdateOldState()
         {
             kbPreviousState = Keyboard.GetState();
             previousMouseState = Mouse.GetState();
             previousGamePadState = GamePad.GetState(PlayerIndex.One, GamePadDeadZone.Circular);
+        }
+
+        public static List<Control> GetPressedControls()
+        {
+            List<Control> controls = new();
+
+            if(kbState != kbPreviousState)
+            {
+                foreach (Keys key in kbState.GetPressedKeys())
+                {
+                    if (GetKeyDown(key))
+                        controls.Add(new Control(key));
+                }
+            }
+
+            if (mouseState != previousMouseState)
+            {
+                foreach (MouseButton button in Enum.GetValues<MouseButton>())
+                {
+                    if (GetMouseButtonDown(button))
+                        controls.Add(new Control(button));
+                }
+            }
+
+            if(gamePadState.PacketNumber != previousGamePadState.PacketNumber)
+            {
+                foreach (Buttons button in Enum.GetValues<Buttons>())
+                {
+                    if (GetButtonDown(button))
+                        controls.Add(new Control(button));
+                }
+            }
+
+            return controls;
         }
 
         public static bool GetKeyDown(Keys key)
@@ -122,14 +160,35 @@ namespace Fiourp
         }
     }
 
-    public class Control
+    public struct Control
     {
         public Keys? Key;
         public MouseButton? MouseButton;
         public Buttons? ControllerButton;
-        public Control(Keys key) { Key = key; }
-        public Control(MouseButton mouseButton) { MouseButton = mouseButton; }
-        public Control(Buttons controllerButton) { ControllerButton = controllerButton; }
+        public object Value 
+        {
+            get
+            {
+                if (Key != null) return Key;
+                else if (MouseButton != null)
+                    return MouseButton;
+                else return ControllerButton;
+            }
+            set
+            {
+                if (value is Keys key)
+                { Key = key; MouseButton = null; ControllerButton = null; }
+                else if (value is MouseButton button)
+                { MouseButton = button; ControllerButton = null; Key = null; }
+                else if(value is Buttons cbutton)
+                { ControllerButton = cbutton; Key = null; MouseButton = null; }
+            }
+        }
+
+        public Control() { Key = null; MouseButton = null; ControllerButton = null; }
+        public Control(Keys key) : this() { Key = key; }
+        public Control(MouseButton mouseButton) : this() { MouseButton = mouseButton; }
+        public Control(Buttons controllerButton) : this() { ControllerButton = controllerButton; }
 
         public bool IsDown()
         {
@@ -163,9 +222,25 @@ namespace Fiourp
                 return Input.GetButtonUp(b);
             return false;
         }
+
+        public override string ToString()
+        {
+            if (Key != null)
+                return Key.ToString();
+            if (MouseButton != null)
+                return "Mouse " + MouseButton.ToString();
+            if(ControllerButton != null)
+                return "Controller " + ControllerButton.ToString();
+#if DEBUG
+            throw new Exception("Control To String not outputing anything: Key, MouseButton and ControllerButton are null");
+#endif
+#if RELEASE
+            return "";
+#endif
+        }
     }
 
-    public class ControlList
+    public class ControlList : IEnumerable<Control>
     {
         public List<Control> Controls;
         public ControlList(params Control[] controls) { Controls = new List<Control>(controls); }
@@ -187,6 +262,11 @@ namespace Fiourp
 #endif
             }
         }
+
+        public int Count => Controls.Count;
+
+        public void Clear()
+            => Controls.Clear();
 
         public bool IsDown()
         {
@@ -232,5 +312,30 @@ namespace Fiourp
 
             return returned;
         }
+
+        public void Add(Control control)
+            => Controls.Add(control);
+
+        public void Remove(Control control)
+            => Controls.Add(control);
+
+        public string GetAllControlNames()
+            => GetAllControlNames(", ");
+
+        public string GetAllControlNames(string inBetween)
+        {
+            string names = "";
+            foreach (Control c in Controls)
+                names += c.ToString() + inBetween;
+            if (names.Length > 2)
+                names = names[0..(names.Length - inBetween.Length)];
+            return names;
+        }
+
+        public IEnumerator GetEnumerator()
+            => Controls.GetEnumerator();
+
+        IEnumerator<Control> IEnumerable<Control>.GetEnumerator()
+            => Controls.GetEnumerator();
     }
 }

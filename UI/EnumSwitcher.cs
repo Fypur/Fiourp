@@ -16,7 +16,7 @@ namespace Fiourp
         {
             Values = values;
             CurrentValue = startValue;
-            valueTextBox.Text = CurrentValue.ToString();
+            ValueTextBox.SetText(CurrentValue.ToString());
         }
 
         public static int GetParams(T startValue, Dictionary<T, Action> enumActions, out T[] values, out Dictionary<int, Action> intActions)
@@ -51,7 +51,7 @@ namespace Fiourp
 
         public override void OnMove()
         {
-            valueTextBox.Text = CurrentValue.ToString();
+            ValueTextBox.SetText(CurrentValue.ToString());
         }
     }
 }

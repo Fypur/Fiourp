@@ -14,19 +14,23 @@ namespace Fiourp
         public static int DefaultUISizeMultiplier = 4;
         public static int CurrentScreenSizeMultiplier = DefaultUISizeMultiplier;
         private static Vector2 RenderTargetSize => Engine.RenderTarget.Bounds.Size.ToVector2();
+        private static Vector2 resolutionBeforeFullScreen;
+
         public static void FullScreen()
         {
             GraphicsDeviceManager graphics = Engine.Graphics;
-            if (Engine.ScreenSize == CurrentResolution)
+            
+            if (!Engine.Graphics.IsFullScreen)
             {
-                SetScreenSize(new Vector2(graphics.GraphicsDevice.Adapter.CurrentDisplayMode.Width, graphics.GraphicsDevice.Adapter.CurrentDisplayMode.Height));
+                resolutionBeforeFullScreen = CurrentResolution;
+                SetSize((int)(graphics.GraphicsDevice.Adapter.CurrentDisplayMode.Width / RenderTargetSize.X));
                 graphics.ToggleFullScreen();
             }
 
             else
             {
                 graphics.ToggleFullScreen();
-                SetScreenSize(CurrentResolution);
+                SetSize((int)(resolutionBeforeFullScreen.X / RenderTargetSize.X));
             }
         }
 

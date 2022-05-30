@@ -29,7 +29,7 @@ namespace Fiourp
 
             if (Selected)
             {
-                if (Input.Action1.IsDown() || Input.GetKeyDown(Microsoft.Xna.Framework.Input.Keys.Enter))
+                if (Input.UIAction1.IsDown() || Input.GetKeyDown(Microsoft.Xna.Framework.Input.Keys.Enter))
                 {
                     OnClick();
                 }

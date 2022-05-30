@@ -14,7 +14,21 @@ namespace Fiourp
 
         public bool Selected;
         public UIElement Left, Right, Up, Down;
-        public bool Selectable = true;
+
+        protected bool selectableField = true;
+        public bool Selectable { get => selectableField; 
+            set 
+            { 
+                if (value != selectableField) 
+                {
+                    selectableField = value;
+                    if(value)
+                        OnAddSelectable();
+                    else
+                        OnRemoveSelectable();
+                }
+            }
+        }
 
         public Vector2 CenteredPos
         {
@@ -112,12 +126,24 @@ namespace Fiourp
         public virtual void OnSelected()
         {
             AddComponent(new Coroutine(Coroutine.WaitFramesThen(1, () => Selected = true)));
-            Sprite.Color = new Color(Sprite.Color.ToVector3() - new Color(20, 20, 20).ToVector3());
+            if(Sprite != null)
+                Sprite.Color = new Color(Sprite.Color.ToVector3() - new Color(20, 20, 20).ToVector3());
         }
         public virtual void OnLeaveSelected() 
         {
             Selected = false;
-            Sprite.Color = new Color(Sprite.Color.ToVector3() + new Color(20, 20, 20).ToVector3());
+            if (Sprite != null)
+                Sprite.Color = new Color(Sprite.Color.ToVector3() + new Color(20, 20, 20).ToVector3());
+        }
+
+        public virtual void OnAddSelectable()
+        {
+            Sprite.Color = new Color(Sprite.Color.ToVector3() + new Color(100, 100, 100).ToVector3());
+        }
+
+        public virtual void OnRemoveSelectable()
+        {
+            Sprite.Color = new Color(Sprite.Color.ToVector3() - new Color(100, 100, 100).ToVector3());
         }
 
         public static void MakeList(List<UIElement> elements, bool vertical)

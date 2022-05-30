@@ -12,7 +12,7 @@ namespace Fiourp
         public bool CurrentValue { get => CurrentIndex == 2; set => CurrentIndex = value ? 1 : 0; }
         public BoolSwitcher(Vector2 position, int width, int height, bool centered, string fieldName, bool startValue, Action onOn, Action onOff) : base(position, width, height, centered, fieldName, startValue ? 2 : 1, 4, new() { { 0, onOn }, { 1, onOff }, { 2, onOn }, { 3, onOff } })
         {
-            valueTextBox.Text = startValue ? "On" : "Off";
+            ValueTextBox.SetText(startValue ? "On" : "Off");
         }
 
         public override void Update()
@@ -32,7 +32,7 @@ namespace Fiourp
 
         public override void OnMove()
         {
-            valueTextBox.Text = CurrentValue ? "On" : "Off";
+            ValueTextBox.SetText(CurrentValue ? "On" : "Off");
         }
     }
 }
