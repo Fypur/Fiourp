@@ -25,8 +25,7 @@ namespace Fiourp
 
         public static Vector2 ScreenMousePos { get => mouseState.Position.ToVector2(); }
         public static Vector2 MousePos { get => Engine.Cam.ScreenToWorldPosition(Engine.Cam.ScreenToRenderTargetPosition(mouseState.Position.ToVector2())); }
-        public static Vector2 MousePosNoRenderTarget { get => Input.MousePos
-                * Engine.Cam.RenderTargetScreenSizeCoef; }
+        public static Vector2 MousePosNoRenderTarget { get => MousePos * Engine.Cam.RenderTargetScreenSizeCoef; }
 
         public static ControlList LeftControls = new ControlList(Keys.Left, Keys.A, Keys.Q);
         public static ControlList RightControls = new ControlList(Keys.Right, Keys.D);

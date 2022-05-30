@@ -11,31 +11,47 @@ namespace Fiourp
         private bool hasChanged;
         public bool FollowsPlayer;
         public bool Locked;
+        public bool RenderTargetMode { get => Size == new Vector2(Engine.RenderTarget.Width, Engine.RenderTarget.Height);
+            set
+            {
+                if (value) Size = new Vector2(Engine.RenderTarget.Width, Engine.RenderTarget.Height);
+                else Size = Engine.ScreenSize;
+            }
+        }
 
-        private Vector2 pos;
         public new Vector2 Pos
         {
-            get => pos;
+            get => base.Pos;
+            set
+            {
+                base.Pos = InBoundsPos(value, out bool changed) - Size / 2;
+                hasChanged = changed;
+            }
+        }
+
+        public Vector2 CenteredPos
+        {
+            get => base.Pos + Size / 2;
 
             set
             {
-                pos = InBoundsPos(value, out bool changed);
-                if(changed) hasChanged = true;
+                base.Pos = InBoundsPos(value, out bool changed) - Size / 2;
+                hasChanged = changed;
             }
         }
 
         public Vector2 NoBoundsPos
         {
-            get => pos;
+            get => base.Pos;
             set
             {
-                if(pos == value) return;
-                pos = value;
+                if(base.Pos == value) return;
+                base.Pos = value;
                 hasChanged = true;
             }
         }
 
-        public override Vector2 ExactPos { get => Pos; set => Pos = value; }
+        public override Vector2 ExactPos { get => CenteredPos; set => CenteredPos = value; }
 
         private float rot;
         public float Rotation
@@ -67,10 +83,9 @@ namespace Fiourp
                 if (hasChanged)
                 {
                     hasChanged = false;
-                    return view = Matrix.CreateTranslation(new Vector3(-pos, 0.0f)) *
+                    return view = Matrix.CreateTranslation(new Vector3(-base.Pos, 0.0f)) *
                            Matrix.CreateScale(ZoomLevel) *
-                           Matrix.CreateRotationZ(MathHelper.ToRadians(Rotation)) *
-                           Matrix.CreateTranslation(new Vector3(new Vector2(Engine.RenderTarget.Width / 2, Engine.RenderTarget.Height / 2), 0.0f));
+                           Matrix.CreateRotationZ(MathHelper.ToRadians(Rotation));
                 }
                 else
                     return view;
@@ -85,7 +100,7 @@ namespace Fiourp
         public float RenderTargetScreenSizeCoef { get => Engine.ScreenSize.X / Engine.RenderTarget.Width; }
 
         public Camera(Vector2 position, float rotation, float zoomLevel, Rectangle? bounds = null)
-            : base(position)
+            : base(position, (int)Engine.ScreenSize.X, (int)Engine.ScreenSize.Y, null)
         {
             Engine.Cam = this;
 
@@ -106,31 +121,31 @@ namespace Fiourp
         }
 
         public Vector2 Follow(Entity actor, float xSmooth, float ySmooth, Rectangle strictFollowBounds)
-            => Pos = FollowedPos(actor, xSmooth, ySmooth, strictFollowBounds, Bounds);
+            => CenteredPos = FollowedPos(actor, xSmooth, ySmooth, strictFollowBounds, Bounds);
 
         public Vector2 FollowedPos(Entity followed, float xSmooth, float ySmooth, Rectangle strictFollowBounds, Rectangle bounds)
         {
-            strictFollowBounds.Location += Pos.ToPoint();
+            strictFollowBounds.Location += CenteredPos.ToPoint();
             Vector2 inBoundsActorPos = InBoundsPos(followed.Pos, bounds);
 
             if (strictFollowBounds.Contains(followed.Pos))
-                return new Vector2(MathHelper.Lerp(Pos.X, inBoundsActorPos.X, Engine.Deltatime * xSmooth),
-                    MathHelper.Lerp(Pos.Y, inBoundsActorPos.Y, Engine.Deltatime * ySmooth));
+                return new Vector2(MathHelper.Lerp(CenteredPos.X, inBoundsActorPos.X, Engine.Deltatime * xSmooth),
+                    MathHelper.Lerp(CenteredPos.Y, inBoundsActorPos.Y, Engine.Deltatime * ySmooth));
             else
-                return new Vector2(MathHelper.Lerp(Pos.X, inBoundsActorPos.X, Engine.Deltatime * xSmooth),
-                    MathHelper.Lerp(Pos.Y, inBoundsActorPos.Y, Engine.Deltatime * ySmooth * 2.5f));
+                return new Vector2(MathHelper.Lerp(CenteredPos.X, inBoundsActorPos.X, Engine.Deltatime * xSmooth),
+                    MathHelper.Lerp(CenteredPos.Y, inBoundsActorPos.Y, Engine.Deltatime * ySmooth * 2.5f));
         }
 
         public void Move(Vector2 offset, float time, Func<float, float> easingFunction = null)
         {
-            Vector2 initPos = Pos;
-            Vector2 newPos = Pos + offset;
+            Vector2 initPos = CenteredPos;
+            Vector2 newPos = CenteredPos + offset;
             AddComponent(new Timer(time, true, (t) =>
 
-                Pos = Vector2.Lerp(initPos, newPos,
+                CenteredPos = Vector2.Lerp(initPos, newPos,
                      (easingFunction ?? Ease.None).Invoke(Ease.Reverse(t.Value / t.MaxValue))),
 
-                () => Pos = newPos));
+                () => CenteredPos = newPos));
         }
 
         public void LightShake()
@@ -149,14 +164,14 @@ namespace Fiourp
 
             if (Bounds == Rectangle.Empty)
             {
-                if(Pos != position)
+                if(CenteredPos != position)
                     changed = true;
                 return position;
             }
 
             if ((Bounds.Contains(position - Engine.ScreenSize / 2 / RenderTargetScreenSizeCoef) && Bounds.Contains(position + Engine.ScreenSize / 2 / RenderTargetScreenSizeCoef)) || Bounds == Rectangle.Empty)
             {
-                if(position != Pos)
+                if(position != CenteredPos)
                     changed = true;
 
                 return position;
@@ -164,7 +179,7 @@ namespace Fiourp
 
             Vector2 correctedPos = InBoundsPos(position);
 
-            if (Pos != correctedPos)
+            if (CenteredPos != correctedPos)
                 changed = true;
 
             return correctedPos;
@@ -231,18 +246,18 @@ namespace Fiourp
         }
 
         public void MoveTo(Vector2 position, float time, Func<float, float> easingFunction = null)
-            => Move(position - Pos, time, easingFunction);
+            => Move(position - CenteredPos, time, easingFunction);
 
         public void SetBoundaries(Rectangle bounds)
         {
             this.Bounds = bounds;
-            Pos = Pos;
+            CenteredPos = CenteredPos;
         }
 
         public void SetBoundaries(Vector2 position, Vector2 size)
         {
             Bounds = new Rectangle(position.ToPoint(), size.ToPoint());
-            Pos = Pos;
+            CenteredPos = CenteredPos;
         }
 
         public Vector2 WorldToScreenPosition(Vector2 position)
