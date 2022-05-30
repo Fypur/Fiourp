@@ -24,7 +24,7 @@ namespace Fiourp
             get => base.Pos;
             set
             {
-                base.Pos = InBoundsPos(value, out bool changed) - Size / 2;
+                base.Pos = InBoundsPos(value + Size / 2, out bool changed) - Size / 2;
                 hasChanged = changed;
             }
         }
