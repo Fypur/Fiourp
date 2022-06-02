@@ -15,6 +15,7 @@ namespace Fiourp
         public TextBox FieldTextBox;
         protected TextBox ValueTextBox;
         protected Dictionary<int, Action> actions;
+        
 
         public Switcher(Vector2 position, int width, int height, bool centered, string fieldName, int startValue, int numValues, Dictionary<int, Action> actions) : base(position, width, height, centered, new Sprite(Color.White))
         {
@@ -73,8 +74,16 @@ namespace Fiourp
 
         public virtual void NotPossible()
         {
-            //TODO: Change this to shaking or smth
-            AddComponent(new Shaker(0.2f, 0.2f, null, false));
+            if (!HasComponent<Shaker>())
+            {
+                AddComponent(new Shaker(0.2f, (Size.X > Size.Y ? Size.X : Size.Y) * 0.005f, null, true));
+            }
+        }
+
+        public override void OnSizeChange()
+        {
+            base.OnSizeChange();
+            //RemoveComponent<Shaker>();
         }
     }
 }

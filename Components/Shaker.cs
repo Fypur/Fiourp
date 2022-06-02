@@ -11,10 +11,11 @@ namespace Fiourp
     public class Shaker : Component
     {
         public float Intensity;
+        public Func<Vector2> UpdatedInitPos;
+
         public bool ShakeSprite;
         private float Time;
         private float timeMaxValue;
-        public Func<Vector2> UpdatedInitPos;
 
         private Vector2 initPos;
 
@@ -39,50 +40,69 @@ namespace Fiourp
         {
             if (ShakeSprite)
             {
+                void MoveSpriteBy(Entity entity, Vector2 offset)
+                {
+                    if(entity.Sprite != null)
+                        entity.Sprite.Offset += offset;
+                    foreach(Entity child in entity.Children)
+                        MoveSpriteBy(child, offset);
+                }
+
                 while (Time > 0)
                 {
                     initPos = UpdatedInitPos == null ? initPos : UpdatedInitPos();
                     Vector2 random = new Vector2(Rand.NextFloat(-1, 1), Rand.NextFloat(-1, 1)) * Intensity;
                     random = Vector2.Clamp(ParentEntity.Sprite.Offset + random, initPos - new Vector2(Intensity), initPos + new Vector2(Intensity)) - ParentEntity.Sprite.Offset;
 
-                    ParentEntity.Sprite.Offset += random;
+                    MoveSpriteBy(ParentEntity, random);
 
                     Time -= Engine.Deltatime;
                     yield return 0;
                 }
 
-                ParentEntity.Sprite.Offset = initPos;
+                MoveSpriteBy(ParentEntity, initPos - ParentEntity.Sprite.Offset);
+                //ParentEntity.Sprite.Offset = initPos;
                 Destroy();
             }
             else
             {
+                void MoveEntityBy(Vector2 move)
+                {
+                    if (ParentEntity is MovingSolid s)
+                        s.Move(move);
+                    else if (ParentEntity is Actor a)
+                        a.Move(move);
+                    else if (ParentEntity is Camera cam)
+                        cam.NoBoundsPos += move;
+                    else
+                        ParentEntity.Pos += move;
+                }
+
+                void MoveEntityTo(Vector2 pos)
+                {
+                    if (ParentEntity is MovingSolid so)
+                        so.MoveTo(pos);
+                    else if (ParentEntity is Actor ac)
+                        ac.MoveTo(pos);
+                    else if (ParentEntity is Camera cam)
+                        cam.NoBoundsPos = pos;
+                    else
+                        ParentEntity.Pos = pos;
+                }
+
                 while (Time > 0)
                 {
                     initPos = UpdatedInitPos == null ? initPos : UpdatedInitPos();
                     Vector2 random = new Vector2(Rand.NextFloat(-1, 1), Rand.NextFloat(-1, 1)) * Intensity;
                     random = Vector2.Clamp(ParentEntity.ExactPos + random, initPos - new Vector2(Intensity) * (Time / timeMaxValue), initPos + new Vector2(Intensity) * (Time / timeMaxValue)) - ParentEntity.ExactPos;
 
-                    if (ParentEntity is MovingSolid s)
-                        s.Move(random);
-                    else if (ParentEntity is Actor a)
-                        a.Move(random);
-                    else if (ParentEntity is Camera cam)
-                        cam.NoBoundsPos += random;
-                    else
-                        ParentEntity.Pos += random;
-
+                    MoveEntityBy(random);
                     Time -= Engine.Deltatime;
                     yield return 0;
                 }
 
-                if (ParentEntity is MovingSolid so)
-                    so.MoveTo(initPos);
-                else if (ParentEntity is Actor ac)
-                    ac.MoveTo(initPos);
-                else if(ParentEntity is Camera cam)
-                    cam.NoBoundsPos = initPos;
-                else
-                    ParentEntity.Pos = initPos;
+                MoveEntityTo(initPos);
+
                 Destroy();
             }
         }

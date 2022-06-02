@@ -12,6 +12,8 @@ namespace Fiourp
     {
         public static Vector2 CurrentResolution;
         public static int DefaultUISizeMultiplier = 4;
+        public static Vector2 DefaultScreenSize => RenderTargetSize * DefaultUISizeMultiplier;
+
         public static int CurrentScreenSizeMultiplier = DefaultUISizeMultiplier;
         private static Vector2 RenderTargetSize => Engine.RenderTarget.Bounds.Size.ToVector2();
         private static Vector2 resolutionBeforeFullScreen;
@@ -54,15 +56,12 @@ namespace Fiourp
                 element.Pos = element.Pos / oldMult * newMult;
                 element.PreviousPos = element.Pos;
                 element.Size = element.Size / oldMult * newMult;
+                element.OnSizeChange();
             }
 
             SetStats(element, oldMult, newMult);
             foreach (UIElement child in element.Children)
-            {
-                SetStats(child, oldMult, newMult);
-                foreach (UIElement child2 in child.Children)
-                    SetUIStatsForSize(child2, oldMult, newMult);
-            }
+                SetUIStatsForSize(child, oldMult, newMult);
         }
 
         private static void SetScreenSize(Vector2 screenSize)

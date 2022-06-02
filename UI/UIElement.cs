@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Fiourp
 {
-    public abstract class UIElement : Entity
+    public class UIElement : Entity
     {
         public bool Overlay;
         public bool Centered;
@@ -22,10 +22,30 @@ namespace Fiourp
                 if (value != selectableField) 
                 {
                     selectableField = value;
-                    if(value)
+                    if (value)
+                    {
+                        if(Up != null)
+                            Up.Down = this;
+                        if(Down != null)
+                            Down.Up = this;
+                        if(Left != null)
+                            Left.Right = this;
+                        if(Right != null)
+                            Right.Left = this;
                         OnAddSelectable();
+                    }
                     else
+                    {
+                        if (Up != null)
+                            Up.Down = Down;
+                        if (Down != null)
+                            Down.Up = Up;
+                        if (Left != null)
+                            Left.Right = Right;
+                        if (Right != null)
+                            Right.Left = Left;
                         OnRemoveSelectable();
+                    }
                 }
             }
         }
@@ -76,31 +96,33 @@ namespace Fiourp
 
         public UIElement(Vector2 position, int width, int height, Sprite sprite) : base(position, width, height, sprite)
         {
-            Pos = Pos / Options.DefaultUISizeMultiplier * Options.CurrentScreenSizeMultiplier;
-            PreviousPos = Pos;
-            Size = Size / Options.DefaultUISizeMultiplier * Options.CurrentScreenSizeMultiplier;
-
             RemoveComponent(Collider);
             Centered = false;
         }
 
         public UIElement(Vector2 position, int width, int height, bool centered, Sprite sprite) : base(position, width, height, sprite)
         {
-            Pos = Pos / Options.DefaultUISizeMultiplier * Options.CurrentScreenSizeMultiplier;
-            PreviousPos = Pos;
-            Size = Size / Options.DefaultUISizeMultiplier * Options.CurrentScreenSizeMultiplier;
-
             RemoveComponent(Collider);
             Centered = centered;
             if (centered)
-            {
                 CenteredPos = Pos;
-            }
+        }
+
+        public override void Awake()
+        {
+            base.Awake();
+
+            Pos = Pos / Options.DefaultUISizeMultiplier * Options.CurrentScreenSizeMultiplier;
+            PreviousPos = Pos;
+            Size = Size / Options.DefaultUISizeMultiplier * Options.CurrentScreenSizeMultiplier;
         }
 
         public override void Update()
         {
             base.Update();
+
+            /*if (Selectable && Active && Visible && Bounds.Contains(Input.MousePosNoRenderTarget))
+                Selected = true;*/
 
             if (Selected)
             {
@@ -145,6 +167,8 @@ namespace Fiourp
         {
             Sprite.Color = new Color(Sprite.Color.ToVector3() - new Color(100, 100, 100).ToVector3());
         }
+
+        public virtual void OnSizeChange() { }
 
         public static void MakeList(List<UIElement> elements, bool vertical)
         {

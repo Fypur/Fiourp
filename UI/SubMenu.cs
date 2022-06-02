@@ -9,13 +9,10 @@ namespace Fiourp
 {
     public class SubMenu : UIElement
     {
-        public new List<UIElement> Children;
-        public SubMenu Parent;
         public bool Vertical;
 
-        public SubMenu(SubMenu parentSubMenu, Vector2 position, int width, int height, bool vertical) : base(position, width, height, null)
+        public SubMenu(Vector2 position, int width, int height, bool vertical) : base(position, width, height, null)
         {
-            Parent = parentSubMenu;
             Vertical = vertical;
         }
 
@@ -27,51 +24,55 @@ namespace Fiourp
                 return;
 
             if (Input.UIActionBack.IsDown())
-                Parent.Instantiate();
+                OnBack();
         }
 
         public virtual List<UIElement> GetElements() { return new(); }
+
+        public virtual void OnBack() { }
+
         public void RefreshElements()
         {
-            Children = GetElements();
+            Children.Clear();
+            AddChildren(new List<Entity>(GetElements()));
         }
 
-        public void AddElement(UIElement element)
+        public void AddElementAtEnd(UIElement element)
         {
             Children.Add(element);
             if (Children.Count > 1)
             {
+                UIElement child = (UIElement)Children[Children.Count - 1];
                 if (Vertical)
                 {
-                    Children[0].Down = element;
-                    element.Up = Children[0];
+                    child.Down = element;
+                    element.Up = child;
                 }
                 else
                 {
-                    Children[0].Right = element;
-                    element.Left = Children[0];
+                    child.Right = element;
+                    element.Left = child;
                 }
             }
         }
 
-        public void SwitchTo(SubMenu other)
+        public void SwitchTo(SubMenu subMenu)
         {
             SelfDestroy();
-            other.Instantiate();
+            subMenu.Instantiate();
         }
 
         public void Instantiate()
         {
+            Engine.CurrentMap.Instantiate(this);
             RefreshElements();
-            bool doOnce = true;
-            foreach(UIElement ui in Children)
+            foreach (UIElement ui in Children)
             {
-                if (doOnce && ui.Selectable)
+                if (ui.Selectable)
                 {
                     ui.Selected = true;
-                    doOnce = false;
+                    break;
                 }
-                Engine.CurrentMap.Instantiate(ui);
             }
         }
     }

@@ -25,7 +25,8 @@ namespace Fiourp
             set
             {
                 base.Pos = InBoundsPos(value + Size / 2, out bool changed) - Size / 2;
-                hasChanged = changed;
+                if (changed)
+                    hasChanged = true;
             }
         }
 
@@ -36,22 +37,23 @@ namespace Fiourp
             set
             {
                 base.Pos = InBoundsPos(value, out bool changed) - Size / 2;
-                hasChanged = changed;
+                if(changed)
+                    hasChanged = true;
             }
         }
 
         public Vector2 NoBoundsPos
         {
-            get => base.Pos;
+            get => base.Pos + Size / 2;
             set
             {
-                if(base.Pos == value) return;
-                base.Pos = value;
+                if(base.Pos - Size / 2 == value) return;
+                base.Pos = value - Size / 2;
                 hasChanged = true;
             }
         }
 
-        public override Vector2 ExactPos { get => CenteredPos; set => CenteredPos = value; }
+        public override Vector2 ExactPos { get => base.Pos + Size / 2; set => CenteredPos = value; }
 
         private float rot;
         public float Rotation
@@ -116,9 +118,13 @@ namespace Fiourp
         {
             base.Update();
 
+            Debug.LogUpdate(Bounds);
             if (Engine.Player != null && FollowsPlayer && !Locked && (!HasComponent(out Timer timer) || timer.Value <= 0) && !HasComponent<Shaker>())
                 Follow(Engine.Player, 3, 3, StrictFollowBounds);
         }
+
+        public void Refresh()
+            => hasChanged = true;
 
         public Vector2 Follow(Entity actor, float xSmooth, float ySmooth, Rectangle strictFollowBounds)
             => CenteredPos = FollowedPos(actor, xSmooth, ySmooth, strictFollowBounds, Bounds);

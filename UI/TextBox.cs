@@ -42,6 +42,7 @@ namespace Fiourp
 
         public override void Awake()
         {
+            base.Awake();
             Collider.DebugColor = Color.Cyan;
             selectableField = false;
         }
@@ -127,22 +128,8 @@ namespace Fiourp
                 else
                 {
                     Vector2 textSize = Font.MeasureString(Text);
-
-                    Drawing.DrawString(Text, Pos + HalfSize,
-                        Color,
-                        DataManager.Fonts[FontID]["Normal"],
-                        textSize / 2,
-                        TextScale, 0);
-                }
-
-
-
-                    /*Drawing.DrawString(Text, Pos, Color, DataManager.Fonts[FontID]["Normal"], Input.MousePosNoRenderTarget - Pos, TextScale, 0);*/
-                    //-HalfSize + measurestring / 2
-                    /* Pos= new Vector2(Size.X + ((Size.Width - Font.MeasureString(Text).X) / 2), Size.Y + ((Size.Height - Font.MeasureString(Text).Y)) / 2)
-                     Origin= new Vector2((Font.MeasureString(Text).X / 2 * scale - Font.MeasureString(Text).X / 2), (Font.MeasureString(Text).Y / 2 * scale - Font.MeasureString(Text).Y / 2)), scale);*/
-                
-                    
+                    Drawing.DrawString(Text, Pos + HalfSize, Color, DataManager.Fonts[FontID]["Normal"], textSize / 2, TextScale, 0);
+                }        
             }
             if (Debug.DebugMode)
                 Drawing.DrawEdge(new Rectangle(Pos.ToPoint(), Size.ToPoint()), 1, Color.Blue);

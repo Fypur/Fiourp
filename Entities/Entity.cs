@@ -103,9 +103,6 @@ namespace Fiourp
                 if (i >= Children.Count)
                     return;
 
-                if(Pos - PreviousPos != Vector2.Zero)
-                { }
-
                 Children[i].Pos += Pos - PreviousPos;
                 if (Children[i].Active)
                     Children[i].Update();
@@ -136,10 +133,6 @@ namespace Fiourp
                 if(Children[i].Active && Children[i].Tag != Tags.UI)
                     Children[i].Render();
 
-            for (int i = Children.Count - 1; i >= 0; i--)
-                if (Children[i].Active && Children[i].Tag != Tags.UI)
-                    Children[i].Render();
-
             if (Debug.DebugMode)
                 Collider?.Render();
         }
@@ -147,7 +140,7 @@ namespace Fiourp
         public void UIChildRender()
         {
             for (int i = Children.Count - 1; i >= 0; i--)
-                if (Children[i].Active && Children[i] is UIElement)
+                if (Children[i].Active && Children[i].Tag == Tags.UI)
                 {
                     Children[i].Render();
                     Children[i].UIChildRender();
@@ -176,10 +169,10 @@ namespace Fiourp
 
         public void RemoveComponent<T>() where T : Component
         {
-            foreach(Component component in Components)
-                if (component is T)
+            for (int i = Components.Count - 1; i >= 0; i--)
+                if (Components[i] is T)
                 {
-                    RemoveComponent(component);
+                    RemoveComponent(Components[i]);
                 }
         }
 
@@ -259,10 +252,7 @@ namespace Fiourp
         public void AddChildren(List<Entity> children)
         {
             foreach(Entity child in children)
-            {
                 AddChild(child);
-                child.Awake();
-            }
         }
 
         public void RemoveChild(Entity child)
