@@ -97,7 +97,7 @@ namespace Fiourp
                 if (word.Contains('\n'))
                     lineSize = wordSize;
 
-                if (lineSize > Width)
+                if (lineSize > Width && newText != "")
                 {
                     newText += "\n";
                     lineSize = wordSize;
@@ -128,7 +128,7 @@ namespace Fiourp
                 else
                 {
                     Vector2 textSize = Font.MeasureString(Text);
-                    Drawing.DrawString(Text, Pos + HalfSize, Color, DataManager.Fonts[FontID]["Normal"], textSize / 2, TextScale, 0);
+                    Drawing.DrawString(Text, Pos + HalfSize, Color, Font, textSize / 2, TextScale, 0);
                 }        
             }
             if (Debug.DebugMode)

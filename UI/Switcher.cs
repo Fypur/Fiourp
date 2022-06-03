@@ -10,19 +10,33 @@ namespace Fiourp
     public class Switcher : UIElement
     {
         public int CurrentIndex { get; protected set; }
+        public int MinValue = 0;
         public int MaxValue;
 
         public TextBox FieldTextBox;
         protected TextBox ValueTextBox;
-        protected Dictionary<int, Action> actions;
+
+        protected Dictionary<int, Action> Actions;
+        protected Action<int> Action;
         
 
         public Switcher(Vector2 position, int width, int height, bool centered, string fieldName, int startValue, int numValues, Dictionary<int, Action> actions) : base(position, width, height, centered, new Sprite(Color.White))
         {
             CurrentIndex = startValue;
             MaxValue = numValues;
-            this.actions = actions;
+            this.Actions = actions;
             
+            FieldTextBox = (TextBox)AddChild(new TextBox(fieldName, "LexendDeca", Pos, width / 2, height, Color.Black, 1, true));
+            ValueTextBox = (TextBox)AddChild(new TextBox(CurrentIndex.ToString(), "LexendDeca", Pos + HalfSize.OnlyX(), width / 2, height, Color.Black, 1, true));
+        }
+
+        public Switcher(Vector2 position, int width, int height, bool centered, string fieldName, int startValue, int minValue, int maxValue, Action<int> action) : base(position, width, height, centered, new Sprite(Color.White))
+        {
+            CurrentIndex = startValue;
+            MinValue = minValue;
+            MaxValue = maxValue;
+            Action = action;
+
             FieldTextBox = (TextBox)AddChild(new TextBox(fieldName, "LexendDeca", Pos, width / 2, height, Color.Black, 1, true));
             ValueTextBox = (TextBox)AddChild(new TextBox(CurrentIndex.ToString(), "LexendDeca", Pos + HalfSize.OnlyX(), width / 2, height, Color.Black, 1, true));
         }
@@ -42,7 +56,7 @@ namespace Fiourp
 
         public virtual void GoLeft()
         {
-            if (CurrentIndex <= 0)
+            if (CurrentIndex <= MinValue)
             {
                 NotPossible();
                 return;
@@ -50,8 +64,9 @@ namespace Fiourp
 
             CurrentIndex--;
             ValueTextBox.SetText(CurrentIndex.ToString());
-            if (actions != null && actions.ContainsKey(CurrentIndex))
-                actions[CurrentIndex]?.Invoke();
+            if (Actions != null && Actions.ContainsKey(CurrentIndex))
+                Actions[CurrentIndex]?.Invoke();
+            Action?.Invoke(CurrentIndex);
             OnMove();
         }
 
@@ -65,8 +80,9 @@ namespace Fiourp
 
             CurrentIndex++;
             ValueTextBox.SetText(CurrentIndex.ToString());
-            if (actions != null && actions.ContainsKey(CurrentIndex))
-                actions[CurrentIndex]?.Invoke();
+            if (Actions != null && Actions.ContainsKey(CurrentIndex))
+                Actions[CurrentIndex]?.Invoke();
+            Action?.Invoke(CurrentIndex);
             OnMove();
         }
 
