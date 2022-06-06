@@ -9,9 +9,9 @@ namespace Fiourp
 {
     public class TextBox : UIElement
     {
-        public string Text { get; private set; }
+        public string Text { get; protected set; }
         public string FontID;
-        private float textScale;
+        protected float textScale;
         public float TextScale { get => textScale / Options.DefaultUISizeMultiplier * Options.CurrentScreenSizeMultiplier; set => textScale = value; }
 
         public Color Color = Color.White;
@@ -20,7 +20,7 @@ namespace Fiourp
 
         public enum Style { Normal, Bold, Italic }
 
-        public TextBox(string text, string fontID, Vector2 position, int width, int height, Color color, float fontSize = 3, bool centered = false)
+        public TextBox(string text, string fontID, Vector2 position, int width, int height, float fontSize, Color color, bool centered = false)
             : base(position, width, height, false, null)
         {
             FontID = fontID;
@@ -31,50 +31,11 @@ namespace Fiourp
             Color = color;
         }
 
-        public TextBox(string text, string fontID, float timePerCharacter, Vector2 position, int width, int height, float fontSize = 3)
-            : base(position, width, height, null)
-        {
-            CustomCenter = true;
-            FontID = fontID;
-            textScale = fontSize;
-            ProgressiveDraw(GenerateText(text), timePerCharacter);
-        }
-
         public override void Awake()
         {
             base.Awake();
             Collider.DebugColor = Color.Cyan;
             selectableField = false;
-        }
-
-        public void ProgressiveDraw(string text, float timePerCharacter, bool formattedText = false)
-            => AddComponent(new Coroutine(TextDraw(formattedText ? text : GenerateText(text), timePerCharacter)));
-
-        public void ProgressiveRemove(float timePerCharacter)
-            => AddComponent(new Coroutine(TextRemove(timePerCharacter)));
-
-        public void StopAllCoroutines()
-        {
-            foreach (Coroutine c in GetComponents<Coroutine>())
-                RemoveComponent(c);
-        }
-
-        private IEnumerator TextDraw(string text, float timePerCharacter)
-        {
-            foreach(char c in text)
-            {
-                Text += c;
-                yield return new Coroutine.WaitForSeconds(timePerCharacter);
-            }
-        }
-
-        private IEnumerator TextRemove(float timePerCharacter)
-        {
-            for (int i = Text.Length - 1; i >= 0; i--)
-            {
-                Text = Text.Remove(i);
-                yield return new Coroutine.WaitForSeconds(timePerCharacter);
-            }
         }
 
         public void SetText(string text)
@@ -108,12 +69,6 @@ namespace Fiourp
             }
 
             return newText.TrimEnd();
-        }
-
-        public void Reset()
-        {
-            StopAllCoroutines();
-            Text = "";
         }
 
         public override void Render()

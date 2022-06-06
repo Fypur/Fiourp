@@ -9,7 +9,7 @@ namespace Fiourp
 {
     public class DialogueBox : UIElement
     {
-        public TextBox TextBox;
+        public WritingTextBox TextBox;
         public string[] Dialogue;
 
         private int currentTextIndex = 0;
@@ -21,7 +21,7 @@ namespace Fiourp
         {
             Dialogue = dialogue;
             this.skipDialogControls = skipDialogueControls;
-            TextBox = new TextBox(dialogue[0], "Pixel", 0.01f, Pos + new Vector2(20, 20), Width - 30, Height - 20);
+            TextBox = new WritingTextBox(dialogue[0], "Pixel", Pos + new Vector2(20, 20), Width - 30, Height - 20, 3, Color.White, false, 0.01f);
             currentGeneratedString = TextBox.GenerateText(dialogue[0]);
 
             AddChild(TextBox);

@@ -16,13 +16,11 @@ namespace Fiourp
         public Action OnChange;
 
         private bool recording;
-        private bool clearActive => Selected && !recording;
-        private float ratio = (float)8 / 10;
 
         public ControlTaker(Vector2 position, int width, int height, bool centered, string fieldName, ControlList modified, Action onChange) : base(position, width, height, centered, new Sprite(Color.White))
         {
-            FieldTextBox = (TextBox)AddChild(new TextBox(fieldName, "LexendDeca", Pos, width / 2, height, Color.Black, 1, true));
-            valueTextBox = (TextBox)AddChild(new TextBox(modified.GetAllControlNames(), "LexendDeca", Pos + HalfSize.OnlyX(), width / 2, height, Color.Black, 1, true));
+            FieldTextBox = (TextBox)AddChild(new TextBox(fieldName, "Recursive", Pos, width / 2, height, 0.5f, Color.Black, true));
+            valueTextBox = (TextBox)AddChild(new TextBox(modified.GetAllControlNames(), "Recursive", Pos + HalfSize.OnlyX(), width / 2, height, 0.3f, Color.Black, true));
 
             Modified = modified;
             OnChange = onChange;

@@ -76,5 +76,11 @@ namespace Fiourp
 
         public static Vector2 Pow(Vector2 vector, float power)
             => new Vector2((float)Math.Pow(vector.X, power), (float)Math.Pow(vector.Y, power));
+
+        public static Vector2 Round(Vector2 value)
+            => new Vector2((float)Math.Round(value.X), (float)Math.Round(value.Y));
+
+        public static Vector2 Round(Vector2 value, int digits)
+            => new Vector2((float)Math.Round(value.X, digits), (float)Math.Round(value.Y, digits));
     }
 }

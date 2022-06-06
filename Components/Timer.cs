@@ -57,6 +57,8 @@ namespace Fiourp
 
         public void PauseUntil(Func<bool> pausedUntil)
         {
+            if (pausedUntil == null)
+                return;
             PausedFunc = pausedUntil;
             Paused = true;
         }

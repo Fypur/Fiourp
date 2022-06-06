@@ -26,8 +26,8 @@ namespace Fiourp
             MaxValue = numValues;
             this.Actions = actions;
             
-            FieldTextBox = (TextBox)AddChild(new TextBox(fieldName, "LexendDeca", Pos, width / 2, height, Color.Black, 1, true));
-            ValueTextBox = (TextBox)AddChild(new TextBox(CurrentIndex.ToString(), "LexendDeca", Pos + HalfSize.OnlyX(), width / 2, height, Color.Black, 1, true));
+            FieldTextBox = (TextBox)AddChild(new TextBox(fieldName, "LexendDeca", Pos, width / 2, height, 1, Color.Black, true));
+            ValueTextBox = (TextBox)AddChild(new TextBox(CurrentIndex.ToString(), "LexendDeca", Pos + HalfSize.OnlyX(), width / 2, height, 1, Color.Black, true));
         }
 
         public Switcher(Vector2 position, int width, int height, bool centered, string fieldName, int startValue, int minValue, int maxValue, Action<int> action) : base(position, width, height, centered, new Sprite(Color.White))
@@ -37,8 +37,8 @@ namespace Fiourp
             MaxValue = maxValue;
             Action = action;
 
-            FieldTextBox = (TextBox)AddChild(new TextBox(fieldName, "LexendDeca", Pos, width / 2, height, Color.Black, 1, true));
-            ValueTextBox = (TextBox)AddChild(new TextBox(CurrentIndex.ToString(), "LexendDeca", Pos + HalfSize.OnlyX(), width / 2, height, Color.Black, 1, true));
+            FieldTextBox = (TextBox)AddChild(new TextBox(fieldName, "LexendDeca", Pos, width / 2, height, 1, Color.Black, true));
+            ValueTextBox = (TextBox)AddChild(new TextBox(CurrentIndex.ToString(), "LexendDeca", Pos + HalfSize.OnlyX(), width / 2, height, 1, Color.Black, true));
         }
 
         public override void Update()

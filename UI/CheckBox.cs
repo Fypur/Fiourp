@@ -18,11 +18,5 @@ namespace Fiourp
             activated = !activated;
             Sprite.Color = activated ? Color.White : Color.Black;
         }
-
-        public override void Update()
-        {
-            base.Update();
-            Debug.LogUpdate(activated);
-        }
     }
 }

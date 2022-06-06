@@ -118,7 +118,6 @@ namespace Fiourp
         {
             base.Update();
 
-            Debug.LogUpdate(Bounds);
             if (Engine.Player != null && FollowsPlayer && !Locked && (!HasComponent(out Timer timer) || timer.Value <= 0) && !HasComponent<Shaker>())
                 Follow(Engine.Player, 3, 3, StrictFollowBounds);
         }
