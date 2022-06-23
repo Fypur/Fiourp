@@ -11,7 +11,7 @@ namespace Fiourp
         public static Random random = new Random();
 
         /// <summary>
-        /// Random integer within specified range
+        /// Random integer within specified range, where maxValue is excluded
         /// </summary>
         /// <param name="minValue">Included</param>
         /// <param name="maxValue">Excluded</param>

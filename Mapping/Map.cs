@@ -17,6 +17,7 @@ namespace Fiourp
         public ParticleSystem MiddlegroundSystem = new ParticleSystem();
         public ParticleSystem BackgroundSystem = new ParticleSystem();
 
+
         public static Map CurrentMap { get => Engine.CurrentMap; }
 
         /// <summary>
@@ -33,17 +34,21 @@ namespace Fiourp
             Data = new MapData();
         }
 
-        public void LoadMap(Level initLevel)
+        private void DefaultLoad(Level initLevel)
         {
             Engine.CurrentMap = this;
             CurrentLevel = initLevel;
+        }
+
+        public void LoadMap(Level initLevel)
+        {
+            DefaultLoad(initLevel);
             CurrentLevel.Load();
         }
 
         public void LoadMapNoAutoTile(Level initLevel)
         {
-            Engine.CurrentMap = this;
-            CurrentLevel = initLevel;
+            DefaultLoad(initLevel);
             CurrentLevel.LoadNoAutoTile();
         }
 

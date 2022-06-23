@@ -26,10 +26,24 @@ namespace Fiourp
         public static Texture2D GetTexture(string textureID)
             => Textures[textureID];
 
-        public static void Initialize(string XMLPath) { Tilesets = GetAllTileSets(XMLPath); GetAllGraphicsFiles(""); }
+        public static void Initialize(string XMLPath)
+        {
+            if(XMLPath != "")
+                Tilesets = GetAllTileSets(XMLPath);
+
+            GetAllGraphicsFiles("");
+        }
+
+        public static void Initialize()
+        {
+            GetAllGraphicsFiles("");
+        }
 
         private static void GetAllGraphicsFiles(string folderName)
         {
+            if (!Directory.Exists(Content.RootDirectory + "\\Graphics\\" + folderName))
+                return;
+
             DirectoryInfo dir = new DirectoryInfo(Content.RootDirectory + "\\Graphics\\" + folderName);
 
             foreach (FileInfo file in dir.GetFiles())
@@ -66,6 +80,9 @@ namespace Fiourp
 
         public static Dictionary<string, T> GetAllFilesInFolder<T>(string folderName)
         {
+            if (!Directory.Exists(Content.RootDirectory + "\\Graphics\\" + folderName))
+                return null;
+
             DirectoryInfo dir = new DirectoryInfo(Content.RootDirectory + "\\Graphics\\" + folderName);
 
             Dictionary<string, T> d = new Dictionary<string, T>();
@@ -113,6 +130,9 @@ namespace Fiourp
 
         public static Dictionary<string, Dictionary<string, SpriteFont>> GetFonts()
         {
+            if (!Directory.Exists(Content.RootDirectory + "\\Fonts"))
+                return null;
+
             DirectoryInfo dir = new DirectoryInfo(Content.RootDirectory + "\\Fonts");
 
             Dictionary<string, Dictionary<string, SpriteFont>> d = new Dictionary<string, Dictionary<string, SpriteFont>>();
@@ -283,6 +303,9 @@ namespace Fiourp
 
         public static string[] GetAllFMODBanksPaths()
         {
+            if (!Directory.Exists(Content.RootDirectory + "\\Audio\\Desktop"))
+                return new string[] {};
+
             DirectoryInfo dir = new DirectoryInfo(Content.RootDirectory + "\\Audio\\Desktop");
             List<string> paths = new();
 

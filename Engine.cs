@@ -34,8 +34,14 @@ namespace Fiourp
 
             RenderTarget = renderTarget;
 
-            DataManager.Initialize(XMLPath);
-            Sprite.LoadAnimationXML(XMLPath);
+            if (XMLPath != "")
+            {
+                DataManager.Initialize(XMLPath);
+                Sprite.LoadAnimationXML(XMLPath);
+            }
+            else
+                DataManager.Initialize();
+            
             Audio.Initialize();
         }
 
