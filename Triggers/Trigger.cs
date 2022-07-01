@@ -85,5 +85,13 @@ namespace Fiourp
         public virtual void OnTriggerStay(Entity entity) { OnTriggerStayAction?.Invoke(entity); }
 
         public virtual void OnTriggerExit(Entity entity) { OnTriggerExitAction?.Invoke(entity); }
+
+        public override void OnDestroy()
+        {
+            foreach (Entity entity in enteredEntities)
+                OnTriggerExit(entity);
+
+            base.OnDestroy();
+        }
     }
 }
