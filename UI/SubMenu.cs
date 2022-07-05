@@ -14,6 +14,7 @@ namespace Fiourp
         public SubMenu(Vector2 position, int width, int height, bool vertical) : base(position, width, height, null)
         {
             Vertical = vertical;
+            Overlay = true;
         }
 
         public override void Update()
@@ -35,6 +36,41 @@ namespace Fiourp
         {
             Children.Clear();
             AddChildren(new List<Entity>(GetElements()));
+        }
+
+        public static void MakeList(List<UIElement> elements, bool vertical)
+        {
+            int offset = 0;
+            for (int i = 0; i < elements.Count; i++)
+            {
+                if (!elements[i].Selectable)
+                {
+                    offset++;
+                    continue;
+                }
+
+                if (i - 1 - offset >= 0)
+                {
+                    if (vertical)
+                        elements[i].Up = elements[i - 1 - offset];
+                    else
+                        elements[i].Left = elements[i - 1 - offset];
+                }
+                for (int j = i + 1; j < elements.Count; j++)
+                {
+                    if (elements[j].Selectable)
+                    {
+                        if (vertical)
+                            elements[i].Down = elements[j];
+                        else
+                            elements[i].Right = elements[j];
+                        i = j - 1;
+                        break;
+                    }
+                }
+
+                offset = 0;
+            }
         }
 
         public void AddElementAtEnd(UIElement element)
@@ -62,18 +98,23 @@ namespace Fiourp
             subMenu.Instantiate();
         }
 
-        public void Instantiate()
+        public void SelectFirstElement()
         {
-            Engine.CurrentMap.Instantiate(this);
-            RefreshElements();
             foreach (UIElement ui in Children)
             {
                 if (ui.Selectable)
                 {
-                    ui.Selected = true;
+                    ui.OnSelected();
                     break;
                 }
             }
+        }
+
+        public void Instantiate()
+        {
+            Engine.CurrentMap.Instantiate(this);
+            RefreshElements();
+            SelectFirstElement();
         }
     }
 }

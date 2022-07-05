@@ -64,6 +64,12 @@ namespace Fiourp
             => MoveY(amount, (entity) => CallbackOnCollision());
 
         public void MoveX(float amount, Action<Entity> CallbackOnCollision = null)
+            => MoveX(amount, new List<Entity>(Engine.CurrentMap.Data.Solids), CallbackOnCollision);
+
+        public void MoveY(float amount, Action<Entity> CallbackOnCollision = null)
+            => MoveY(amount, new List<Entity>(Engine.CurrentMap.Data.Solids), CallbackOnCollision);
+
+        public void MoveX(float amount, List<Entity> checkedCollision, Action<Entity> CallbackOnCollision = null)
         {
             xRemainder += amount;
             int move = (int)Math.Round(xRemainder);
@@ -76,7 +82,7 @@ namespace Fiourp
                 while (move != 0)
                 {
                     //Console.WriteLine($"XRemainder: {xRemainder}; move: {move}; sign: {sign}");
-                    if (!Collider.CollideAt(new List<Entity>(Engine.CurrentMap.Data.Solids), Pos + new Vector2(sign, 0), out Entity collided))
+                    if (!Collider.CollideAt(checkedCollision, Pos + new Vector2(sign, 0), out Entity collided))
                     {
                         Pos.X += sign;
                         move -= sign;
@@ -90,7 +96,7 @@ namespace Fiourp
             }
         }
 
-        public void MoveY(float amount, Action<Entity> CallbackOnCollision = null)
+        public void MoveY(float amount, List<Entity> checkedCollision, Action<Entity> CallbackOnCollision = null)
         {
             yRemainder += amount;
             int move = (int)Math.Round(yRemainder);
@@ -102,7 +108,7 @@ namespace Fiourp
 
                 while (move != 0)
                 {
-                    if (!Collider.CollideAt(new List<Entity>(Engine.CurrentMap.Data.Solids), Pos + new Vector2(0, sign), out Entity collided))
+                    if (!Collider.CollideAt(checkedCollision, Pos + new Vector2(0, sign), out Entity collided))
                     {
                         Pos.Y += sign;
                         move -= sign;

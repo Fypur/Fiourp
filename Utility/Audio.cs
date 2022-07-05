@@ -14,7 +14,7 @@ namespace Fiourp
         public static void Initialize()
         {
             FMOD.Studio.System.create(out system);
-            system.initialize(1024, FMOD.Studio.INITFLAGS.NORMAL, FMOD.INITFLAGS.NORMAL, IntPtr.Zero);
+            RESULT result = system.initialize(1024, FMOD.Studio.INITFLAGS.NORMAL, FMOD.INITFLAGS.NORMAL, IntPtr.Zero);
 
             Load();
         }

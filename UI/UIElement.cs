@@ -12,7 +12,7 @@ namespace Fiourp
         public bool Centered;
         protected bool CustomCenter;
 
-        public bool Selected;
+        public bool Selected { get; protected set; }
         public UIElement Left, Right, Up, Down;
 
         protected bool selectableField = true;
@@ -149,13 +149,13 @@ namespace Fiourp
         {
             AddComponent(new Coroutine(Coroutine.WaitFramesThen(1, () => Selected = true)));
             if(Sprite != null)
-                Sprite.Color = new Color(Sprite.Color.ToVector3() - new Color(20, 20, 20).ToVector3());
+                Sprite.Color = new Color(Sprite.Color.ToVector3() - new Color(50, 50, 50).ToVector3());
         }
         public virtual void OnLeaveSelected() 
         {
             Selected = false;
             if (Sprite != null)
-                Sprite.Color = new Color(Sprite.Color.ToVector3() + new Color(20, 20, 20).ToVector3());
+                Sprite.Color = new Color(Sprite.Color.ToVector3() + new Color(50, 50, 50).ToVector3());
         }
 
         public virtual void OnAddSelectable()
@@ -169,42 +169,7 @@ namespace Fiourp
         }
 
         public virtual void OnSizeChange() { }
-
-        public static void MakeList(List<UIElement> elements, bool vertical)
-        {
-            int offset = 0;
-            for (int i = 0; i < elements.Count; i++)
-            {
-                if (!elements[i].Selectable)
-                {
-                    offset++;
-                    continue;
-                }
-
-                if (i - 1 - offset >= 0)
-                {
-                    if(vertical)
-                        elements[i].Up = elements[i - 1 - offset];
-                    else
-                        elements[i].Left = elements[i - 1 - offset];
-                }
-                for(int j = i + 1; j < elements.Count; j++)
-                {
-                    if (elements[j].Selectable)
-                    {
-                        if(vertical)
-                            elements[i].Down = elements[j];
-                        else
-                            elements[i].Right = elements[j];
-                        i = j - 1;
-                        break;
-                    }
-                }
-
-                offset = 0;
-            }
-         }
-
+        
         public void AddElements(List<UIElement> uiElements)
         {
             if (uiElements == null)

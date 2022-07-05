@@ -17,7 +17,12 @@ namespace Fiourp
         public CircleCollider(Vector2 localPosition, float radius)
         {
             Pos = localPosition;
-            radiusPercentage = radius / ParentEntity.Width;
+            radiusPercentage = radius;
+        }
+
+        public override void Added()
+        {
+            radiusPercentage = radiusPercentage / ParentEntity.Width;
         }
 
         public override void Render()

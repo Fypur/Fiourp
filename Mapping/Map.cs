@@ -120,9 +120,12 @@ namespace Fiourp
         {
             Data.Entities.Add(entity);
             entity.Awake();
-
-            if (entity is Solid)
-                Data.Solids.Add((Solid)entity);
+            if(entity is Platform)
+            {
+                Data.Platforms.Add((Platform)entity);
+                if (entity is Solid)
+                    Data.Solids.Add((Solid)entity);
+            }
             else if (entity is Actor)
                 Data.Actors.Add((Actor)entity);
             else if (entity is Trigger)
@@ -139,8 +142,12 @@ namespace Fiourp
             entity.OnDestroy();
             Data.Entities.Remove(entity);
 
-            if (entity is Solid)
-                Data.Solids.Remove((Solid)entity);
+            if (entity is Platform)
+            {
+                Data.Platforms.Remove((Platform)entity);
+                if (entity is Solid)
+                    Data.Solids.Remove((Solid)entity);
+            }
             else if (entity is Actor)
                 Data.Actors.Remove((Actor)entity);
             else if (entity is Trigger)

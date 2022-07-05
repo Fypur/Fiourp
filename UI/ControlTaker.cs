@@ -13,6 +13,10 @@ namespace Fiourp
         private TextBox valueTextBox;
         
         public ControlList Modified;
+        public ControlList Controls;
+        public ControlList KbMouseControls = new();
+        public ControlList GamepadControls = new();
+
         public Action OnChange;
 
         private bool recording;
@@ -23,6 +27,14 @@ namespace Fiourp
             valueTextBox = (TextBox)AddChild(new TextBox(modified.GetAllControlNames(), "Recursive", Pos + HalfSize.OnlyX(), width / 2, height, 0.3f, Color.Black, true));
 
             Modified = modified;
+            foreach(Control control in modified)
+            {
+                if(control.Key != null || control.MouseButton != null)
+                    KbMouseControls.Add(control);
+                else
+                    GamepadControls.Add(control);
+            }
+
             OnChange = onChange;
         }
 
@@ -31,13 +43,25 @@ namespace Fiourp
             if(!((Input.UIAction1.IsDown() || Input.GetKeyDown(Microsoft.Xna.Framework.Input.Keys.Enter))) && !recording)
                 base.Update();
 
+            List<Control> mod = new List<Control>(KbMouseControls.Controls);
+            mod.AddRange(GamepadControls);
+            Modified.Controls = mod;
+
+            if (Input.GamePadConnected)
+                Controls = GamepadControls;
+            else
+                Controls = KbMouseControls;
+
+            valueTextBox.SetText(Controls.GetAllControlNames());
+
             if (Selected)
             {
                 if (Input.ButtonClear.IsDown() && !recording)
                 {
-                    Modified.Clear();
-                    valueTextBox.SetText(Modified.GetAllControlNames());
+                    Controls.Clear();
+                    valueTextBox.SetText(Controls.GetAllControlNames());
                 }
+
                 else if ((Input.UIAction1.IsDown() || Input.GetKeyDown(Microsoft.Xna.Framework.Input.Keys.Enter)) && !recording)
                 {
                     recording = true;
@@ -71,17 +95,18 @@ namespace Fiourp
             recording = false;
             Sprite.Color = Color.White;
 
-            if (Modified.Contains(pressedControls[0]))
+            if (Controls.Contains(pressedControls[0]))
                 return;
 
             //More than 4 buttons => Clear the ControlList
-            if (Modified.Count >= 4)
-                Modified.Clear();
+            if (Controls.Count >= 4)
+                Controls.Clear();
+
 
             //Add the control
-            Modified.Add(pressedControls[0]);
+            Controls.Add(pressedControls[0]);
 
-            valueTextBox.SetText(Modified.GetAllControlNames());
+            valueTextBox.SetText(Controls.GetAllControlNames());
         }
     }
 }

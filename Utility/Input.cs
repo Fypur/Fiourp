@@ -242,6 +242,8 @@ namespace Fiourp
     public class ControlList : IEnumerable<Control>
     {
         public List<Control> Controls;
+
+        public ControlList() { Controls = new List<Control>(); }
         public ControlList(params Control[] controls) { Controls = new List<Control>(controls); }
 
         public ControlList(params object[] controls)
@@ -261,6 +263,9 @@ namespace Fiourp
 #endif
             }
         }
+
+        public ControlList(ControlList copyfrom)
+            => Controls = new List<Control>(copyfrom.Controls);
 
         public int Count => Controls.Count;
 
@@ -336,5 +341,8 @@ namespace Fiourp
 
         IEnumerator<Control> IEnumerable<Control>.GetEnumerator()
             => Controls.GetEnumerator();
+
+        public ControlList Copy()
+            => new ControlList(this);
     }
 }
