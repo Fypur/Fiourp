@@ -38,6 +38,9 @@ namespace Fiourp
         public override bool Collide(Vector2 point)
             => Bounds.Contains(point);
 
+        public override bool Collide(GridCollider other)
+            => other.Collide(this);
+
         public override float Width { get => widthPercentage * ParentEntity.Width; set => widthPercentage = value / ParentEntity.Width; }
         public override float Height { get => heightPercentage * ParentEntity.Height; set => heightPercentage = value / ParentEntity.Height; }
         public override float Left { get => Pos.X; set => Pos.X = value; }

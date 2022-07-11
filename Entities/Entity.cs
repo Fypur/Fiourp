@@ -104,6 +104,8 @@ namespace Fiourp
                     return;
 
                 Children[i].Pos += Pos - PreviousPos;
+                if(Pos - PreviousPos != Vector2.Zero)
+                { }
                 if (Children[i].Active)
                     Children[i].Update();
             }

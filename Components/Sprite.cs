@@ -203,7 +203,12 @@ namespace Fiourp
             {
                 if (desinationRectangle == null)
                 {
-                    Rectangle rect = ParentEntity.Bounds;
+                    Rectangle rect;
+                    if (ParentEntity != null)
+                        rect = ParentEntity.Bounds;
+                    else
+                        rect = Texture.Bounds;
+
                     rect.Location += Offset.ToPoint();
                     Drawing.Draw(Texture, rect, Color, Rotation, Origin, Scale, Effect, LayerDepth);
                 }
@@ -216,6 +221,9 @@ namespace Fiourp
             else
                 Drawing.Draw(Texture, ParentEntity.Pos + Offset, SourceRectangle, Color, Rotation, Origin, Scale, Effect, LayerDepth);
         }
+
+        public void Draw(Vector2 position)
+            => Drawing.Draw(Texture, position, SourceRectangle, Color, Rotation, Origin, Scale, Effect, LayerDepth);
 
         public void Add(string id, Animation animation)
             => animations[id] = animation;

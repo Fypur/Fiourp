@@ -39,6 +39,11 @@ namespace Fiourp
         public override bool Collide(Vector2 point)
             => Vector2.Distance(AbsolutePosition, point) < Radius;
 
+        public override bool Collide(GridCollider other)
+        {
+            throw new NotImplementedException();
+        }
+
         public override float Width { get => Radius * 2; set => Radius = value * 0.5f; }
         public override float Height { get => Radius * 2; set => Radius = value * 0.5f; }
         public override float Left { get => Pos.X - Radius; set => Pos.X = value + Radius; }
