@@ -82,5 +82,33 @@ namespace Fiourp
 
         public static Vector2 Round(Vector2 value, int digits)
             => new Vector2((float)Math.Round(value.X, digits), (float)Math.Round(value.Y, digits));
+
+        /// <summary>
+        /// Rotate a Vector Anti Clockwise for angleRad radiants
+        /// </summary>
+        /// <param name="vector"></param>
+        /// <param name="angleRad"></param>
+        /// <returns></returns>
+        public static Vector2 Rotate(Vector2 vector, float angleRad)
+        {
+            float length = vector.Length();
+            float angle = vector.ToAngle();
+            return new Vector2((float)(length * Math.Cos(angle + angleRad)), (float)(length * Math.Sin(angle + angleRad)));
+        }
+
+        public static Vector2 RotateDeg(Vector2 vector, float angleDeg)
+            => Rotate(vector, MathHelper.ToRadians(angleDeg));
+
+        public static Vector2 RotateAround(this Vector2 vector, Vector2 pivotPoint, float angleRad)
+            => Rotate(vector - pivotPoint, angleRad) + pivotPoint;
+
+        public static Vector2[] ToPoints(this Rectangle rectangle)
+            => new Vector2[4]
+            {
+                rectangle.Location.ToVector2(),
+                rectangle.Location.ToVector2() + new Vector2(rectangle.Width, 0),
+                rectangle.Location.ToVector2() + new Vector2(0, rectangle.Height),
+                rectangle.Location.ToVector2() + new Vector2(rectangle.Width, rectangle.Height)
+            };
     }
 }

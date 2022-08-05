@@ -33,6 +33,9 @@ namespace Fiourp
         public override bool Collide(BoxCollider other)
             => Collision.RectCircle(other.Bounds, AbsolutePosition, Radius);
 
+        public override bool Collide(BoxColliderRotated other)
+            => other.Collide(this);
+
         public override bool Collide(CircleCollider other)
             => Vector2.Distance(AbsolutePosition, other.AbsolutePosition) < Radius + other.Radius;
 

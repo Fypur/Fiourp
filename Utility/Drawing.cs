@@ -51,6 +51,9 @@ namespace Fiourp
         public static void Draw(Rectangle rect, Color color)
             => spriteBatch.Draw(pointTexture, rect, color);
 
+        public static void Draw(Rectangle rect, float rotation, Color color)
+            => spriteBatch.Draw(pointTexture, rect, null, color, rotation, Vector2.Zero, SpriteEffects.None, 0);
+
         public static void DrawCircleEdge(Vector2 position, float radius, float theta, Color color, int thickness)
         {
             Vector2 previous = position + new Vector2(radius, 0); ;
@@ -137,15 +140,15 @@ namespace Fiourp
 #endif
         }
 
-        public static void DebugPoint(int scale)
+        public static void DebugPoint(int thickness, int screenScale)
         {
 #if DEBUG
 
             foreach(Tuple<Vector2, Color> pos in DebugPos)
-                DrawPoint(pos.Item1 * scale, 1, pos.Item2);
+                DrawPoint(pos.Item1 * screenScale, thickness, pos.Item2);
 
             foreach (Tuple<Vector2, Color> pos in DebugPosUpdate)
-                DrawPoint(pos.Item1 * scale, 1, pos.Item2);
+                DrawPoint(pos.Item1 * screenScale, thickness, pos.Item2);
 
             DebugPosUpdate.Clear();
 #endif

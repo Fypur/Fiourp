@@ -7,15 +7,51 @@ namespace Fiourp
 {
     public class Raycast
     {
-        public bool hit;
-        public Vector2 endPoint;
+        public bool Hit;
+        public Vector2 BeginPoint;
+        public Vector2 EndPoint;
+        private float? distance = null;
 
-        public Raycast(Vector2 begin, Vector2 direction, float length)
-            => FastRay(begin, direction, length);
+        public float Distance
+        {
+            get
+            {
+                if (distance == null)
+                    distance = Vector2.Distance(BeginPoint, EndPoint);
+                return (float)distance;
+            }
+        }
+        
+        public enum RayTypes { Normal, MapTiles }
+
+        public Raycast(RayTypes rayType, Vector2 begin, Vector2 direction, float length)
+        {
+            BeginPoint = begin;
+            switch (rayType)
+            {
+                case RayTypes.MapTiles:
+                    FastRay(begin, direction, length);
+                    break;
+                case RayTypes.Normal:
+                    SlowRay(begin, direction, length, new(Engine.CurrentMap.Data.Solids));
+                    break;
+            }   
+        }
 
 
-        public Raycast(Vector2 begin, Vector2 end)
-            => FastRay(begin, end - begin, Vector2.Distance(begin, end));
+        public Raycast(RayTypes rayType, Vector2 begin, Vector2 end)
+        {
+            BeginPoint = begin;
+            switch (rayType)
+            {
+                case RayTypes.MapTiles:
+                    FastRay(begin, end - begin, Vector2.Distance(begin, end));
+                    break;
+                case RayTypes.Normal:
+                    SlowRay(begin, end - begin, Vector2.Distance(begin, end), new(Engine.CurrentMap.Data.Solids));
+                    break;
+            }   
+        }
 
         void FastRay(Vector2 begin, Vector2 direction, float length)
         {
@@ -66,7 +102,7 @@ namespace Fiourp
 
             float travelledDistance = 0;
             
-            while (!hit && travelledDistance < length)
+            while (!Hit && travelledDistance < length)
             {
                 //Moving
                 if (rayLength1D.X < rayLength1D.Y)
@@ -85,13 +121,34 @@ namespace Fiourp
                 //Checking
                 if (map.CurrentLevel.Contains(mapPoint) && travelledDistance < length)
                     if (map.CurrentLevel.Organisation[(int)(mapPoint.Y - map.CurrentLevel.Pos.Y) / map.CurrentLevel.TileHeight, (int)(mapPoint.X - map.CurrentLevel.Pos.X) / map.CurrentLevel.TileWidth] > 0)
-                        hit = true;
+                        Hit = true;
             }
             
-            endPoint = begin + Vector2.Normalize(direction) * travelledDistance;
+            EndPoint = begin + Vector2.Normalize(direction) * travelledDistance;
 
             #endregion
         }
 
+        void SlowRay(Vector2 begin, Vector2 direction, float length, List<Entity> checkedEntities)
+        {
+            direction = direction.Normalized() * 0.5f;
+
+            for (int i = 0; i < length; i++)
+            {
+                Vector2 end = begin + i * direction;
+                foreach (Entity entity in checkedEntities)
+                {
+                    if (entity.Collider.Collide(end))
+                    {
+                        Hit = true;
+                        EndPoint = end;
+                        return;
+                    }
+                }
+            }
+
+            Hit = false;
+            EndPoint = begin + direction * length;
+        }
     }
 }

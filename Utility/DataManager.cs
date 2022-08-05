@@ -41,19 +41,19 @@ namespace Fiourp
 
         private static void GetAllGraphicsFiles(string folderName)
         {
-            if (!Directory.Exists(Content.RootDirectory + "\\Graphics\\" + folderName))
+            if (!Directory.Exists(Content.RootDirectory + "/Graphics/" + folderName))
                 return;
 
-            DirectoryInfo dir = new DirectoryInfo(Content.RootDirectory + "\\Graphics\\" + folderName);
+            DirectoryInfo dir = new DirectoryInfo(Content.RootDirectory + "/Graphics/" + folderName);
 
             foreach (FileInfo file in dir.GetFiles())
             {
-                string name = file.FullName.Substring(file.FullName.LastIndexOf("Graphics\\") + 9);
+                string name = file.FullName.Substring(file.FullName.LastIndexOf("Graphics/") + 9);
                 name = name.Replace('\\', '/');
                 string key = name.Substring(0, name.Length - 4);
 
                 object loaded = Content.Load<Object>("Graphics/" + key);
-                bool isObject = file.FullName.Contains("Graphics\\Objects");
+                bool isObject = file.FullName.Contains("Graphics/Objects");
 
                 if (loaded is Texture2D texture)
                     AddTexture(key, texture);
@@ -104,12 +104,12 @@ namespace Fiourp
         /// <returns></returns>
         public static Texture2D[] LoadAllGraphicsWithName(string name, string folderName = "")
         {
-            DirectoryInfo dir = new DirectoryInfo(Content.RootDirectory + "\\Graphics\\" + folderName);
+            DirectoryInfo dir = new DirectoryInfo(Content.RootDirectory + "/Graphics" + folderName);
             List<Texture2D> textures = new List<Texture2D>();
 
             foreach (FileInfo file in dir.GetFiles())
             {
-                string fileName = file.FullName.Substring(file.FullName.LastIndexOf("Graphics\\") + 9);
+                string fileName = file.FullName.Substring(file.FullName.LastIndexOf("Graphics/") + 9);
                 if (!file.Name.StartsWith(name))
                     continue;
 
@@ -130,10 +130,10 @@ namespace Fiourp
 
         public static Dictionary<string, Dictionary<string, SpriteFont>> GetFonts()
         {
-            if (!Directory.Exists(Content.RootDirectory + "\\Fonts"))
+            if (!Directory.Exists(Content.RootDirectory + "/Fonts"))
                 return null;
 
-            DirectoryInfo dir = new DirectoryInfo(Content.RootDirectory + "\\Fonts");
+            DirectoryInfo dir = new DirectoryInfo(Content.RootDirectory + "/Fonts");
 
             Dictionary<string, Dictionary<string, SpriteFont>> d = new Dictionary<string, Dictionary<string, SpriteFont>>();
 
@@ -154,7 +154,7 @@ namespace Fiourp
 
         private static Dictionary<int, Dictionary<string, Texture2D>> GetAllTileSets(string XMLpath)
         {
-            DirectoryInfo dir = new DirectoryInfo(Content.RootDirectory + "\\Graphics\\Tilesets");
+            DirectoryInfo dir = new DirectoryInfo(Content.RootDirectory + "/Graphics/Tilesets");
             Dictionary<int, Dictionary<string, Texture2D>> d = new();
 
             System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
@@ -162,7 +162,7 @@ namespace Fiourp
 
             foreach (System.Xml.XmlElement element in doc["Sprites"]["Tilesets"])
             {
-                object loaded = Content.Load<Object>(dir.FullName + "/" + element.GetAttribute("path"));
+                object loaded = Content.Load<Object>("\\Graphics\\Tilesets" + "/" + element.GetAttribute("path"));
 
                 Texture2D texture;
                 if (loaded is Texture2D txt)

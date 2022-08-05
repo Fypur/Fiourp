@@ -12,13 +12,23 @@ namespace Fiourp
         public static void LogUpdate(params object[] log)
         {
             foreach (object l in log)
-                Drawing.Debug.Add(l.ToString());
+            {
+                if(l != null)
+                    Drawing.Debug.Add(l.ToString());
+                else
+                    Drawing.Debug.Add("null");
+            }
         }
 
         public static void Log(params object[] log)
         {
             foreach (object l in log)
-                Drawing.DebugForever.Add(l.ToString());
+            {
+                if(l != null)
+                    Drawing.Debug.Add(l.ToString());
+                else
+                    Drawing.Debug.Add("null");
+            }
         }
 
         public static void Point(params Vector2[] log)

@@ -64,6 +64,11 @@ namespace Fiourp
             return false;
         }
 
+        public override bool Collide(BoxColliderRotated other)
+        {
+            throw new NotImplementedException();
+        }
+
         public override bool Collide(CircleCollider other)
         {
             return false;

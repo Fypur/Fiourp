@@ -34,11 +34,15 @@ namespace Fiourp
 
         public override bool Collide(CircleCollider other)
             => Collision.RectCircle(Bounds, other.AbsolutePosition, other.Radius);
+        
 
         public override bool Collide(Vector2 point)
             => Bounds.Contains(point);
-
+        
         public override bool Collide(GridCollider other)
+            => other.Collide(this);
+        
+        public override bool Collide(BoxColliderRotated other)
             => other.Collide(this);
 
         public override float Width { get => widthPercentage * ParentEntity.Width; set => widthPercentage = value / ParentEntity.Width; }

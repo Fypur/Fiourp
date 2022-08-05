@@ -13,8 +13,8 @@ namespace Fiourp
 
         public abstract bool Collide(Vector2 point);
         public abstract bool Collide(BoxCollider other);
+        public abstract bool Collide(BoxColliderRotated other);
         public abstract bool Collide(CircleCollider other);
-
         public abstract bool Collide(GridCollider other);
         
         public abstract float Width { get; set; }
@@ -37,12 +37,14 @@ namespace Fiourp
 
             if (other is BoxCollider box)
                 return Collide(box);
-            else if (other is CircleCollider circle)
+            if (other is BoxColliderRotated boxRot)
+                return Collide(boxRot);
+            if (other is CircleCollider circle)
                 return Collide(circle);
-            else if(other is GridCollider grid)
+            if(other is GridCollider grid)
                 return Collide(grid);
-            else
-                throw new Exception("Collider type has not been implemented yet.");
+            
+            throw new Exception("Collider type has not been implemented yet.");
         }
 
         public bool Collide(Entity entity)

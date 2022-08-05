@@ -9,20 +9,12 @@ namespace Fiourp
 {
     public class Grid : Solid
     {
-        public int[,] Organisation { get => Organisation; set => Organisation = value; }
+        public int[,] Organisation { get => ((GridCollider)Collider).Organisation; set => ((GridCollider)Collider).Organisation = value; }
         public Sprite[,] Tiles;
 
         public Grid(Vector2 position, int gridWidth, int gridHeight, int[,] org, Sprite[,] tiles = null) : base(position, gridWidth * tiles.GetLength(1), gridHeight * tiles.GetLength(0), Sprite.None)
         {
             Tiles = tiles;
-            int[,] organisation = new int[tiles.GetLength(1), tiles.GetLength(0)];
-            for(int x = 0; x < organisation.GetLength(1); x++)
-                for(int y = 0; y < organisation.GetLength(0); y++)
-                {
-                    if (tiles[x, y] != null && tiles[x, y] != Sprite.None)
-                        organisation[y, x] = 1;
-                }
-
             RemoveComponent(Collider);
             Collider = new GridCollider(Vector2.Zero, gridWidth, gridHeight, org);
             AddComponent(Collider);
@@ -46,6 +38,12 @@ namespace Fiourp
                     Vector2 pos = new Vector2(x * gridCol.GridWidth, y * gridCol.GridHeight) + Collider.AbsolutePosition;
                     if(Tiles[y, x] != Sprite.None && Tiles[y, x] != null)
                         Tiles[y, x].Draw(pos);
+                    if(Debug.DebugMode && Organisation[y, x] != 0)
+                        Drawing.DrawEdge(new Rectangle(pos.ToPoint(), new Point(gridCol.GridWidth, gridCol.GridHeight)), 1, Color.Blue);
+                    if (Organisation[y, x] != 0 && (Tiles[y, x] == null || Tiles[y, x] == Sprite.None))
+                    {
+                        Debug.LogUpdate(Organisation[y, x], Tiles[y, x], pos);
+                    }
                 }
             }
         }
