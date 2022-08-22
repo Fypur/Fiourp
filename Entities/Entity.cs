@@ -37,7 +37,7 @@ namespace Fiourp
 
         public Entity(Vector2 position, int width, int height, Sprite sprite)
         {
-            Pos = position;
+            ExactPos = position;
             Width = width;
             Height = height;
 
@@ -132,7 +132,7 @@ namespace Fiourp
                     Renderers[i].Render();
 
             for (int i = Children.Count - 1; i >= 0; i--)
-                if(Children[i].Active && Children[i].Tag != Tags.UI)
+                if(Children[i].Visible && Children[i].Tag != Tags.UI)
                     Children[i].Render();
 
             if (Debug.DebugMode)

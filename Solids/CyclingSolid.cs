@@ -123,7 +123,7 @@ namespace Fiourp
                 direction = !goingForwards;
             }
 
-            final -= new Vector2(width / 2, height / 2);
+            //final -= new Vector2(width / 2, height / 2);
             return final;
         }
 

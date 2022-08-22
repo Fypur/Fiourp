@@ -38,6 +38,7 @@ namespace Fiourp
             if (moveX == 0 && moveY == 0) return;
 
             List<Actor> ridingActors = GetAllRidingActors();
+            List<Actor> ridingActorsX = new List<Actor>(ridingActors);
 
             Collider.Collidable = false;
 
@@ -45,41 +46,27 @@ namespace Fiourp
             {
                 xRemainder -= moveX;
                 Pos.X += moveX;
-                
-                if(moveX > 0)
+
+                for (int i = Engine.CurrentMap.Data.Actors.Count - 1; i >= 0; i--)
                 {
-                    for (int i = Engine.CurrentMap.Data.Actors.Count - 1; i >= 0; i--)
+                    Actor actor = Engine.CurrentMap.Data.Actors[i];
+                    if (Collider.Collide(actor))
                     {
-                        Actor actor = Engine.CurrentMap.Data.Actors[i];
-                        if (Collider.Collide(actor))
-                        {
+                        if (moveX > 0)
                             actor.MoveX(Pos.X + Width - actor.Pos.X, actor.Squish);
-                            actor.LiftSpeed = new Vector2(moveX / Engine.Deltatime, actor.LiftSpeed.Y);
-                            
-                        }
-                        else if (ridingActors.Contains(actor))
-                        {
-                            actor.MoveX(moveX);
-                            actor.LiftSpeed = new Vector2(moveX / Engine.Deltatime, actor.LiftSpeed.Y);
-                        }
+                        else
+                            actor.MoveX(Pos.X - actor.Pos.X - actor.Width, actor.Squish);
+
+                        actor.LiftSpeed = new Vector2(moveX / Engine.Deltatime, actor.LiftSpeed.Y);
+                        if(ridingActorsX.Contains(actor))
+                            ridingActorsX.Remove(actor);
                     }
                 }
-                else
+
+                foreach (Actor actor in ridingActorsX)
                 {
-                    for (int i = Engine.CurrentMap.Data.Actors.Count - 1; i >= 0; i--)
-                    {
-                        Actor actor = Engine.CurrentMap.Data.Actors[i];
-                        if (Collider.Collide(actor))
-                        {
-                            actor.MoveX(Pos.X - actor.Pos.X - actor.Width, actor.Squish);
-                            actor.LiftSpeed = new Vector2(moveX / Engine.Deltatime, actor.LiftSpeed.Y);
-                        }
-                        else if (ridingActors.Contains(actor))
-                        {
-                            actor.MoveX(moveX);
-                            actor.LiftSpeed = new Vector2(moveX / Engine.Deltatime, actor.LiftSpeed.Y);
-                        }
-                    }
+                    actor.MoveX(moveX);
+                    actor.LiftSpeed = new Vector2(moveX / Engine.Deltatime, actor.LiftSpeed.Y);
                 }
             }
             
@@ -88,39 +75,26 @@ namespace Fiourp
                 yRemainder -= moveY;
                 Pos.Y += moveY;
 
-                if (moveY > 0)
+                for (int i = Engine.CurrentMap.Data.Actors.Count - 1; i >= 0; i--)
                 {
-                    for (int i = Engine.CurrentMap.Data.Actors.Count - 1; i >= 0; i--)
+                    Actor actor = Engine.CurrentMap.Data.Actors[i];
+                    if (Collider.Collide(actor))
                     {
-                        Actor actor = Engine.CurrentMap.Data.Actors[i];
-                        if (Collider.Collide(actor))
-                        {
+                        if(moveY > 0)
                             actor.MoveY(Pos.Y + Height - actor.Pos.Y, actor.Squish);
-                            actor.LiftSpeed = new Vector2(actor.LiftSpeed.X, moveY / Engine.Deltatime);
-                        }
-                        else if (ridingActors.Contains(actor))
-                        {
-                            actor.MoveY(moveY);
-                            actor.LiftSpeed = new Vector2(actor.LiftSpeed.X, moveY / Engine.Deltatime);
-                        }
+                        else
+                            actor.MoveY(Pos.Y - actor.Pos.Y - actor.Height, actor.Squish);
+
+                        actor.LiftSpeed = new Vector2(actor.LiftSpeed.X, moveY / Engine.Deltatime);
+                        if (ridingActors.Contains(actor))
+                            ridingActors.Remove(actor);
                     }
                 }
-                else
+
+                foreach(Actor actor in ridingActors)
                 {
-                    for (int i = Engine.CurrentMap.Data.Actors.Count - 1; i >= 0; i--)
-                    {
-                        Actor actor = Engine.CurrentMap.Data.Actors[i];
-                        if (Collider.Collide(actor))
-                        {
-                            actor.MoveY(Pos.Y - actor.Pos.Y - actor.Height, actor.Squish);
-                            actor.LiftSpeed = new Vector2(actor.LiftSpeed.X, moveY / Engine.Deltatime);
-                        }
-                        else if (ridingActors.Contains(actor))
-                        {
-                            actor.MoveY(moveY);
-                            actor.LiftSpeed = new Vector2(actor.LiftSpeed.X, moveY / Engine.Deltatime);
-                        }
-                    }
+                    actor.MoveY(moveY);
+                    actor.LiftSpeed = new Vector2(actor.LiftSpeed.X, moveY / Engine.Deltatime);
                 }
             }
 
