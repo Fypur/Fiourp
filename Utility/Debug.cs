@@ -14,9 +14,9 @@ namespace Fiourp
             foreach (object l in log)
             {
                 if(l != null)
-                    Drawing.Debug.Add(l.ToString());
+                    Drawing.DebugUpdate.Add(l.ToString());
                 else
-                    Drawing.Debug.Add("null");
+                    Drawing.DebugUpdate.Add("null");
             }
         }
 
@@ -25,9 +25,9 @@ namespace Fiourp
             foreach (object l in log)
             {
                 if(l != null)
-                    Drawing.Debug.Add(l.ToString());
+                    Drawing.DebugForever.Add(l.ToString());
                 else
-                    Drawing.Debug.Add("null");
+                    Drawing.DebugForever.Add("null");
             }
         }
 

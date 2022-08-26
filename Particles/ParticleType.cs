@@ -38,7 +38,7 @@ namespace Fiourp
 
         public ParticleType()
         {
-            Texture = Drawing.pointTexture;
+            Texture = Drawing.PointTexture;
 
             Color = Color.White;
             Color2 = null;
@@ -68,7 +68,7 @@ namespace Fiourp
             => Create(followed, position, direction, Color);
 
         public Particle Create(Vector2 position)
-            => Create(null, position, Direction, Color);
+            => Create(null, position, Direction - 0.5f * DirectionRange + Rand.NextDouble() * DirectionRange, Color);
 
         public Particle Create(Entity followed, Vector2 position, float direction, Color color)
         {

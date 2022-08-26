@@ -20,6 +20,7 @@ namespace Fiourp
         public Action OnLastFrame;
         public Action OnLoop;
         public Action OnChange;
+        public Action OnFrameChange;
 
         public Texture2D Texture;
         public NineSliceSettings NineSliceSettings;
@@ -36,10 +37,13 @@ namespace Fiourp
         public Rectangle? SourceRectangle = null;
         public bool Centered;
 
+        public Texture2D CurrentAnimationFrame => 
+            CurrentAnimation.Frames[CurrentFrame];
+        public Animation CurrentAnimation;
+        public int CurrentFrame;
+
         private Dictionary<string, Animation> animations = new();
         private bool animating;
-        private Animation currentAnimation;
-        private int currentFrame;
         private float animTimer;
 
         public override string ToString()
@@ -70,13 +74,13 @@ namespace Fiourp
 
         public Sprite(Color color)
         {
-            Texture = Drawing.pointTexture;
+            Texture = Drawing.PointTexture;
             Color = color;
         }
 
         public Sprite(Color color, Rectangle? rect, float layerDepth = 0)
         {
-            Texture = Drawing.pointTexture;
+            Texture = Drawing.PointTexture;
             Color = color;
             LayerDepth = layerDepth;
         }
@@ -101,105 +105,64 @@ namespace Fiourp
 
             animTimer += Engine.Deltatime;
 
-            if (animTimer < currentAnimation.Delay)
+            if (animTimer < CurrentAnimation.Delay)
                 return;
 
             //Next Frame
 
-            animTimer -= currentAnimation.Delay;
-            currentFrame++;
+            animTimer -= CurrentAnimation.Delay;
+            CurrentFrame++;
+            OnFrameChange?.Invoke();
 
             //End
-            if(currentFrame + 1 > currentAnimation.Frames.Length)
+            if (CurrentFrame + 1 > CurrentAnimation.Frames.Length)
             {
-                Animation was = currentAnimation;
+                Animation was = CurrentAnimation;
                 OnLastFrame?.Invoke();
 
                 //OnLastFrame didn't change the animation
-                if(currentAnimation == was)
+                if(CurrentAnimation == was)
                 {
                     //Looping or going to next animation
-                    if (currentAnimation.GoTo != "" && currentAnimation.GoTo != null)
+                    if (CurrentAnimation.GoTo != "" && CurrentAnimation.GoTo != null)
                     {
                         //Loop
-                        if(animations[currentAnimation.GoTo] == currentAnimation)
+                        if(animations[CurrentAnimation.GoTo] == CurrentAnimation)
                         {
-                            currentFrame = 0;
-                            Texture = currentAnimation.Frames[currentFrame];
+                            CurrentFrame = 0;
+                            Texture = CurrentAnimation.Frames[CurrentFrame];
                         }
                         else
                         {
-                            Play(currentAnimation.GoTo);
+                            Play(CurrentAnimation.GoTo);
+                            OnChange?.Invoke();
                         }
                     }
                     //Ended
                     else
                     {
                         animating = false;
-                        currentFrame = 0;
+                        CurrentFrame = 0;
                     }
                 }
+                else
+                    OnChange?.Invoke();
             }
             else
-                Texture = currentAnimation.Frames[currentFrame];
+                Texture = CurrentAnimation.Frames[CurrentFrame];
         }
 
         public override void Render()
         {
             if(NineSliceSettings != NineSliceSettings.Empty)
             {
-                NineSliceSettings n = NineSliceSettings;
-
-                DrawNineSlice(n.TopLeft, ParentEntity.Pos, Size(n.TopLeft));
-                DrawNineSlice(n.TopRight, ParentEntity.Pos + new Vector2(ParentEntity.Width - n.TopRight.Width, 0), Size(n.TopRight));
-                DrawNineSlice(n.BottomLeft, ParentEntity.Pos + new Vector2(0, ParentEntity.Height - n.BottomLeft.Height), Size(n.BottomLeft));
-                DrawNineSlice(n.BottomRight, ParentEntity.Pos + new Vector2(ParentEntity.Width - n.BottomRight.Width, ParentEntity.Height - n.BottomRight.Height), Size(n.BottomRight));
-
-                if (n.Repeat)
-                {
-                    for (int i = 0; i < ParentEntity.Width - n.TopLeft.Width - n.TopRight.Width; i += n.Top.Width)
-                        DrawNineSlice(n.Top, ParentEntity.Pos + new Vector2(n.TopLeft.Width + i, 0), Size(n.Top));
-
-                    for (int i = 0; i < ParentEntity.Width - n.BottomLeft.Width - n.BottomRight.Width; i += n.Bottom.Width)
-                        DrawNineSlice(n.Bottom, ParentEntity.Pos + new Vector2(n.BottomLeft.Width + i, ParentEntity.Height - n.Bottom.Height), Size(n.Bottom));
-
-                    for (int i = 0; i < ParentEntity.Height - n.TopRight.Height - n.BottomRight.Height; i += n.Right.Height)
-                        DrawNineSlice(n.Right, ParentEntity.Pos + new Vector2(ParentEntity.Width - n.TopRight.Width, n.TopRight.Height + i), Size(n.Right));
-
-                    for (int i = 0; i < ParentEntity.Height - n.TopLeft.Height - n.BottomLeft.Height; i += n.Left.Height)
-                        DrawNineSlice(n.Left, ParentEntity.Pos + new Vector2(0, n.TopLeft.Height + i), Size(n.Left));
-
-                    for (int x = n.TopLeft.Width; x <= ParentEntity.Width - n.TopLeft.Width - n.BottomRight.Width; x += n.Fill.Width)
-                        for (int y = n.TopLeft.Height; y <= ParentEntity.Height - n.TopLeft.Height - n.BottomRight.Height; y += n.Fill.Height)
-                            DrawNineSlice(n.Fill, ParentEntity.Pos + new Vector2(x, y), 
-                                new Vector2(Math.Min(n.Fill.Width, ParentEntity.Width - n.Right.Width - x), Math.Min(n.Fill.Height, ParentEntity.Height - n.Bottom.Height - y)));
-
-                }
-                else
-                {
-                    DrawNineSlice(n.Top, ParentEntity.Pos + new Vector2(n.TopLeft.Width, 0), new Vector2(ParentEntity.Width - n.TopLeft.Width - n.TopRight.Width, n.Top.Height));
-                    DrawNineSlice(n.Bottom, ParentEntity.Pos + new Vector2(n.BottomLeft.Width, ParentEntity.Height - n.Bottom.Height), new Vector2(ParentEntity.Width - n.BottomLeft.Width - n.BottomRight.Width, n.Bottom.Height));
-                    DrawNineSlice(n.Right, ParentEntity.Pos + new Vector2(ParentEntity.Width - n.TopRight.Width, n.TopRight.Height), new Vector2(n.Right.Width, ParentEntity.Height - n.TopRight.Height - n.BottomRight.Height));
-                    DrawNineSlice(n.Left, ParentEntity.Pos + new Vector2(0, n.TopLeft.Height), new Vector2(n.Left.Width, ParentEntity.Height - n.TopLeft.Height - n.BottomLeft.Height));
-
-                    DrawNineSlice(n.Fill, ParentEntity.Pos + Size(n.TopLeft), ParentEntity.Size - Size(n.TopLeft) - Size(n.BottomRight));
-                }
-
-                return;
-
-                static Vector2 Size(Texture2D texture) => new Vector2(texture.Width, texture.Height);
-
-                void DrawNineSlice(Texture2D texture, Vector2 position, Vector2 size)
-                {
-                    Drawing.Draw(texture, position + Offset, size * Scale, Color, Rotation, Origin, Effect, LayerDepth);
-                    /*Drawing.DrawEdge(new Rectangle(position.ToPoint(), size.ToPoint()), 1, new Color(){ R = 255, G = 255, B = 255, A = 50 });*/
-                }
+                DrawNineSlice(NineSliceSettings);
             }
 
             if (Texture == null)
                 return;
 
-            if (Texture == Drawing.pointTexture)
+            if (Texture == Drawing.PointTexture)
             {
                 if (desinationRectangle == null)
                 {
@@ -222,6 +185,7 @@ namespace Fiourp
                 Drawing.Draw(Texture, ParentEntity.Pos + Offset, SourceRectangle, Color, Rotation, Origin, Scale, Effect, LayerDepth);
         }
 
+
         public void Draw(Vector2 position)
             => Drawing.Draw(Texture, position, SourceRectangle, Color, Rotation, Origin, Scale, Effect, LayerDepth);
 
@@ -240,9 +204,9 @@ namespace Fiourp
             if (!animations.ContainsKey(id))
                 throw new Exception("No Animation defined for Id " + id);
 #endif
-            currentAnimation = animations[id];
-            Texture = currentAnimation.Frames[0];
-            currentFrame = 0;
+            CurrentAnimation = animations[id];
+            Texture = CurrentAnimation.Frames[0];
+            CurrentFrame = 0;
             animTimer = 0;
             animating = true;
         }
@@ -254,11 +218,37 @@ namespace Fiourp
                 Frames = frames;
                 Delay = delay;
                 GoTo = goTo;
+
+
+                Slices = ((List<Slice>)((object[])Frames[0].Tag)[1]).ToArray();
+                Frames[0].Tag = ((object[])Frames[0].Tag)[0];
             }
 
             public float Delay;
             public Texture2D[] Frames;
             public string GoTo;
+
+            public Slice[] Slices;
+
+            public class Slice
+            {
+                public Rectangle Rect;
+                public NineSliceSettings NiceSlice;
+                public string Name;
+
+                public Slice(string name, Rectangle rect, NineSliceSettings niceSlice)
+                {
+                    Name = name;
+                    Rect = rect;
+                    NiceSlice = niceSlice;
+                }
+
+                public Slice(string name, Rectangle rect)
+                {
+                    Name = name;
+                    Rect = rect;
+                }
+            }
         }
 
         public class AnimData
@@ -289,7 +279,13 @@ namespace Fiourp
                 foreach (XmlElement anim in element)
                 {
                     if (anim.Name == "Anim")
-                        AllAnimData[element.Name].Animations[anim.GetAttribute("id")] = new Animation(DataManager.LoadAllGraphicsWithName(anim.GetAttribute("path"), path), float.Parse(anim.GetAttribute("delay"), System.Globalization.CultureInfo.InvariantCulture.NumberFormat), anim.GetAttribute("goto"));
+                        AllAnimData[element.Name].Animations[anim.GetAttribute("id")] = 
+                            new Animation(
+                                DataManager.LoadAllGraphicsWithName(anim.GetAttribute("path"), path),
+                                float.Parse(anim.GetAttribute("delay"),
+                                System.Globalization.CultureInfo.InvariantCulture.NumberFormat),
+                                anim.GetAttribute("goto"));
+
                     else if (anim.Name == "Loop")
                         AllAnimData[element.Name].Animations[anim.GetAttribute("id")] = new Animation(DataManager.LoadAllGraphicsWithName(anim.GetAttribute("path"), path), float.Parse(anim.GetAttribute("delay"), System.Globalization.CultureInfo.InvariantCulture.NumberFormat), anim.GetAttribute("id"));
                 }
@@ -317,11 +313,67 @@ namespace Fiourp
             s.Centered = Centered ;
             s.animations = animations;
             s.animating = animating ;
-            s.currentAnimation = currentAnimation;
-            s.currentFrame = currentFrame ;
+            s.CurrentAnimation = CurrentAnimation;
+            s.CurrentFrame = CurrentFrame ;
             s.animTimer = animTimer;
 
             return s;
-    }
+        }
+
+        private void DrawNineSlice(NineSliceSettings nineSliceSettings)
+        {
+            NineSliceSettings n = NineSliceSettings;
+
+            DrawSlice(n.TopLeft, ParentEntity.Pos, Size(n.TopLeft));
+            DrawSlice(n.TopRight, ParentEntity.Pos + new Vector2(ParentEntity.Width - Size(n.TopRight).X, 0), Size(n.TopRight));
+            DrawSlice(n.BottomLeft, ParentEntity.Pos + new Vector2(0, ParentEntity.Height - Size(n.BottomLeft).Y), Size(n.BottomLeft));
+            DrawSlice(n.BottomRight, ParentEntity.Pos + new Vector2(ParentEntity.Width - Size(n.BottomRight).X, ParentEntity.Height - Size(n.BottomRight).Y), Size(n.BottomRight));
+
+            if (n.Repeat)
+            {
+                if(n.Top != null)
+                    for (int i = 0; i < ParentEntity.Width - Size(n.TopLeft).X - Size(n.TopRight).X; i += Size(n.Top).X)
+                        DrawSlice(n.Top, ParentEntity.Pos + new Vector2(Size(n.TopLeft).X + i, 0), Size(n.Top));
+
+                if (n.Bottom != null)
+                    for (int i = 0; i < ParentEntity.Width - Size(n.BottomLeft).X - Size(n.BottomRight).X; i += Size(n.Bottom).X)
+                        DrawSlice(n.Bottom, ParentEntity.Pos + new Vector2(Size(n.BottomLeft).X + i, ParentEntity.Height - Size(n.Bottom).Y), Size(n.Bottom));
+
+                if (n.Right != null)
+                    for (int i = 0; i < ParentEntity.Height - Size(n.TopRight).Y - Size(n.BottomRight).Y; i += Size(n.Right).Y)
+                        DrawSlice(n.Right, ParentEntity.Pos + new Vector2(ParentEntity.Width - Size(n.TopRight).X, Size(n.TopRight).Y + i), Size(n.Right));
+
+                if (n.Left != null)
+                    for (int i = 0; i < ParentEntity.Height - Size(n.TopLeft).Y - Size(n.BottomLeft).Y; i += Size(n.Left).Y)
+                        DrawSlice(n.Left, ParentEntity.Pos + new Vector2(0, Size(n.TopLeft).Y + i), Size(n.Left));
+
+                if (n.Fill != null)
+                    for (int x = Size(n.TopLeft).X; x <= ParentEntity.Width - Size(n.TopLeft).X - Size(n.BottomRight).X; x += Size(n.Fill).X)
+                        for (int y = Size(n.TopLeft).Y; y <= ParentEntity.Height - Size(n.TopLeft).Y - Size(n.BottomRight).Y; y += Size(n.Fill).Y)
+                            DrawSlice(n.Fill, ParentEntity.Pos + new Vector2(x, y),
+                                new Point(Math.Min(Size(n.Fill).X, ParentEntity.Width - Size(n.Right).X - x), Math.Min(Size(n.Fill).Y, ParentEntity.Height - Size(n.Bottom).Y - y)));
+
+            }
+            else
+            {
+                DrawSlice(n.Top, ParentEntity.Pos + new Vector2(Size(n.TopLeft).X, 0), new Point(ParentEntity.Width - Size(n.TopLeft).X - Size(n.TopRight).X, Size(n.Top).Y));
+                DrawSlice(n.Bottom, ParentEntity.Pos + new Vector2(Size(n.BottomLeft).X, ParentEntity.Height - Size(n.Bottom).Y), new Point(ParentEntity.Width - Size(n.BottomLeft).X - Size(n.BottomRight).X, Size(n.Bottom).Y));
+                DrawSlice(n.Right, ParentEntity.Pos + new Vector2(ParentEntity.Width - Size(n.TopRight).X, Size(n.TopRight).Y), new Point(Size(n.Right).X, ParentEntity.Height - Size(n.TopRight).Y - Size(n.BottomRight).Y));
+                DrawSlice(n.Left, ParentEntity.Pos + new Vector2(0, Size(n.TopLeft).Y), new Point(Size(n.Left).X, ParentEntity.Height - Size(n.TopLeft).Y - Size(n.BottomLeft).Y));
+
+                DrawSlice(n.Fill, ParentEntity.Pos + Size(n.TopLeft).ToVector2(), ParentEntity.Size.ToPoint() - Size(n.TopLeft) - Size(n.BottomRight));
+            }
+
+            return;
+
+            static Point Size(Texture2D texture) => texture != null ? new Point(texture.Width, texture.Height) : Point.Zero;
+
+            void DrawSlice(Texture2D texture, Vector2 position, Point size)
+            {
+                if(texture != null)
+                    Drawing.Draw(texture, position + Offset, size.ToVector2() * Scale, Color, Rotation, Origin, Effect, LayerDepth);
+                /*Drawing.DrawEdge(new Rectangle(position.ToPoint(), size.ToPoint()), 1, new Color(){ R = 255, G = 255, B = 255, A = 50 });*/
+            }
+        }
     }
 }

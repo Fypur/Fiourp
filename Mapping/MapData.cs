@@ -15,7 +15,7 @@ namespace Fiourp
         public List<Actor> Actors = new List<Actor>();
         public List<Trigger> Triggers = new List<Trigger>();
         public List<UIElement> UIElements = new List<UIElement>();
-        public List<Tile> Decorations = new List<Tile>();
+        public List<Decoration> Decorations = new List<Decoration>();
 
         public List<T> GetEntities<T>() where T : Entity
         {

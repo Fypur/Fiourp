@@ -298,6 +298,27 @@ namespace Fiourp
             Texture2D[] result = new Texture2D[doc.Frames.Count];
             for (int i = 0; i < doc.Frames.Count; i++)
                 result[i] = doc.Texture.CropTo(new Vector2(doc.Frames[i].X, doc.Frames[i].Y), new Vector2(doc.Frames[i].Width, doc.Frames[i].Height));
+
+            result[0].Tag = new object[2];
+            List<Sprite.Animation.Slice> slices = new();
+            foreach(AsepriteSlice slice in doc.Slices.Values)
+            {
+                slices.Add(new(slice.Name, new Rectangle(slice.SliceKeys[0].X, slice.SliceKeys[0].Y, slice.SliceKeys[0].Width, slice.SliceKeys[0].Height)));
+            }
+
+            ((object[])result[0].Tag)[1] = slices;
+
+            foreach(AsepriteTag tag in doc.Tags.Values)
+            {
+                for (int i = tag.From; i <= tag.To; i++)
+                {
+                    if (i != 0)
+                        result[i].Tag = tag.Name;
+                    else
+                        ((object[])result[0].Tag)[0] = tag.Name;
+                }
+            }
+
             return result;
         }
 

@@ -132,8 +132,8 @@ namespace Fiourp
                 Data.Triggers.Add((Trigger)entity);
             else if (entity is UIElement)
                 Data.UIElements.Add((UIElement)entity);
-            else if (entity is Tile)
-                Data.Decorations.Add((Tile)entity);
+            else if (entity is Decoration)
+                Data.Decorations.Add((Decoration)entity);
             return entity;
         }
 
@@ -154,6 +154,8 @@ namespace Fiourp
                 Data.Triggers.Remove((Trigger)entity);
             else if (entity is UIElement)
                 Data.UIElements.Remove((UIElement)entity);
+            else if (entity is Decoration)
+                Data.Decorations.Remove((Decoration)entity);
         }
     }
 }
