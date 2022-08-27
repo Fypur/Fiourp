@@ -23,7 +23,7 @@ namespace Fiourp
         public Action OnFrameChange;
 
         public Texture2D Texture;
-        public NineSliceSettings NineSliceSettings;
+        public NineSlice NineSliceSettings;
         public float Rotation = 0;
 
         public Color Color = Color.White;
@@ -61,7 +61,7 @@ namespace Fiourp
             Texture = texture;
         }
 
-        public Sprite(NineSliceSettings nineSliceSettings)
+        public Sprite(NineSlice nineSliceSettings)
         {
             NineSliceSettings = nineSliceSettings;
         }
@@ -154,9 +154,9 @@ namespace Fiourp
 
         public override void Render()
         {
-            if(NineSliceSettings != NineSliceSettings.Empty)
+            if(NineSliceSettings != null)
             {
-                DrawNineSlice(NineSliceSettings);
+                NineSliceSettings.Draw(this);
             }
 
             if (Texture == null)
@@ -233,10 +233,10 @@ namespace Fiourp
             public class Slice
             {
                 public Rectangle Rect;
-                public NineSliceSettings NiceSlice;
+                public NineSlice NiceSlice;
                 public string Name;
 
-                public Slice(string name, Rectangle rect, NineSliceSettings niceSlice)
+                public Slice(string name, Rectangle rect, NineSlice niceSlice)
                 {
                     Name = name;
                     Rect = rect;
@@ -318,62 +318,6 @@ namespace Fiourp
             s.animTimer = animTimer;
 
             return s;
-        }
-
-        private void DrawNineSlice(NineSliceSettings nineSliceSettings)
-        {
-            NineSliceSettings n = NineSliceSettings;
-
-            DrawSlice(n.TopLeft, ParentEntity.Pos, Size(n.TopLeft));
-            DrawSlice(n.TopRight, ParentEntity.Pos + new Vector2(ParentEntity.Width - Size(n.TopRight).X, 0), Size(n.TopRight));
-            DrawSlice(n.BottomLeft, ParentEntity.Pos + new Vector2(0, ParentEntity.Height - Size(n.BottomLeft).Y), Size(n.BottomLeft));
-            DrawSlice(n.BottomRight, ParentEntity.Pos + new Vector2(ParentEntity.Width - Size(n.BottomRight).X, ParentEntity.Height - Size(n.BottomRight).Y), Size(n.BottomRight));
-
-            if (n.Repeat)
-            {
-                if(n.Top != null)
-                    for (int i = 0; i < ParentEntity.Width - Size(n.TopLeft).X - Size(n.TopRight).X; i += Size(n.Top).X)
-                        DrawSlice(n.Top, ParentEntity.Pos + new Vector2(Size(n.TopLeft).X + i, 0), Size(n.Top));
-
-                if (n.Bottom != null)
-                    for (int i = 0; i < ParentEntity.Width - Size(n.BottomLeft).X - Size(n.BottomRight).X; i += Size(n.Bottom).X)
-                        DrawSlice(n.Bottom, ParentEntity.Pos + new Vector2(Size(n.BottomLeft).X + i, ParentEntity.Height - Size(n.Bottom).Y), Size(n.Bottom));
-
-                if (n.Right != null)
-                    for (int i = 0; i < ParentEntity.Height - Size(n.TopRight).Y - Size(n.BottomRight).Y; i += Size(n.Right).Y)
-                        DrawSlice(n.Right, ParentEntity.Pos + new Vector2(ParentEntity.Width - Size(n.TopRight).X, Size(n.TopRight).Y + i), Size(n.Right));
-
-                if (n.Left != null)
-                    for (int i = 0; i < ParentEntity.Height - Size(n.TopLeft).Y - Size(n.BottomLeft).Y; i += Size(n.Left).Y)
-                        DrawSlice(n.Left, ParentEntity.Pos + new Vector2(0, Size(n.TopLeft).Y + i), Size(n.Left));
-
-                if (n.Fill != null)
-                    for (int x = Size(n.TopLeft).X; x <= ParentEntity.Width - Size(n.TopLeft).X - Size(n.BottomRight).X; x += Size(n.Fill).X)
-                        for (int y = Size(n.TopLeft).Y; y <= ParentEntity.Height - Size(n.TopLeft).Y - Size(n.BottomRight).Y; y += Size(n.Fill).Y)
-                            DrawSlice(n.Fill, ParentEntity.Pos + new Vector2(x, y),
-                                new Point(Math.Min(Size(n.Fill).X, ParentEntity.Width - Size(n.Right).X - x), Math.Min(Size(n.Fill).Y, ParentEntity.Height - Size(n.Bottom).Y - y)));
-
-            }
-            else
-            {
-                DrawSlice(n.Top, ParentEntity.Pos + new Vector2(Size(n.TopLeft).X, 0), new Point(ParentEntity.Width - Size(n.TopLeft).X - Size(n.TopRight).X, Size(n.Top).Y));
-                DrawSlice(n.Bottom, ParentEntity.Pos + new Vector2(Size(n.BottomLeft).X, ParentEntity.Height - Size(n.Bottom).Y), new Point(ParentEntity.Width - Size(n.BottomLeft).X - Size(n.BottomRight).X, Size(n.Bottom).Y));
-                DrawSlice(n.Right, ParentEntity.Pos + new Vector2(ParentEntity.Width - Size(n.TopRight).X, Size(n.TopRight).Y), new Point(Size(n.Right).X, ParentEntity.Height - Size(n.TopRight).Y - Size(n.BottomRight).Y));
-                DrawSlice(n.Left, ParentEntity.Pos + new Vector2(0, Size(n.TopLeft).Y), new Point(Size(n.Left).X, ParentEntity.Height - Size(n.TopLeft).Y - Size(n.BottomLeft).Y));
-
-                DrawSlice(n.Fill, ParentEntity.Pos + Size(n.TopLeft).ToVector2(), ParentEntity.Size.ToPoint() - Size(n.TopLeft) - Size(n.BottomRight));
-            }
-
-            return;
-
-            static Point Size(Texture2D texture) => texture != null ? new Point(texture.Width, texture.Height) : Point.Zero;
-
-            void DrawSlice(Texture2D texture, Vector2 position, Point size)
-            {
-                if(texture != null)
-                    Drawing.Draw(texture, position + Offset, size.ToVector2() * Scale, Color, Rotation, Origin, Effect, LayerDepth);
-                /*Drawing.DrawEdge(new Rectangle(position.ToPoint(), size.ToPoint()), 1, new Color(){ R = 255, G = 255, B = 255, A = 50 });*/
-            }
         }
     }
 }

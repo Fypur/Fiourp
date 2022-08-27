@@ -17,7 +17,7 @@ namespace Fiourp
         {
         }
 
-        public SolidPlatform(Vector2 position, int width, int height, NineSliceSettings nineSlice) : base(position, width, height, new Sprite(nineSlice))
+        public SolidPlatform(Vector2 position, int width, int height, NineSlice nineSlice) : base(position, width, height, new Sprite(nineSlice))
         {
         }
     }
