@@ -33,7 +33,7 @@ namespace Fiourp
         public SpriteEffects Effect = SpriteEffects.None;
         public float LayerDepth = 0.5f;
 
-        public Rectangle? desinationRectangle = null;
+        public Rectangle? DesinationRectangle = null;
         public Rectangle? SourceRectangle = null;
         public bool Centered;
 
@@ -47,7 +47,7 @@ namespace Fiourp
         private float animTimer;
 
         public override string ToString()
-            => $"Texture: {Texture.Name}, {Color}, layerDepth: {LayerDepth}, Rect: {desinationRectangle}, Origin {Origin}, " +
+            => $"Texture: {Texture.Name}, {Color}, layerDepth: {LayerDepth}, Rect: {DesinationRectangle}, Origin {Origin}, " +
                 $"Scale: {Scale}, Rotation {Rotation}, SpriteEffects: {Effect}";
 
         #region Constructors
@@ -164,7 +164,7 @@ namespace Fiourp
 
             if (Texture == Drawing.PointTexture)
             {
-                if (desinationRectangle == null)
+                if (DesinationRectangle == null)
                 {
                     Rectangle rect;
                     if (ParentEntity != null)
@@ -173,14 +173,14 @@ namespace Fiourp
                         rect = Texture.Bounds;
 
                     rect.Location += Offset.ToPoint();
-                    Drawing.Draw(Texture, rect, Color, Rotation, Origin, Scale, Effect, LayerDepth);
+                    Drawing.Draw(Texture, ParentEntity.Pos + Offset, SourceRectangle, Color, Rotation, Origin, new Vector2(rect.Width, rect.Height) * Scale, Effect, LayerDepth);
                 }
                 else
-                    Drawing.Draw(Texture, (Rectangle)desinationRectangle, Color, Rotation, Origin, Scale, Effect, LayerDepth);
+                    Drawing.Draw(Texture, (Rectangle)DesinationRectangle, Color, Rotation, Origin, Scale, Effect, LayerDepth);
             }
             else if (Centered)
                 Drawing.Draw(Texture, ParentEntity.Pos + ParentEntity.HalfSize + Offset, SourceRectangle, Color, Rotation, Origin,
-                    Vector2.One, SpriteEffects.None, 1);
+                    Scale, SpriteEffects.None, 1);
             else
                 Drawing.Draw(Texture, ParentEntity.Pos + Offset, SourceRectangle, Color, Rotation, Origin, Scale, Effect, LayerDepth);
         }
@@ -309,7 +309,7 @@ namespace Fiourp
             s.Scale = Scale;
             s.Effect = Effect;
             s.LayerDepth = LayerDepth;
-            s.desinationRectangle = desinationRectangle;
+            s.DesinationRectangle = DesinationRectangle;
             s.Centered = Centered ;
             s.animations = animations;
             s.animating = animating ;

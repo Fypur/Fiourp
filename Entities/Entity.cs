@@ -17,7 +17,7 @@ namespace Fiourp
 
         public Tags Tag;
         public enum Tags { Unknown, Actor, Solid, Trigger, UI, Decoration }
-        public int Layer = 2;
+        public int Layer = 0;
 
         public virtual Vector2 ExactPos { get => Pos; set => Pos = value; }
         public Vector2 MiddleExactPos => ExactPos + HalfSize;
@@ -118,10 +118,22 @@ namespace Fiourp
                 if (Children[i].Active)
                     Children[i].LateUpdate();
             }
+
+            PreviousPos = Pos;
         }
 
         public virtual void LateUpdate()
         {
+
+        }
+
+        public void UpdateChildrenPos()
+        {
+            foreach(Entity child in Children)
+            {
+                child.Pos += Pos - PreviousPos;
+            }
+
             PreviousPos = Pos;
         }
 

@@ -13,10 +13,10 @@ namespace Fiourp
 
         public static void Initialize()
         {
-            /*FMOD.Studio.System.create(out system);
+            FMOD.Studio.System.create(out system);
             RESULT result = system.initialize(1024, FMOD.Studio.INITFLAGS.NORMAL, FMOD.INITFLAGS.NORMAL, IntPtr.Zero);
 
-            Load();*/
+            Load();
         }
 
         private static void Load()
@@ -72,13 +72,13 @@ namespace Fiourp
 
         public static void Update()
         {
-            //system.update();
+            system.update();
         }
 
         public static void Finish()
         {
-            /*system.unloadAll();
-            system.release();*/
+            system.unloadAll();
+            system.release();
         }
     }
 }
