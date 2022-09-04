@@ -62,12 +62,14 @@ namespace Fiourp
 
             Vector2 rayDir = Vector2.Normalize(direction);
 
+            Grid grid = (Grid)Engine.CurrentMap.Data.EntitiesByType[typeof(Grid)][0];
+
             //The hypothenus' size for one Unit (a tile width) on the x and y axis
-            Vector2 rayUnitStep = new Vector2((float)Math.Sqrt(map.CurrentLevel.TileWidth * map.CurrentLevel.TileWidth + (rayDir.Y * map.CurrentLevel.TileWidth / rayDir.X) * (rayDir.Y * map.CurrentLevel.TileWidth / rayDir.X)),
-                (float)Math.Sqrt(map.CurrentLevel.TileHeight * map.CurrentLevel.TileHeight + (rayDir.X * map.CurrentLevel.TileHeight / rayDir.Y) * (rayDir.X * map.CurrentLevel.TileHeight / rayDir.Y)));
+            Vector2 rayUnitStep = new Vector2((float)Math.Sqrt(grid.TileWidth * grid.TileWidth + (rayDir.Y * grid.TileWidth / rayDir.X) * (rayDir.Y * grid.TileWidth / rayDir.X)),
+                (float)Math.Sqrt(grid.TileHeight * grid.TileHeight + (rayDir.X * grid.TileHeight / rayDir.Y) * (rayDir.X * grid.TileHeight / rayDir.Y)));
 
             //The tile the begin point is on and the one the end point is on : position truncated to a multiple of the tile's width or height
-            Vector2 mapPoint = new Vector2((float)Math.Floor(begin.X / map.CurrentLevel.TileWidth) * map.CurrentLevel.TileWidth, (float)Math.Floor(begin.Y / map.CurrentLevel.TileWidth) * map.CurrentLevel.TileHeight);
+            Vector2 mapPoint = new Vector2((float)Math.Floor(begin.X / grid.TileWidth) * grid.TileWidth, (float)Math.Floor(begin.Y / grid.TileWidth) * grid.TileHeight);
             #endregion
 
             #region Ray Direction for Each Dimension and Length for non tiled objects
@@ -77,24 +79,24 @@ namespace Fiourp
 
             if (rayDir.X < 0)
             {
-                rayStep.X = -map.CurrentLevel.TileWidth;
-                rayLength1D.X = (begin.X - mapPoint.X) * rayUnitStep.X / map.CurrentLevel.TileWidth;
+                rayStep.X = -grid.TileWidth;
+                rayLength1D.X = (begin.X - mapPoint.X) * rayUnitStep.X / grid.TileWidth;
             }
             else
             {
-                rayStep.X = map.CurrentLevel.TileWidth;
-                rayLength1D.X = (map.CurrentLevel.TileWidth + mapPoint.X - begin.X) * rayUnitStep.X / map.CurrentLevel.TileWidth;
+                rayStep.X = grid.TileWidth;
+                rayLength1D.X = (grid.TileWidth + mapPoint.X - begin.X) * rayUnitStep.X / grid.TileWidth;
 
             }
             if (rayDir.Y < 0)
             {
-                rayStep.Y = -map.CurrentLevel.TileHeight;
-                rayLength1D.Y = (begin.Y - mapPoint.Y) * rayUnitStep.Y / map.CurrentLevel.TileWidth;
+                rayStep.Y = -grid.TileHeight;
+                rayLength1D.Y = (begin.Y - mapPoint.Y) * rayUnitStep.Y / grid.TileWidth;
             }
             else
             {
-                rayStep.Y = map.CurrentLevel.TileHeight;
-                rayLength1D.Y = (map.CurrentLevel.TileWidth + mapPoint.Y - begin.Y) * rayUnitStep.Y / map.CurrentLevel.TileWidth;
+                rayStep.Y = grid.TileHeight;
+                rayLength1D.Y = (grid.TileWidth + mapPoint.Y - begin.Y) * rayUnitStep.Y / grid.TileWidth;
             }
             #endregion
 
@@ -119,8 +121,8 @@ namespace Fiourp
                 }
                 
                 //Checking
-                if (map.CurrentLevel.Contains(mapPoint) && travelledDistance < length)
-                    if (map.CurrentLevel.Organisation[(int)(mapPoint.Y - map.CurrentLevel.Pos.Y) / map.CurrentLevel.TileHeight, (int)(mapPoint.X - map.CurrentLevel.Pos.X) / map.CurrentLevel.TileWidth] > 0)
+                if (grid.Collider.Bounds.Contains(mapPoint) && travelledDistance < length)
+                    if (((GridCollider)grid.Collider).Organisation[(int)(mapPoint.Y - grid.Collider.AbsoluteTop) / grid.TileHeight, (int)(mapPoint.X - grid.Collider.AbsoluteLeft) / grid.TileWidth] > 0)
                         Hit = true;
             }
             

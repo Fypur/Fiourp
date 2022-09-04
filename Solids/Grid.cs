@@ -9,21 +9,26 @@ namespace Fiourp
 {
     public class Grid : Solid
     {
-        public int[,] Organisation { get => ((GridCollider)Collider).Organisation; set => ((GridCollider)Collider).Organisation = value; }
+        public int[,] Organisation { get => (Collider).Organisation; set => (Collider).Organisation = value; }
+        public int TileWidth => Collider.GridWidth;
+        public int TileHeight => Collider.GridHeight;
+
         public Sprite[,] Tiles;
+
+        private new GridCollider Collider => base.Collider as GridCollider;
 
         public Grid(Vector2 position, int gridWidth, int gridHeight, int[,] org, Sprite[,] tiles = null) : base(position, gridWidth * tiles.GetLength(1), gridHeight * tiles.GetLength(0), Sprite.None)
         {
             Tiles = tiles;
-            RemoveComponent(Collider);
-            Collider = new GridCollider(Vector2.Zero, gridWidth, gridHeight, org);
-            AddComponent(Collider);
+            RemoveComponent(base.Collider);
+            base.Collider = new GridCollider(Vector2.Zero, gridWidth, gridHeight, org);
+            AddComponent(base.Collider);
         }
         public override void Render()
         {
             base.Render();
 
-            var gridCol = (GridCollider)Collider;
+            var gridCol = Collider;
             Vector2 startPos = (Engine.Cam.Pos - Pos) / gridCol.GridSize;
 
             if (startPos.X > Width || startPos.Y > Height || startPos.X + Engine.RenderTarget.Width < 0 || startPos.Y + Engine.RenderTarget.Height < 0)

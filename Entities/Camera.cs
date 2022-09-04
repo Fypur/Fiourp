@@ -55,6 +55,8 @@ namespace Fiourp
 
         public override Vector2 ExactPos { get => base.Pos + Size / 2; set => CenteredPos = value; }
 
+        private Vector2 WholePos => VectorHelper.Round(Pos);
+
         private float rot;
         public float Rotation
         {
@@ -85,7 +87,7 @@ namespace Fiourp
                 if (hasChanged)
                 {
                     hasChanged = false;
-                    return view = Matrix.CreateTranslation(new Vector3(-base.Pos, 0.0f)) *
+                    return view = Matrix.CreateTranslation(new Vector3(-WholePos, 0.0f)) *
                            Matrix.CreateScale(ZoomLevel) *
                            Matrix.CreateRotationZ(MathHelper.ToRadians(Rotation));
                 }

@@ -113,6 +113,21 @@ namespace Fiourp
             indices[indicesCount++] = ind + 1;
         }
 
+        public static void DrawQuad(Vector2 a, Color aColor, Vector2 b, Color bColor, Vector2 c, Color cColor, Vector2 d, Color dColor)
+        {
+            indices[indicesCount++] = vertexCount;
+            indices[indicesCount++] = vertexCount + 1;
+            indices[indicesCount++] = vertexCount + 2;
+            indices[indicesCount++] = vertexCount;
+            indices[indicesCount++] = vertexCount + 2;
+            indices[indicesCount++] = vertexCount + 3;
+
+            vertices[vertexCount++] = new VertexPositionColor(new Vector3(a, 0), aColor);
+            vertices[vertexCount++] = new VertexPositionColor(new Vector3(b, 0), bColor);
+            vertices[vertexCount++] = new VertexPositionColor(new Vector3(c, 0), cColor);
+            vertices[vertexCount++] = new VertexPositionColor(new Vector3(d, 0), dColor);
+        }
+
         public static void DrawString(string text, Vector2 position, Color color, Vector2 origin)
             => spriteBatch.DrawString(Font, text, position, color, 0, origin,
                 1, SpriteEffects.None, 1);
@@ -217,7 +232,7 @@ namespace Fiourp
                 Flush();
         }
 
-        public static void DrawTriangle(Vector2 a, Vector2 b, Vector2 c, Color color)
+        public static void DrawTriangle(Vector2 a, Color aColor, Vector2 b, Color bColor, Vector2 c, Color cColor)
         {
             EnsureSpace(3, 3);
 
@@ -227,9 +242,9 @@ namespace Fiourp
             indices[indicesCount++] = vertexCount + 1;
             indices[indicesCount++] = vertexCount + 2;
 
-            vertices[vertexCount++] = new VertexPositionColor(new Vector3(a, 0), color);
-            vertices[vertexCount++] = new VertexPositionColor(new Vector3(b, 0), color);
-            vertices[vertexCount++] = new VertexPositionColor(new Vector3(c, 0), color);
+            vertices[vertexCount++] = new VertexPositionColor(new Vector3(a, 0), aColor);
+            vertices[vertexCount++] = new VertexPositionColor(new Vector3(b, 0), bColor);
+            vertices[vertexCount++] = new VertexPositionColor(new Vector3(c, 0), cColor);
         }
 
         public static void DebugString()
