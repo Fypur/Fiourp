@@ -115,6 +115,8 @@ namespace Fiourp
 
         public static void DrawQuad(Vector2 a, Color aColor, Vector2 b, Color bColor, Vector2 c, Color cColor, Vector2 d, Color dColor)
         {
+            EnsureSpace(4, 6);
+
             indices[indicesCount++] = vertexCount;
             indices[indicesCount++] = vertexCount + 1;
             indices[indicesCount++] = vertexCount + 2;
@@ -126,6 +128,8 @@ namespace Fiourp
             vertices[vertexCount++] = new VertexPositionColor(new Vector3(b, 0), bColor);
             vertices[vertexCount++] = new VertexPositionColor(new Vector3(c, 0), cColor);
             vertices[vertexCount++] = new VertexPositionColor(new Vector3(d, 0), dColor);
+
+            shapesCount++;
         }
 
         public static void DrawString(string text, Vector2 position, Color color, Vector2 origin)

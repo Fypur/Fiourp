@@ -196,6 +196,9 @@ namespace Fiourp
         {
             foreach(KeyValuePair<string, Animation> data in animData.Animations)
                 animations[data.Key] = data.Value;
+
+            if (CurrentAnimation == null)
+                 Play(animData.StartAnimationId);
         }
 
         public void Play(string id)
@@ -254,6 +257,7 @@ namespace Fiourp
         public class AnimData
         {
             public readonly Dictionary<string, Animation> Animations = new();
+            public string StartAnimationId;
         }
 
         public static void LoadAnimationXML(string path)
@@ -290,6 +294,7 @@ namespace Fiourp
                         AllAnimData[element.Name].Animations[anim.GetAttribute("id")] = new Animation(DataManager.LoadAllGraphicsWithName(anim.GetAttribute("path"), path), float.Parse(anim.GetAttribute("delay"), System.Globalization.CultureInfo.InvariantCulture.NumberFormat), anim.GetAttribute("id"));
                 }
 
+                AllAnimData[element.Name].StartAnimationId = element.GetAttribute("start");
                 path = path.Remove(path.LastIndexOf("/" + element.GetAttribute("path")));
             }
         }
