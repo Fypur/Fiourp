@@ -77,6 +77,7 @@ namespace Fiourp
                     Data.Decorations[i].Render();
             }
 
+
             int maxLayer = 2;
             List<Entity> loopedEntities = new List<Entity>(Data.Entities);
             for(int l = 0; l <= maxLayer; l++)
@@ -91,10 +92,11 @@ namespace Fiourp
                     }
                 }
 
+
                 if(l == 1)
                     MiddlegroundSystem.Render();
             }
-            
+
             ForegroundSystem.Render();
         }
 

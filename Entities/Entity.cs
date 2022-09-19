@@ -53,7 +53,7 @@ namespace Fiourp
                 Solid => Tags.Solid,
                 Trigger => Tags.Trigger,
                 UIElement => Tags.UI,
-                Tile => Tags.Decoration,
+                Decoration => Tags.Decoration,
                 _ => Tags.Unknown
             };
 

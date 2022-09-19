@@ -126,7 +126,10 @@ namespace Fiourp
                         Hit = true;
             }
             
-            EndPoint = begin + Vector2.Normalize(direction) * travelledDistance;
+            if(Hit)
+                EndPoint = begin + Vector2.Normalize(direction) * travelledDistance;
+            else
+                EndPoint = begin + Vector2.Normalize(direction) * length;
 
             #endregion
         }
