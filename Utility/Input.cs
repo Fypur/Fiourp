@@ -60,7 +60,7 @@ namespace Fiourp
         {
             kbPreviousState = Keyboard.GetState();
             previousMouseState = Mouse.GetState();
-            previousGamePadState = GamePad.GetState(PlayerIndex.One, GamePadDeadZone.Circular);
+            previousGamePadState = GamePad.GetState(1);
         }
 
         public static List<Control> GetPressedControls()

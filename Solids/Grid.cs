@@ -45,10 +45,10 @@ namespace Fiourp
                         Tiles[y, x].Draw(pos);
                     if(Debug.DebugMode && Organisation[y, x] != 0)
                         Drawing.DrawEdge(new Rectangle(pos.ToPoint(), new Point(gridCol.GridWidth, gridCol.GridHeight)), 1, Color.Blue);
-                    if (Organisation[y, x] != 0 && (Tiles[y, x] == null || Tiles[y, x] == Sprite.None))
+                    /*if (Organisation[y, x] != 0 && (Tiles[y, x] == null || Tiles[y, x] == Sprite.None))
                     {
                         Debug.LogUpdate(Organisation[y, x], Tiles[y, x], pos);
-                    }
+                    }*/
                 }
             }
         }
