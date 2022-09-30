@@ -11,6 +11,7 @@ namespace Fiourp
         private bool hasChanged;
         public bool FollowsPlayer;
         public bool Locked;
+        public Vector2 Offset;
         public bool RenderTargetMode { get => Size == new Vector2(Engine.RenderTarget.Width, Engine.RenderTarget.Height);
             set
             {
@@ -21,10 +22,10 @@ namespace Fiourp
 
         public new Vector2 Pos
         {
-            get => base.Pos;
+            get => base.Pos + Offset;
             set
             {
-                base.Pos = InBoundsPos(value + Size / 2, out bool changed) - Size / 2;
+                base.Pos = InBoundsPos(value + Size / 2 + Offset, out bool changed) - Size / 2 - Offset;
                 if (changed)
                     hasChanged = true;
             }
@@ -32,11 +33,11 @@ namespace Fiourp
 
         public Vector2 CenteredPos
         {
-            get => base.Pos + Size / 2;
+            get => base.Pos + Size / 2 + Offset;
 
             set
             {
-                base.Pos = InBoundsPos(value, out bool changed) - Size / 2;
+                base.Pos = InBoundsPos(value + Offset, out bool changed) - Size / 2 - Offset;
                 if(changed)
                     hasChanged = true;
             }
@@ -48,12 +49,12 @@ namespace Fiourp
             set
             {
                 if(base.Pos - Size / 2 == value) return;
-                base.Pos = value - Size / 2;
+                base.Pos = value - Size / 2 + Offset;
                 hasChanged = true;
             }
         }
 
-        public override Vector2 ExactPos { get => base.Pos + Size / 2; set => CenteredPos = value; }
+        public override Vector2 ExactPos { get => base.Pos + Size / 2 + Offset; set => CenteredPos = value; }
 
         private Vector2 WholePos => VectorHelper.Round(Pos);
 
