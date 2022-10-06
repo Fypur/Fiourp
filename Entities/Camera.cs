@@ -11,7 +11,19 @@ namespace Fiourp
         private bool hasChanged;
         public bool FollowsPlayer;
         public bool Locked;
-        public Vector2 Offset;
+
+        private Vector2 offset;
+        public Vector2 Offset
+        {
+            get => offset;
+            set
+            {
+                if (value != offset)
+                    hasChanged = true;
+                offset = value;
+            }
+        }
+
         public bool RenderTargetMode { get => Size == new Vector2(Engine.RenderTarget.Width, Engine.RenderTarget.Height);
             set
             {
@@ -22,10 +34,10 @@ namespace Fiourp
 
         public new Vector2 Pos
         {
-            get => base.Pos + Offset;
+            get => base.Pos;
             set
             {
-                base.Pos = InBoundsPos(value + Size / 2 + Offset, out bool changed) - Size / 2 - Offset;
+                base.Pos = InBoundsPos(value + Size / 2, out bool changed) - Size / 2;
                 if (changed)
                     hasChanged = true;
             }
@@ -33,11 +45,11 @@ namespace Fiourp
 
         public Vector2 CenteredPos
         {
-            get => base.Pos + Size / 2 + Offset;
+            get => base.Pos + Size / 2;
 
             set
             {
-                base.Pos = InBoundsPos(value + Offset, out bool changed) - Size / 2 - Offset;
+                base.Pos = InBoundsPos(value, out bool changed) - Size / 2;
                 if(changed)
                     hasChanged = true;
             }
@@ -49,12 +61,12 @@ namespace Fiourp
             set
             {
                 if(base.Pos - Size / 2 == value) return;
-                base.Pos = value - Size / 2 + Offset;
+                base.Pos = value - Size / 2;
                 hasChanged = true;
             }
         }
 
-        public override Vector2 ExactPos { get => base.Pos + Size / 2 + Offset; set => CenteredPos = value; }
+        public override Vector2 ExactPos { get => base.Pos + Size / 2; set => CenteredPos = value; }
 
         private Vector2 WholePos => VectorHelper.Round(Pos);
 
@@ -136,12 +148,10 @@ namespace Fiourp
             strictFollowBounds.Location += CenteredPos.ToPoint();
             Vector2 inBoundsActorPos = InBoundsPos(followed.Pos, bounds);
 
-            if (strictFollowBounds.Contains(followed.Pos))
-                return new Vector2(MathHelper.Lerp(CenteredPos.X, inBoundsActorPos.X, Engine.Deltatime * xSmooth),
-                    MathHelper.Lerp(CenteredPos.Y, inBoundsActorPos.Y, Engine.Deltatime * ySmooth));
-            else
-                return new Vector2(MathHelper.Lerp(CenteredPos.X, inBoundsActorPos.X, Engine.Deltatime * xSmooth),
-                    MathHelper.Lerp(CenteredPos.Y, inBoundsActorPos.Y, Engine.Deltatime * ySmooth * 2.5f));
+            return new Vector2(
+                MathHelper.Lerp(CenteredPos.X, inBoundsActorPos.X + offset.X, Engine.Deltatime * xSmooth),
+                MathHelper.Lerp(CenteredPos.Y, inBoundsActorPos.Y + offset.Y, 
+                    Engine.Deltatime * ySmooth * (strictFollowBounds.Contains(followed.Pos) ? 1 : 2.5f)));
         }
 
         public void Move(Vector2 offset, float time, Func<float, float> easingFunction = null)
