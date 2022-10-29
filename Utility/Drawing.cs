@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Reflection.Metadata;
 
 namespace Fiourp
 {
@@ -163,9 +164,26 @@ namespace Fiourp
         public static void DrawLine(Vector2 begin, Vector2 end, Color color, int thickness = 1)
         {
             float distance = Vector2.Distance(begin, end);
-            var angle = (float)Math.Atan2(end.Y - begin.Y, end.X - begin.X);
-            var scale = new Vector2(distance, thickness);
+            float angle = (float)Math.Atan2(end.Y - begin.Y, end.X - begin.X);
+            Vector2 scale = new Vector2(distance, thickness);
             spriteBatch.Draw(PointTexture, begin, null, color, angle, new Vector2(0f, 0.5f), scale, SpriteEffects.None, 1);
+        }
+
+        public static void DrawDottedLine(Vector2 begin, Vector2 end, Color color, int thickness, int dotLength, int gapLength)
+        {
+            float distance = Vector2.Distance(begin, end);
+            float step = dotLength + gapLength;
+            Vector2 normalized = (end - begin).Normalized();
+
+            for(int i = 0; i * step < distance; i++)
+            {
+                Vector2 a = begin + normalized * i * step;
+                Vector2 b = begin + normalized * (Math.Min(i * step + dotLength, distance));
+
+                float angle = (float)Math.Atan2(b.Y - a.Y, b.X - a.X);
+                Vector2 scale = new Vector2(i * step + dotLength < distance ? dotLength : Vector2.Distance(b, end), thickness);
+                spriteBatch.Draw(PointTexture, a, null, color, angle, new Vector2(0f, 0.5f), scale, SpriteEffects.None, 1);
+            }
         }
 
         public static void DrawEdge(Rectangle rectangle, int lineWidth, Color color)

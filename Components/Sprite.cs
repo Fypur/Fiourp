@@ -83,6 +83,7 @@ namespace Fiourp
             Texture = Drawing.PointTexture;
             Color = color;
             LayerDepth = layerDepth;
+            DesinationRectangle = rect;
         }
 
         public Sprite(Texture2D texture, Rectangle rect)
@@ -95,6 +96,7 @@ namespace Fiourp
         {
             Texture = texture;
             Rotation = MathHelper.ToRadians(rotation);
+            DesinationRectangle = rect;
         }
 
 #endregion
