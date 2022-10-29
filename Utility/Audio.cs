@@ -31,7 +31,7 @@ namespace Fiourp
 
         public static EventInstance PlayEvent(string eventName)
         {
-            EventInstance instance = CreateEventInstance(eventName);
+            EventInstance instance = CreateEventInstance("event:/" + eventName);
             instance.start();
             instance.release();
             return instance;

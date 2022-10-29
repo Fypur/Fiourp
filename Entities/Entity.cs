@@ -95,7 +95,7 @@ namespace Fiourp
         public virtual void Update()
         {
             for (int i = Components.Count - 1; i >= 0; i--)
-                if(Components[i].Active)
+                if(Components.Count > i && Components[i].Active)
                     Components[i].Update();
 
             for (int i = Children.Count - 1; i >= 0; i--)

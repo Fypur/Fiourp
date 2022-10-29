@@ -6,7 +6,7 @@ namespace Fiourp
 {
     public class AudioData
     {
-        public const string THUD = "event:/THUD";
-        public const string MUSIC = "event:/Music";
+        public const string THUD = "THUD";
+        public const string MUSIC = "Music";
     }
 }

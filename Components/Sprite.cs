@@ -88,6 +88,7 @@ namespace Fiourp
         public Sprite(Texture2D texture, Rectangle rect)
         {
             Texture = texture;
+            DesinationRectangle = rect;
         }
 
         public Sprite(Texture2D texture, Rectangle rect, float rotation)

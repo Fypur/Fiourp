@@ -16,6 +16,7 @@ namespace Fiourp
         public UIElement Left, Right, Up, Down;
 
         protected bool selectableField = true;
+
         public bool Selectable { get => selectableField; 
             set 
             { 
