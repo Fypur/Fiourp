@@ -87,5 +87,35 @@ namespace Fiourp
 
             return null; // No collision
         }
+
+        public static Vector2[] LineCircleIntersection(Vector2 lineBegin, Vector2 lineEnd, Vector2 circleCenter, float circleRadius)
+        {
+            Vector2 d = (lineEnd - lineBegin);
+            Vector2 f = (lineBegin - circleCenter);
+
+            float a = Vector2.Dot(d, d);
+            float b = 2 * Vector2.Dot(f, d);
+            float c = Vector2.Dot(f, f) - circleRadius * circleRadius;
+
+            float delta = b * b - 4 * a * c;
+
+            if (delta < 0)
+                return new Vector2[0];
+
+            delta = (float)Math.Sqrt(delta);
+
+            float t1 = (-b + delta) / (2 * a);
+            if (delta == 0)
+                return new Vector2[1] { lineBegin + d * t1 };
+            
+            float t2 = (-b - delta) / (2 * a);
+            
+            if(t2 < 0 || t2 > 1)
+                return new Vector2[1] { lineBegin + d * t1 };
+            if(t1 < 0 || t1 > 1)
+                return new Vector2[1] { lineBegin + d * t2 };
+
+            return new Vector2[2] { lineBegin + d * t1, lineBegin + d * t2 };
+        }
     }
 }

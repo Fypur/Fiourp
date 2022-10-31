@@ -73,7 +73,7 @@ namespace Fiourp
 
         public static void DrawCircleEdge(Vector2 position, float radius, float theta, Color color, int thickness)
         {
-            Vector2 previous = position + new Vector2(radius, 0); ;
+            Vector2 previous = position + new Vector2(radius, 0);
             for (float x = theta; x < 2 * Math.PI; x += theta)
             {
                 Vector2 pos = position + new Vector2((float)(Math.Cos(x) * radius), (float)(Math.Sin(x) * radius));

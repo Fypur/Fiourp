@@ -146,11 +146,11 @@ namespace Fiourp
         public Vector2 FollowedPos(Entity followed, float xSmooth, float ySmooth, Rectangle strictFollowBounds, Rectangle bounds)
         {
             strictFollowBounds.Location += CenteredPos.ToPoint();
-            Vector2 inBoundsActorPos = InBoundsPos(followed.Pos, bounds);
+            Vector2 inBoundsActorPos = InBoundsPos(InBoundsPos(followed.Pos, bounds) + offset, bounds);
 
             return new Vector2(
-                MathHelper.Lerp(CenteredPos.X, inBoundsActorPos.X + offset.X, Engine.Deltatime * xSmooth),
-                MathHelper.Lerp(CenteredPos.Y, inBoundsActorPos.Y + offset.Y, 
+                MathHelper.Lerp(CenteredPos.X, inBoundsActorPos.X, Engine.Deltatime * xSmooth),
+                MathHelper.Lerp(CenteredPos.Y, inBoundsActorPos.Y, 
                     Engine.Deltatime * ySmooth * (strictFollowBounds.Contains(followed.Pos) ? 1 : 2.5f)));
         }
 
