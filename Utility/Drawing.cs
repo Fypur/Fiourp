@@ -82,6 +82,23 @@ namespace Fiourp
             }
         }
 
+        public static void DrawArc(Vector2 middle, float radius, float angleStartRad, float angleEndRad, float theta, Color color, int thickness)
+        {
+            while (angleEndRad < angleStartRad)
+                angleEndRad += (float)Math.PI * 2;
+
+            Vector2 previous = middle + new Vector2((float)(Math.Cos(angleStartRad) * radius), (float)(Math.Sin(angleStartRad) * radius));
+            for (float x = angleStartRad + theta; x < angleEndRad; x += theta)
+            {
+                Vector2 pos = middle + new Vector2((float)(Math.Cos(x) * radius), (float)(Math.Sin(x) * radius));
+                DrawLine(pos, previous, color, thickness);
+                previous = pos;
+            }
+        }
+
+        public static void DrawArc(Vector2 middle, float radius, Vector2 arcPos1, Vector2 arcPos2, float theta, Color color, int thickness)
+            => DrawArc(middle, radius, (arcPos1 - middle).ToAngle(), (arcPos2 - middle).ToAngle(), theta, color, thickness);
+
         public static void DrawCircle(Vector2 position, float radius, float theta, Color color)
             => DrawCircle(position, radius, theta, color, color);
 

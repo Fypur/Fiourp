@@ -11,17 +11,32 @@ namespace Fiourp
         public Vector2 BeginPoint;
         public Vector2 EndPoint;
         private float? distance = null;
+        private float? distanceSquared = null;
 
         public float Distance
         {
             get
             {
                 if (distance == null)
-                    distance = Vector2.Distance(BeginPoint, EndPoint);
+                {
+                    if (distanceSquared == null)
+                        distanceSquared = Vector2.DistanceSquared(BeginPoint, EndPoint);
+                    distance = (float)Math.Sqrt((float)distanceSquared);
+                }
                 return (float)distance;
             }
         }
-        
+
+        public float DistanceSquared
+        {
+            get
+            {
+                if (distanceSquared == null)
+                    distanceSquared = Vector2.DistanceSquared(BeginPoint, EndPoint);
+                return (float)distanceSquared;
+            }
+        }
+
         public enum RayTypes { Normal, MapTiles }
 
         public Raycast(RayTypes rayType, Vector2 begin, Vector2 direction, float length)
@@ -154,6 +169,45 @@ namespace Fiourp
 
             Hit = false;
             EndPoint = begin + direction * length;
+        }
+
+        public static Raycast FiveRays(Vector2 from, Vector2 to, bool waitForHit, bool varyTarget = true, float varienceMagnitude = 1)
+        {
+            var r0 = new Raycast(Raycast.RayTypes.MapTiles, from, to);
+            if (r0.Hit == waitForHit)
+                return r0;
+
+            for (int x = -1; x <= 1; x++)
+                for (int y = -1; y <= 1; y++)
+                {
+                    var r = new Raycast(Raycast.RayTypes.MapTiles,
+                        from + (varyTarget ? Vector2.Zero : Vector2.UnitX * x * varienceMagnitude + Vector2.UnitY * y * varienceMagnitude),
+                        to + (varyTarget ? Vector2.UnitX * x * varienceMagnitude + Vector2.UnitY * y * varienceMagnitude : Vector2.Zero));
+                    if (r.Hit == waitForHit)
+                        return r;
+                }
+
+            return r0;
+        }
+
+        public static Raycast FiveRays(Vector2 from, Vector2 direction, float length, bool waitForHit, bool varyDirection = true, float varienceMagnitude = 1)
+        {
+            var r0 = new Raycast(Raycast.RayTypes.MapTiles, from, direction, length);
+            if (r0.Hit == waitForHit)
+                return r0;
+
+            for (int x = -1; x <= 1; x++)
+                for (int y = -1; y <= 1; y++)
+                {
+                    var r = new Raycast(Raycast.RayTypes.MapTiles,
+                        from + (varyDirection ? Vector2.Zero : Vector2.UnitX * x * varienceMagnitude + Vector2.UnitY * y * varienceMagnitude),
+                        direction + (varyDirection ? Vector2.UnitX * x * varienceMagnitude + Vector2.UnitY * y * varienceMagnitude : Vector2.Zero),
+                        length);
+                    if (r.Hit == waitForHit)
+                        return r;
+                }
+
+            return r0;
         }
     }
 }

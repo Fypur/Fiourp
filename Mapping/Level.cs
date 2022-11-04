@@ -16,6 +16,7 @@ namespace Fiourp
         public readonly Vector2 Size;
         public readonly int[,] Organisation;
         public readonly Vector2[] Corners;
+        public readonly Vector2[] InsideCorners;
 
         public readonly Map ParentMap;
 
@@ -30,6 +31,7 @@ namespace Fiourp
             Organisation = data.Organisation;
             Size = data.Size;
             Corners = GetLevelCorners();
+            InsideCorners = GetLevelInsideCorners();
 
             entityData = data.Entities;
             if(entityData == null)
@@ -103,6 +105,33 @@ namespace Fiourp
                             points.Add(Pos + new Vector2(x * TileWidth, (y + 1) * TileHeight));
 
                         if (GetOrganisation(x + 1, y) == 0 && GetOrganisation(x, y + 1) == 0 && GetOrganisation(x + 1, y + 1) == 0)
+                            points.Add(Pos + new Vector2((x + 1) * TileWidth, (y + 1) * TileHeight));
+                    }
+                }
+            }
+
+            return points.ToArray();
+        }
+        
+        public Vector2[] GetLevelInsideCorners()
+        {
+            List<Vector2> points = new List<Vector2>();
+            for (int x = 0; x < Organisation.GetLength(1); x++)
+            {
+                for (int y = 0; y < Organisation.GetLength(0); y++)
+                {
+                    if(Organisation[y, x] != 0)
+                    {
+                        if (GetOrganisation(x - 1, y) != 0 && GetOrganisation(x, y - 1) != 0 && GetOrganisation(x - 1, y - 1) == 0)
+                            points.Add(Pos + new Vector2(x * TileWidth, y * TileHeight));
+
+                        if (GetOrganisation(x + 1, y) != 0 && GetOrganisation(x, y - 1) != 0 && GetOrganisation(x + 1, y - 1) == 0)
+                            points.Add(Pos + new Vector2((x + 1) * TileWidth, y * TileHeight));
+
+                        if (GetOrganisation(x - 1, y) != 0 && GetOrganisation(x, y + 1) != 0 && GetOrganisation(x - 1, y + 1) == 0)
+                            points.Add(Pos + new Vector2(x * TileWidth, (y + 1) * TileHeight));
+
+                        if (GetOrganisation(x + 1, y) != 0 && GetOrganisation(x, y + 1) != 0 && GetOrganisation(x + 1, y + 1) == 0)
                             points.Add(Pos + new Vector2((x + 1) * TileWidth, (y + 1) * TileHeight));
                     }
                 }
