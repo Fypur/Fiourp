@@ -241,5 +241,30 @@ namespace Fiourp
         public Vector2 ToClosestTileCoordinates(Vector2 position)
             => new Vector2((float)Math.Round(position.X / TileWidth) * TileWidth,
                 (float)Math.Round(position.Y / TileWidth) * TileHeight);
+
+        public List<int[]> GetEdges()
+        {
+            List<int[]> edges = new();
+            for (int y = 0; y < Engine.CurrentMap.CurrentLevel.Organisation.GetLength(0); y++)
+                for (int x = 0; x < Engine.CurrentMap.CurrentLevel.Organisation.GetLength(1); x++)
+                {
+                    if (Engine.CurrentMap.CurrentLevel.GetOrganisation(x, y) != 0)
+                    {
+                        if (Engine.CurrentMap.CurrentLevel.GetOrganisation(x - 1, y) == 0)
+                            edges.Add(new int[4] { x, y, x, y + 1 });
+                        if (Engine.CurrentMap.CurrentLevel.GetOrganisation(x + 1, y) == 0)
+                        {
+                            edges.Add(new int[4] { x + 1, y, x + 1, y + 1 });
+                            //edges.Add(new int[4] { x + 1, y, x + 1, y + 1 });
+                        }
+                        if (Engine.CurrentMap.CurrentLevel.GetOrganisation(x, y - 1) == 0)
+                            edges.Add(new int[4] { x, y, x + 1, y });
+                        if (Engine.CurrentMap.CurrentLevel.GetOrganisation(x, y + 1) == 0)
+                            edges.Add(new int[4] { x, y + 1, x + 1, y + 1 });
+                    }
+                }
+
+            return edges;
+        }
     }
 }

@@ -190,20 +190,19 @@ namespace Fiourp
             return r0;
         }
 
-        public static Raycast FiveRays(Vector2 from, Vector2 direction, float length, bool waitForHit, bool varyDirection = true, float varienceMagnitude = 1)
+        public static Raycast FiveRays(Vector2 from, Vector2 to, Func<Raycast, bool> waitForHit, bool varyTarget = true, float varienceMagnitude = 1)
         {
-            var r0 = new Raycast(Raycast.RayTypes.MapTiles, from, direction, length);
-            if (r0.Hit == waitForHit)
+            var r0 = new Raycast(Raycast.RayTypes.MapTiles, from, to);
+            if (waitForHit(r0))
                 return r0;
 
             for (int x = -1; x <= 1; x++)
                 for (int y = -1; y <= 1; y++)
                 {
                     var r = new Raycast(Raycast.RayTypes.MapTiles,
-                        from + (varyDirection ? Vector2.Zero : Vector2.UnitX * x * varienceMagnitude + Vector2.UnitY * y * varienceMagnitude),
-                        direction + (varyDirection ? Vector2.UnitX * x * varienceMagnitude + Vector2.UnitY * y * varienceMagnitude : Vector2.Zero),
-                        length);
-                    if (r.Hit == waitForHit)
+                        from + (varyTarget ? Vector2.Zero : Vector2.UnitX * x * varienceMagnitude + Vector2.UnitY * y * varienceMagnitude),
+                        to + (varyTarget ? Vector2.UnitX * x * varienceMagnitude + Vector2.UnitY * y * varienceMagnitude : Vector2.Zero));
+                    if (waitForHit(r0))
                         return r;
                 }
 
