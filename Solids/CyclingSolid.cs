@@ -17,7 +17,7 @@ namespace Fiourp
 
         private int nextIndex = 1;
         private bool increment = true;
-        private Timer movingTimer;
+        protected Timer MovingTimer;
 
         public CyclingSolid(Vector2 position, int width, int height, Sprite sprite) : base(position, width, height, sprite) { }
         public CyclingSolid(Vector2 position, int width, int height, Color color) : base(position, width, height, color) { }
@@ -52,7 +52,7 @@ namespace Fiourp
             Times = timesBetweenPositions;
             EasingFunction = easingfunction;
 
-            movingTimer = new Timer(Times[currentIndex + (increment ? 0 : -1)] - currentTime, true, (timer) =>
+            MovingTimer = new Timer(Times[currentIndex + (increment ? 0 : -1)] - currentTime, true, (timer) =>
             {
                 if (!moving)
                     timer.PauseUntil(() => moving);
@@ -79,7 +79,7 @@ namespace Fiourp
                 StartTimer();
             });
 
-            AddComponent(movingTimer);
+            AddComponent(MovingTimer);
     }
 
         private static Vector2 InitPos(Vector2 position, Vector2[] positions, float[] timesBetweenPositions, int width, int height, bool goingForwards, out int currentIndex, out float currentTime, out bool direction)
@@ -129,7 +129,7 @@ namespace Fiourp
 
         private void StartTimer()
         {
-            movingTimer = new Timer(Times[nextIndex + (increment ? -1 : 0)], true, (timer) =>
+            MovingTimer = new Timer(Times[nextIndex + (increment ? -1 : 0)], true, (timer) =>
             {
                 if (!moving)
                     timer.PauseUntil(() => moving);
@@ -151,7 +151,7 @@ namespace Fiourp
                 StartTimer();
             });
 
-            AddComponent(movingTimer);
+            AddComponent(MovingTimer);
         }
     }
 }

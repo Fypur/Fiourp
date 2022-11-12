@@ -171,9 +171,15 @@ namespace Fiourp
 
         public void Shake(float time, float intensity)
         {
-            AddComponent(new Shaker(time, intensity, () =>
-                FollowedPos(Engine.Player, 3, 3, StrictFollowBounds,
+            Shaker shaker = GetComponent<Shaker>();
+            if(shaker == null || time > shaker.Time ||  intensity > shaker.Intensity)
+            {
+                RemoveComponent(shaker);
+                AddComponent(new Shaker(time, intensity, () => FollowedPos(Engine.Player, 3, 3, StrictFollowBounds,
                 Bounds), false));
+            }
+
+            
         }
 
         public Vector2 InBoundsPos(Vector2 position, out bool changed)

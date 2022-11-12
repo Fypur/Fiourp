@@ -14,7 +14,8 @@ namespace Fiourp
         public Func<Vector2> UpdatedInitPos;
 
         public bool ShakeSprite;
-        private float Time;
+        public float Time;
+        public bool DestroyOnEnd;
         private float timeMaxValue;
 
         private Vector2 initPos;
@@ -62,7 +63,9 @@ namespace Fiourp
 
                 MoveSpriteBy(ParentEntity, initPos - ParentEntity.Sprite.Offset);
                 //ParentEntity.Sprite.Offset = initPos;
-                Destroy();
+
+                if(DestroyOnEnd)
+                    Destroy();
             }
             else
             {

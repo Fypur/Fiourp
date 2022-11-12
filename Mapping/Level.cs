@@ -34,7 +34,7 @@ namespace Fiourp
             InsideCorners = GetLevelInsideCorners();
 
             entityData = data.Entities;
-            if(entityData == null)
+            if (entityData == null)
                 entityData = new List<Entity>();
             enterAction = data.EnterAction;
         }
@@ -77,7 +77,7 @@ namespace Fiourp
 
         public void Unload()
         {
-            if(Engine.CurrentMap.CurrentLevel == this)
+            if (Engine.CurrentMap.CurrentLevel == this)
                 Engine.CurrentMap.CurrentLevel = null;
 
             foreach (Entity e in entityData)
@@ -93,7 +93,7 @@ namespace Fiourp
             {
                 for (int y = 0; y < Organisation.GetLength(0); y++)
                 {
-                    if(Organisation[y, x] != 0)
+                    if (Organisation[y, x] != 0)
                     {
                         if (GetOrganisation(x - 1, y) == 0 && GetOrganisation(x, y - 1) == 0 && GetOrganisation(x - 1, y - 1) == 0)
                             points.Add(Pos + new Vector2(x * TileWidth, y * TileHeight));
@@ -112,7 +112,7 @@ namespace Fiourp
 
             return points.ToArray();
         }
-        
+
         public Vector2[] GetLevelInsideCorners()
         {
             List<Vector2> points = new List<Vector2>();
@@ -120,7 +120,7 @@ namespace Fiourp
             {
                 for (int y = 0; y < Organisation.GetLength(0); y++)
                 {
-                    if(Organisation[y, x] != 0)
+                    if (Organisation[y, x] != 0)
                     {
                         if (GetOrganisation(x - 1, y) != 0 && GetOrganisation(x, y - 1) != 0 && GetOrganisation(x - 1, y - 1) == 0)
                             points.Add(Pos + new Vector2(x * TileWidth, y * TileHeight));
@@ -147,13 +147,13 @@ namespace Fiourp
 
         public int GetOrganisation(int x, int y, int returnIfEmpty = 0)
         {
-            if(x >= 0 && x < Organisation.GetLength(1) && y >= 0 && y < Organisation.GetLength(0))
+            if (x >= 0 && x < Organisation.GetLength(1) && y >= 0 && y < Organisation.GetLength(0))
                 return Organisation[y, x];
             else
                 return returnIfEmpty;
         }
 
-        private Texture2D GetTileTexture(int x, int y) 
+        private Texture2D GetTileTexture(int x, int y)
         {
             int tileValue = Organisation[y, x];
             Dictionary<string, Texture2D> tileSet = DataManager.Tilesets[tileValue];
@@ -242,7 +242,7 @@ namespace Fiourp
             => new Vector2((float)Math.Round(position.X / TileWidth) * TileWidth,
                 (float)Math.Round(position.Y / TileWidth) * TileHeight);
 
-        public List<int[]> GetEdges()
+        /*public List<int[]> GetEdges()
         {
             List<int[]> edges = new();
             for (int y = 0; y < Engine.CurrentMap.CurrentLevel.Organisation.GetLength(0); y++)
@@ -265,6 +265,68 @@ namespace Fiourp
                 }
 
             return edges;
+        }*/
+
+        public List<int[]> GetEdges()
+        {
+            List<int[]> edges = new();
+
+            for (int y = 0; y < Engine.CurrentMap.CurrentLevel.Organisation.GetLength(0); y++)
+                for (int x = 0; x < Engine.CurrentMap.CurrentLevel.Organisation.GetLength(1); x++)
+                {
+                    if(GetOrganisation(x, y) != 0)
+                    {
+                        //Top
+                        if(GetOrganisation(x, y - 1) == 0 && (GetOrganisation(x - 1, y) == 0 || GetOrganisation(x - 1, y - 1) != 0))
+                        {
+                            int xMove = x + 1;
+                            while(GetOrganisation(xMove, y) != 0 && GetOrganisation(xMove, y - 1) == 0)
+                                xMove++;
+
+                            edges.Add(new int[4] { x, y, xMove, y });
+                        }
+
+                        //Bottom
+                        if (GetOrganisation(x, y + 1) == 0 && (GetOrganisation(x - 1, y) == 0 || GetOrganisation(x - 1, y + 1) != 0))
+                        {
+                            int xMove = x + 1;
+                            while (GetOrganisation(xMove, y) != 0 && GetOrganisation(xMove, y + 1) == 0)
+                                xMove++;
+
+                            edges.Add(new int[4] { x, y + 1, xMove, y + 1 });
+                        }
+
+                        //Left
+                        if (GetOrganisation(x - 1, y) == 0 && (GetOrganisation(x, y - 1) == 0 || GetOrganisation(x - 1, y - 1) != 0))
+                        {
+                            int yMove = y + 1;
+                            while (GetOrganisation(x, yMove) != 0 && GetOrganisation(x - 1, yMove) == 0)
+                                yMove++;
+
+                            edges.Add(new int[4] { x, y, x, yMove });
+                        }
+
+                        //Right
+                        if (GetOrganisation(x + 1, y) == 0 && (GetOrganisation(x, y - 1) == 0 || GetOrganisation(x + 1, y - 1) != 0))
+                        {
+                            int yMove = y + 1;
+                            while (GetOrganisation(x, yMove) != 0 && GetOrganisation(x + 1, yMove) == 0)
+                                yMove++;
+
+                            edges.Add(new int[4] { x + 1, y, x + 1, yMove });
+                        }
+                    }
+                }
+
+            /*foreach (int[] edge in edges)
+            {
+                Debug.PointUpdate(Color.DarkOrange, new Vector2(edge[0], edge[1]) * 8 + Pos, new Vector2(edge[2], edge[3]) * 8 + Pos);
+            }*/
+
+            return edges;
         }
+
+        public Vector2 GetOrganisationPos(int x, int y)
+            => new Vector2(x * TileWidth, y * TileHeight) + Pos;
     }
 }
