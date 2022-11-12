@@ -17,6 +17,7 @@ namespace Fiourp
         public readonly int[,] Organisation;
         public readonly Vector2[] Corners;
         public readonly Vector2[] InsideCorners;
+        public readonly List<int[]> Edges;
 
         public readonly Map ParentMap;
 
@@ -32,6 +33,7 @@ namespace Fiourp
             Size = data.Size;
             Corners = GetLevelCorners();
             InsideCorners = GetLevelInsideCorners();
+            Edges = GetEdges();
 
             entityData = data.Entities;
             if (entityData == null)
@@ -132,6 +134,19 @@ namespace Fiourp
                             points.Add(Pos + new Vector2(x * TileWidth, (y + 1) * TileHeight));
 
                         if (GetOrganisation(x + 1, y) != 0 && GetOrganisation(x, y + 1) != 0 && GetOrganisation(x + 1, y + 1) == 0)
+                            points.Add(Pos + new Vector2((x + 1) * TileWidth, (y + 1) * TileHeight));
+
+                        //Corners that are inside corners
+                        if (GetOrganisation(x - 1, y) == 0 && GetOrganisation(x, y - 1) == 0 && GetOrganisation(x - 1, y - 1) != 0)
+                            points.Add(Pos + new Vector2(x * TileWidth, y * TileHeight));
+
+                        if (GetOrganisation(x + 1, y) == 0 && GetOrganisation(x, y - 1) == 0 && GetOrganisation(x + 1, y - 1) != 0)
+                            points.Add(Pos + new Vector2((x + 1) * TileWidth, y * TileHeight));
+
+                        if (GetOrganisation(x - 1, y) == 0 && GetOrganisation(x, y + 1) == 0 && GetOrganisation(x - 1, y + 1) != 0)
+                            points.Add(Pos + new Vector2(x * TileWidth, (y + 1) * TileHeight));
+
+                        if (GetOrganisation(x + 1, y) == 0 && GetOrganisation(x, y + 1) == 0 && GetOrganisation(x + 1, y + 1) != 0)
                             points.Add(Pos + new Vector2((x + 1) * TileWidth, (y + 1) * TileHeight));
                     }
                 }
@@ -271,8 +286,8 @@ namespace Fiourp
         {
             List<int[]> edges = new();
 
-            for (int y = 0; y < Engine.CurrentMap.CurrentLevel.Organisation.GetLength(0); y++)
-                for (int x = 0; x < Engine.CurrentMap.CurrentLevel.Organisation.GetLength(1); x++)
+            for (int y = 0; y < Organisation.GetLength(0); y++)
+                for (int x = 0; x < Organisation.GetLength(1); x++)
                 {
                     if(GetOrganisation(x, y) != 0)
                     {

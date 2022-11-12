@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Net.Http.Headers;
 using System.Text;
 
 namespace Fiourp
@@ -72,7 +73,7 @@ namespace Fiourp
 
                 //Les 5 raycast comme ça c'est juste pcq des fois c'est un peu funky et un seul raycast trouve que y a collision
                 //au pixel près. Donc j'en fait 5 pcq un raycast sur maptiles c'est pas expensive
-                Raycast bestRay = Raycast.FiveRays(middle, corner, false, false, 0.001f);
+                Raycast bestRay = Raycast.FiveRays(middle, corner, false, false, 0.001f, true);
 
                 if (d < sqrdMaxedDist && !bestRay.Hit)
                 {
@@ -86,11 +87,11 @@ namespace Fiourp
             foreach (Vector2 corner in corners)
             {
                 points.Add(corner);
-                var r = new Raycast(Raycast.RayTypes.MapTiles, middle, corner - middle, distance);
-                var r2 = new Raycast(Raycast.RayTypes.MapTiles, middle, corner - middle - Vector2.UnitX * 0.1f, distance);
-                var r3 = new Raycast(Raycast.RayTypes.MapTiles, middle, corner - middle - Vector2.UnitY * 0.1f, distance);
-                var r4 = new Raycast(Raycast.RayTypes.MapTiles, middle, corner - middle + Vector2.UnitX * 0.1f, distance);
-                var r5 = new Raycast(Raycast.RayTypes.MapTiles, middle, corner - middle + Vector2.UnitY * 0.1f, distance);
+                var r = new Raycast(Raycast.RayTypes.MapTiles, middle, corner - middle, distance, true);
+                var r2 = new Raycast(Raycast.RayTypes.MapTiles, middle, corner - middle - Vector2.UnitX * 0.1f, distance, true);
+                var r3 = new Raycast(Raycast.RayTypes.MapTiles, middle, corner - middle - Vector2.UnitY * 0.1f, distance, true);
+                var r4 = new Raycast(Raycast.RayTypes.MapTiles, middle, corner - middle + Vector2.UnitX * 0.1f, distance, true);
+                var r5 = new Raycast(Raycast.RayTypes.MapTiles, middle, corner - middle + Vector2.UnitY * 0.1f, distance, true);
                 //Debug.PointUpdate(Color.DarkGreen, r5.EndPoint);
 
                 Raycast bestRay = r;
@@ -111,7 +112,7 @@ namespace Fiourp
             }
 
             //On determine toutes les edges (non opti là ça fait par tile)
-            List<int[]> edges = Engine.CurrentMap.CurrentLevel.GetEdges();
+            List<int[]> edges = Engine.CurrentMap.CurrentLevel.Edges;
 
             //On cherche les points d'intersection sur les edges, puis on vérifie par raycast
             foreach (int[] edge in edges)
@@ -157,10 +158,23 @@ namespace Fiourp
                 return (float)Math.Ceiling(f);
             }
 
+            Vector2 CeilingOrFloorV(Vector2 v)
+                => new Vector2(CeilingOrFloor(v.X), CeilingOrFloor(v.Y));
+
             void CompareAndRemove(int index, int index2)
             {
-                if (CeilingOrFloor(points[index].X) == CeilingOrFloor(points[index2].X) && CeilingOrFloor(points[index].Y) == CeilingOrFloor(points[index2].Y))
-                    points.RemoveAt(index2);
+                //if (Vector2.DistanceSquared(points[index], points[index2]) < 1)
+                if(CeilingOrFloor(points[index].X) == CeilingOrFloor(points[index2].X) && CeilingOrFloor(points[index].Y) == CeilingOrFloor(points[index2].Y))
+                {
+                    if (distancesSquared[points[index2]] < distancesSquared[points[index]])
+                        points.RemoveAt(index2);
+                    else
+                        points.RemoveAt(index);
+                }
+                return;
+
+                /*if ()
+                    points.RemoveAt(index2);*/
             }
               
             for (int i = 0; i < points.Count - 2; i++)
@@ -184,16 +198,16 @@ namespace Fiourp
             int CheckAngleAndChange(int index0, int index1, int index2)
             {
                 bool Aligned(int index, int index2)
-                    => Vector2.Floor(points[index] - points[index2]).X == 0 || Vector2.Floor(points[index] - points[index2]).Y == 0;
+                    => CeilingOrFloorV(points[index] - points[index2]).X == 0 || CeilingOrFloorV(points[index] - points[index2]).Y == 0;
 
                 bool SameEdge(int index, int index2)
                 {
                     bool AlignedWithEdge(Vector2 edgeBegin, Vector2 edgeEnd)
                     {
-                        return (Vector2.Floor(points[index] - edgeBegin).X == 0 || Vector2.Floor(points[index] - edgeBegin).Y == 0)
-                            && (Vector2.Floor(points[index] - edgeEnd).X == 0 || Vector2.Floor(points[index] - edgeEnd).Y == 0)
-                            && (Vector2.Floor(points[index2] - edgeBegin).X == 0 || Vector2.Floor(points[index2] - edgeBegin).Y == 0)
-                            && (Vector2.Floor(points[index2] - edgeEnd).X == 0 || Vector2.Floor(points[index2] - edgeEnd).Y == 0);
+                        return (CeilingOrFloorV(points[index] - edgeBegin).X == 0 || CeilingOrFloorV(points[index] - edgeBegin).Y == 0)
+                            && (CeilingOrFloorV(points[index] - edgeEnd).X == 0 || CeilingOrFloorV(points[index] - edgeEnd).Y == 0)
+                            && (CeilingOrFloorV(points[index2] - edgeBegin).X == 0 || CeilingOrFloorV(points[index2] - edgeBegin).Y == 0)
+                            && (CeilingOrFloorV(points[index2] - edgeEnd).X == 0 || CeilingOrFloorV(points[index2] - edgeEnd).Y == 0);
                     }
 
                     if (!Aligned(index, index2))
@@ -209,9 +223,9 @@ namespace Fiourp
                         if (!AlignedWithEdge(edgeBegin, edgeEnd))
                             continue;
 
-                        if (p1.X >= edgeBegin.X && p1.Y >= edgeBegin.Y && p2.X >= edgeBegin.X && p2.Y >= edgeBegin.Y &&
-                            Vector2.DistanceSquared(edgeBegin, p1) <= Vector2.DistanceSquared(edgeBegin, edgeEnd) &&
-                            Vector2.DistanceSquared(edgeBegin, p2) <= Vector2.DistanceSquared(edgeBegin, edgeEnd))
+                        if (CeilingOrFloor(p1.X) >= edgeBegin.X && CeilingOrFloor(p1.Y) >= edgeBegin.Y && CeilingOrFloor(p2.X) >= edgeBegin.X && CeilingOrFloor(p2.Y) >= edgeBegin.Y &&
+                            Vector2.DistanceSquared(edgeBegin, CeilingOrFloorV(p1)) <= Vector2.DistanceSquared(edgeBegin, edgeEnd) &&
+                            Vector2.DistanceSquared(edgeBegin, CeilingOrFloorV(p2)) <= Vector2.DistanceSquared(edgeBegin, edgeEnd))
                             return true;
                     }
 

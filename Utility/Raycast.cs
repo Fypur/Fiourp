@@ -10,6 +10,8 @@ namespace Fiourp
         public bool Hit;
         public Vector2 BeginPoint;
         public Vector2 EndPoint;
+        public bool UseOnlyLevelOrganisation;
+
         private float? distance = null;
         private float? distanceSquared = null;
 
@@ -39,9 +41,10 @@ namespace Fiourp
 
         public enum RayTypes { Normal, MapTiles }
 
-        public Raycast(RayTypes rayType, Vector2 begin, Vector2 direction, float length)
+        public Raycast(RayTypes rayType, Vector2 begin, Vector2 direction, float length, bool onlyInLevel = false)
         {
             BeginPoint = begin;
+            UseOnlyLevelOrganisation = onlyInLevel;
             switch (rayType)
             {
                 case RayTypes.MapTiles:
@@ -54,9 +57,10 @@ namespace Fiourp
         }
 
 
-        public Raycast(RayTypes rayType, Vector2 begin, Vector2 end)
+        public Raycast(RayTypes rayType, Vector2 begin, Vector2 end, bool onlyInLevel = false)
         {
             BeginPoint = begin;
+            UseOnlyLevelOrganisation = onlyInLevel;
             switch (rayType)
             {
                 case RayTypes.MapTiles:
@@ -134,11 +138,20 @@ namespace Fiourp
                     travelledDistance = rayLength1D.Y;
                     rayLength1D.Y += rayUnitStep.Y;
                 }
-                
+
                 //Checking
-                if (grid.Collider.Bounds.Contains(mapPoint) && travelledDistance < length)
-                    if (((GridCollider)grid.Collider).Organisation[(int)(mapPoint.Y - grid.Collider.AbsoluteTop) / grid.TileHeight, (int)(mapPoint.X - grid.Collider.AbsoluteLeft) / grid.TileWidth] > 0)
-                        Hit = true;
+                if (!UseOnlyLevelOrganisation)
+                {
+                    if (grid.Collider.Bounds.Contains(mapPoint) && travelledDistance < length)
+                        if (((GridCollider)grid.Collider).Organisation[(int)(mapPoint.Y - grid.Collider.AbsoluteTop) / grid.TileHeight, (int)(mapPoint.X - grid.Collider.AbsoluteLeft) / grid.TileWidth] > 0)
+                            Hit = true;
+                }
+                else
+                {
+                    if (Engine.CurrentMap.CurrentLevel.Contains(mapPoint) && travelledDistance < length)
+                        if (Engine.CurrentMap.CurrentLevel.Organisation[(int)(mapPoint.Y - Engine.CurrentMap.CurrentLevel.Pos.Y) / grid.TileHeight, (int)(mapPoint.X - Engine.CurrentMap.CurrentLevel.Pos.X) / grid.TileWidth] > 0)
+                            Hit = true;
+                }
             }
             
             if(Hit)
@@ -171,7 +184,7 @@ namespace Fiourp
             EndPoint = begin + direction * length;
         }
 
-        public static Raycast FiveRays(Vector2 from, Vector2 to, bool waitForHit, bool varyTarget = true, float varienceMagnitude = 1)
+        public static Raycast FiveRays(Vector2 from, Vector2 to, bool waitForHit, bool varyTarget = true, float varienceMagnitude = 1, bool onlyInLevel = false)
         {
             var r0 = new Raycast(Raycast.RayTypes.MapTiles, from, to);
             if (r0.Hit == waitForHit)
@@ -182,7 +195,7 @@ namespace Fiourp
                 {
                     var r = new Raycast(Raycast.RayTypes.MapTiles,
                         from + (varyTarget ? Vector2.Zero : Vector2.UnitX * x * varienceMagnitude + Vector2.UnitY * y * varienceMagnitude),
-                        to + (varyTarget ? Vector2.UnitX * x * varienceMagnitude + Vector2.UnitY * y * varienceMagnitude : Vector2.Zero));
+                        to + (varyTarget ? Vector2.UnitX * x * varienceMagnitude + Vector2.UnitY * y * varienceMagnitude : Vector2.Zero), onlyInLevel);
                     if (r.Hit == waitForHit)
                         return r;
                 }
