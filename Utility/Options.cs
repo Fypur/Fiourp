@@ -54,7 +54,7 @@ namespace Fiourp
             void SetStats(UIElement element, int oldMult, int newMult)
             {
                 element.Pos = element.Pos / oldMult * newMult;
-                element.PreviousPos = element.Pos;
+                element.PreviousPos = element.ExactPos;
                 element.Size = element.Size / oldMult * newMult;
                 element.OnSizeChange();
             }

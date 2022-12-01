@@ -89,7 +89,7 @@ namespace Fiourp
         /// </summary>
         public virtual void Awake()
         {
-            PreviousPos = Pos;
+            PreviousPos = ExactPos;
         }
 
         public virtual void Update()
@@ -103,7 +103,7 @@ namespace Fiourp
                 if (i >= Children.Count)
                     return;
 
-                Children[i].Pos += Pos - PreviousPos;
+                Children[i].Pos += ExactPos - PreviousPos;
                 if(Pos - PreviousPos != Vector2.Zero)
                 { }
                 if (Children[i].Active)
@@ -119,7 +119,7 @@ namespace Fiourp
                     Children[i].LateUpdate();
             }
 
-            PreviousPos = Pos;
+            PreviousPos = ExactPos;
         }
 
         public virtual void LateUpdate()
@@ -131,10 +131,10 @@ namespace Fiourp
         {
             foreach(Entity child in Children)
             {
-                child.Pos += Pos - PreviousPos;
+                child.ExactPos += ExactPos - PreviousPos;
             }
 
-            PreviousPos = Pos;
+            PreviousPos = ExactPos;
         }
 
         public virtual void Render()

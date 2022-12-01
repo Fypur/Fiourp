@@ -237,17 +237,21 @@ namespace Fiourp
                 if (!sameAngle)
                     return 1;
 
-                //Points 1 and 2 are aligned and Points 0 and 2 are on circle edges
+                //Points 0 and 2 are aligned and Points 0 and 2 are on circle edges
                 if (!SameEdge(index0, index2) && !(distancesSquared[points[index0]] + 1 >= sqrdMaxedDist && distancesSquared[points[index2]] + 1 >= sqrdMaxedDist))
                     return 1;
 
-                //Points 1 and 2 are aligned and Points 2 and 3
+                //Points 0 and 1 are aligned and Points 1 and 2 are aligned
                 if (SameEdge(index0, index1) && SameEdge(index1, index2))
                     return 1;
 
+                //Points 0 and 2 are aligned and Points 1 and 2 are on circle edges
+                /*if (!SameEdge(index0, index2) && !(distancesSquared[points[index1]] + 1 >= sqrdMaxedDist && distancesSquared[points[index2]] + 1 >= sqrdMaxedDist))
+                    return 1;*/
+
                 /*if (distancesSquared[points[index1]] < distancesSquared[points[index0]] && distancesSquared[points[index1]] < distancesSquared[points[index2]])
                     return 1;*/
-                
+
                 if (distancesSquared[points[index0]] + 1 >= sqrdMaxedDist && distancesSquared[points[index1]] + 1 >= sqrdMaxedDist)
                     return 1;
 
@@ -266,6 +270,7 @@ namespace Fiourp
 
             if (points.Count > 1)
             {
+                
                 CheckAngleAndChange(points.Count - 1, 0, 1);
 
                 if (points.Count > 2)
@@ -274,7 +279,7 @@ namespace Fiourp
 
             //On vérifie si 2 points sont curved en vérifiant si 2 points sont connectés et sont à la limite du cercle
             PolygonPoint[] polygon = new PolygonPoint[points.Count];
-            for (int i = 0; i < polygon.Length; i++)
+            for (int i = 0; i < points.Count; i++)
             {
                 //distancesSquared[points[i]] = Vector2.DistanceSquared(middle, points[i]);
                 PolygonPoint point = new PolygonPoint(points[i]);
@@ -307,14 +312,14 @@ namespace Fiourp
             return polygon;
         }
 
-        public static void DrawCirclePolygon(PolygonPoint[] polygon, Vector2 circleCenter, float circleRadius, Color color)
+        public static void DrawCirclePolygon(PolygonPoint[] polygon, Vector2 circleCenter, float circleRadius, Color color, float theta = 0.01f)
         {
             for (int i = 0; i < polygon.Length; i++)
             {
                 if (polygon[i].ArchedRight && polygon[i + 1 < polygon.Length ? i + 1 : 0].ArchedLeft)
                 {
                     if (!Debug.DebugMode)
-                        Drawing.DrawArc(circleCenter, circleRadius, polygon[i].Position, polygon[i + 1 < polygon.Length ? i + 1 : 0].Position, 0.01f, color, 1);
+                        Drawing.DrawArc(circleCenter, circleRadius, polygon[i].Position, polygon[i + 1 < polygon.Length ? i + 1 : 0].Position, theta, color, 1);
                     else
                         Drawing.DrawLine(polygon[i].Position, polygon[i + 1 < polygon.Length ? i + 1 : 0].Position, new Color(Color.Yellow, 130));
                 }
@@ -326,6 +331,9 @@ namespace Fiourp
                         Drawing.DrawLine(polygon[i].Position, polygon[i + 1 < polygon.Length ? i + 1 : 0].Position, new Color(Color.Green, 130));
                 }
             }
+
+            if (polygon.Length == 0)
+                Drawing.DrawCircleEdge(circleCenter, circleRadius, theta, color, 1);
         }
     }
 

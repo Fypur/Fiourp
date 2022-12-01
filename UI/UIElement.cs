@@ -25,26 +25,26 @@ namespace Fiourp
                     selectableField = value;
                     if (value)
                     {
-                        if(Up != null)
+                        /*if(Up != null)
                             Up.Down = this;
                         if(Down != null)
                             Down.Up = this;
                         if(Left != null)
                             Left.Right = this;
                         if(Right != null)
-                            Right.Left = this;
+                            Right.Left = this;*/
                         OnAddSelectable();
                     }
                     else
                     {
-                        if (Up != null)
+                        /*if (Up != null)
                             Up.Down = Down;
                         if (Down != null)
                             Down.Up = Up;
                         if (Left != null)
                             Left.Right = Right;
                         if (Right != null)
-                            Right.Left = Left;
+                            Right.Left = Left;*/
                         OnRemoveSelectable();
                     }
                 }
@@ -114,7 +114,7 @@ namespace Fiourp
             base.Awake();
 
             Pos = Pos / Options.DefaultUISizeMultiplier * Options.CurrentScreenSizeMultiplier;
-            PreviousPos = Pos;
+            PreviousPos = ExactPos;
             Size = Size / Options.DefaultUISizeMultiplier * Options.CurrentScreenSizeMultiplier;
         }
 
@@ -129,14 +129,14 @@ namespace Fiourp
             {
                 UIElement newSelected = null;
 
-                if (Input.UpControls.IsDown() && Up != null && Up.Selectable)
-                    newSelected = Up;
-                else if (Input.DownControls.IsDown() && Down != null && Down.Selectable)
-                    newSelected = Down;
-                else if (Input.LeftControls.IsDown() && Left != null && Left.Selectable)
-                    newSelected = Left;
-                else if (Input.RightControls.IsDown() && Right != null && Right.Selectable)
-                    newSelected = Right;
+                if (Input.UpControls.IsDown())
+                    newSelected = NextSelected(Direction.Up);
+                else if (Input.DownControls.IsDown())
+                    newSelected = NextSelected(Direction.Down);
+                else if (Input.LeftControls.IsDown())
+                    newSelected = NextSelected(Direction.Left);
+                else if (Input.RightControls.IsDown())
+                    newSelected = NextSelected(Direction.Right);
 
                 if(newSelected != null)
                 {
@@ -144,6 +144,33 @@ namespace Fiourp
                     OnLeaveSelected();
                 }
             }
+        }
+
+        public UIElement NextSelected(Direction direction)
+        {
+            UIElement newSelected = null;
+
+
+            switch (direction)
+            {
+                case Direction.Up:
+                    newSelected = Up;
+                    break;
+                case Direction.Down:
+                    newSelected = Down;
+                    break;
+                case Direction.Left:
+                    newSelected = Left;
+                    break;
+                case Direction.Right:
+                    newSelected = Right;
+                    break;
+            }
+
+            if (newSelected != null && !newSelected.Selectable)
+                newSelected = newSelected.NextSelected(direction);
+
+            return newSelected;
         }
 
         public virtual void OnSelected()

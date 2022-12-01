@@ -40,36 +40,23 @@ namespace Fiourp
 
         public static void MakeList(List<UIElement> elements, bool vertical)
         {
-            int offset = 0;
             for (int i = 0; i < elements.Count; i++)
             {
-                if (!elements[i].Selectable)
-                {
-                    offset++;
-                    continue;
-                }
-
-                if (i - 1 - offset >= 0)
+                if (i - 1 >= 0)
                 {
                     if (vertical)
-                        elements[i].Up = elements[i - 1 - offset];
+                        elements[i].Up = elements[i - 1];
                     else
-                        elements[i].Left = elements[i - 1 - offset];
-                }
-                for (int j = i + 1; j < elements.Count; j++)
-                {
-                    if (elements[j].Selectable)
-                    {
-                        if (vertical)
-                            elements[i].Down = elements[j];
-                        else
-                            elements[i].Right = elements[j];
-                        i = j - 1;
-                        break;
-                    }
+                        elements[i].Left = elements[i - 1];
                 }
 
-                offset = 0;
+                if(i + 1 < elements.Count)
+                {
+                    if (vertical)
+                        elements[i].Down = elements[i + 1];
+                    else
+                        elements[i].Right = elements[i + 1];
+                }
             }
         }
 
