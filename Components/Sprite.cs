@@ -41,6 +41,7 @@ namespace Fiourp
             CurrentAnimation.Frames[CurrentFrame];
         public Animation CurrentAnimation;
         public int CurrentFrame;
+        private int currentLoopAmount;
 
         private Dictionary<string, Animation> animations = new();
         private bool animating;
@@ -130,9 +131,10 @@ namespace Fiourp
                     if (CurrentAnimation.GoTo != "" && CurrentAnimation.GoTo != null)
                     {
                         //Loop
-                        if(animations[CurrentAnimation.GoTo] == CurrentAnimation)
+                        if((animations[CurrentAnimation.GoTo] == CurrentAnimation || CurrentAnimation.IsLoop) && currentLoopAmount < CurrentAnimation.LoopAmount)
                         {
                             CurrentFrame = 0;
+                            currentLoopAmount++;
                             Texture = CurrentAnimation.Frames[CurrentFrame];
                         }
                         else
@@ -146,6 +148,7 @@ namespace Fiourp
                     {
                         animating = false;
                         CurrentFrame = 0;
+                        currentLoopAmount = 0;
                     }
                 }
                 else
@@ -215,15 +218,18 @@ namespace Fiourp
             CurrentFrame = 0;
             animTimer = 0;
             animating = true;
+            currentLoopAmount = 0;
         }
 
         public class Animation
         {
-            public Animation(Texture2D[] frames, float delay, string goTo)
+            public Animation(Texture2D[] frames, float delay, string goTo, bool isLoop = false, int loopAmount = 1)
             {
                 Frames = frames;
                 Delay = delay;
                 GoTo = goTo;
+                IsLoop = isLoop;
+                LoopAmount = loopAmount;
 
 
                 Slices = ((List<Slice>)((object[])Frames[0].Tag)[1]).ToArray();
@@ -233,6 +239,8 @@ namespace Fiourp
             public float Delay;
             public Texture2D[] Frames;
             public string GoTo;
+            public bool IsLoop;
+            public int LoopAmount;
 
             public Slice[] Slices;
 
@@ -294,7 +302,18 @@ namespace Fiourp
                                 anim.GetAttribute("goto"));
 
                     else if (anim.Name == "Loop")
-                        AllAnimData[element.Name].Animations[anim.GetAttribute("id")] = new Animation(DataManager.LoadAllGraphicsWithName(anim.GetAttribute("path"), path), float.Parse(anim.GetAttribute("delay"), System.Globalization.CultureInfo.InvariantCulture.NumberFormat), anim.GetAttribute("id"));
+                    {
+                        int loopAmount = 1;
+                        
+                        if(int.TryParse(anim.GetAttribute("loop"), out int l))
+                            loopAmount = l;
+
+                        string animGoto = anim.GetAttribute("goto");
+                        if (animGoto == "")
+                            animGoto = anim.GetAttribute("id");
+
+                        AllAnimData[element.Name].Animations[anim.GetAttribute("id")] = new Animation(DataManager.LoadAllGraphicsWithName(anim.GetAttribute("path"), path), float.Parse(anim.GetAttribute("delay"), System.Globalization.CultureInfo.InvariantCulture.NumberFormat), animGoto, true, loopAmount);
+                    }
                 }
 
                 AllAnimData[element.Name].StartAnimationId = element.GetAttribute("start");
