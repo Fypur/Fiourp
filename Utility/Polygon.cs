@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.Net.Http.Headers;
 using System.Text;
 
@@ -71,11 +72,21 @@ namespace Fiourp
             {
                 float d = Vector2.DistanceSquared(middle, corner);
 
+                if (d > sqrdMaxedDist)
+                    continue;
+
                 //Les 5 raycast comme ça c'est juste pcq des fois c'est un peu funky et un seul raycast trouve que y a collision
                 //au pixel près. Donc j'en fait 5 pcq un raycast sur maptiles c'est pas expensive
-                Raycast bestRay = Raycast.FiveRays(middle, corner, false, false, 0.001f, true);
+                Raycast r = new Raycast(Raycast.RayTypes.MapTiles, middle, corner, true);
+                if (r.Hit)
+                {
+                    r.Hit = Vector2.DistanceSquared(r.EndPoint, corner) > 1.1f;
+                    //Debug.LogUpdate(r.Hit);
+                }
 
-                if (d < sqrdMaxedDist && !bestRay.Hit)
+                //Raycast bestRay = Raycast.FiveRays(middle, corner, false, false, 0.001f, true);
+
+                if (!r.Hit)
                 {
                     corners.Add(corner);
                     distancesSquared[corner] = d;
@@ -87,6 +98,7 @@ namespace Fiourp
             foreach (Vector2 corner in corners)
             {
                 points.Add(corner);
+
                 var r = new Raycast(Raycast.RayTypes.MapTiles, middle, corner - middle, distance, true);
                 var r2 = new Raycast(Raycast.RayTypes.MapTiles, middle, corner - middle - Vector2.UnitX * 0.1f - Vector2.UnitY * 0.1f, distance, true);
                 var r3 = new Raycast(Raycast.RayTypes.MapTiles, middle, corner - middle - Vector2.UnitX * 0.1f + Vector2.UnitY * 0.1f, distance, true);
@@ -130,10 +142,17 @@ namespace Fiourp
                     if (points.Contains(p))
                         continue;
 
-                    Raycast bestRay = Raycast.FiveRays(middle, p, false, true, 0.001f);
+                    //Raycast bestRay = Raycast.FiveRays(middle, p, false, true, 0.001f);
+
+                    Raycast r = new Raycast(Raycast.RayTypes.MapTiles, middle, p, true);
+                    if (r.Hit)
+                    {
+                        r.Hit = Vector2.DistanceSquared(r.EndPoint, p) > 1.1f;
+                        //Debug.LogUpdate(r.Hit);
+                    }
                     //Debug.PointUpdate(Color.Green, collPoints);
 
-                    if (!bestRay.Hit)
+                    if (!r.Hit)
                     {
                         distancesSquared[p] = Vector2.DistanceSquared(middle, p);
                         points.Add(p);
@@ -270,7 +289,6 @@ namespace Fiourp
 
             if (points.Count > 1)
             {
-                
                 CheckAngleAndChange(points.Count - 1, 0, 1);
 
                 if (points.Count > 2)
