@@ -185,6 +185,26 @@ namespace Fiourp
             Vector2 scale = new Vector2(distance, thickness);
             spriteBatch.Draw(PointTexture, begin, null, color, angle, new Vector2(0f, 0.5f), scale, SpriteEffects.None, 1);
         }
+        
+        public static void DrawLine(Texture2D texture, Vector2 begin, Vector2 end, Color color, int thickness = 1)
+        {
+            float distance = Vector2.Distance(begin, end);
+            float step = texture.Width;
+            Vector2 normalized = (end - begin).Normalized();
+            begin += VectorHelper.Normal2(normalized) * texture.Height / 2 + Vector2.One;
+            end += VectorHelper.Normal2(normalized) * texture.Height / 2 + Vector2.One;
+
+            for (int i = 0; i * step < distance; i++)
+            {
+                Vector2 a = begin + normalized * i * step;
+                Vector2 b = begin + normalized * (Math.Min(i * step + step, distance));
+
+                float angle = (float)Math.Atan2(b.Y - a.Y, b.X - a.X);
+                Vector2 scale = new Vector2(i * step + step < distance ? 1 : Vector2.Distance(a, end) / step, 1);
+
+                spriteBatch.Draw(texture, a, null, color, angle, new Vector2(0f, 0.5f), scale, SpriteEffects.None, 1);
+            }
+        }
 
         public static void DrawDottedLine(Vector2 begin, Vector2 end, Color color, int thickness, int dotLength, int gapLength)
         {
@@ -203,6 +223,7 @@ namespace Fiourp
             }
         }
 
+
         public static void DrawEdge(Rectangle rectangle, int lineWidth, Color color)
         {
             spriteBatch.Draw(PointTexture, new Rectangle(rectangle.X, rectangle.Y, lineWidth, rectangle.Height + lineWidth), color);
@@ -214,6 +235,16 @@ namespace Fiourp
         public static void DrawPoint(Vector2 pos, int thickness, Color color)
         {
             spriteBatch.Draw(PointTexture, new Rectangle((int)pos.X - (thickness / 2), (int)pos.Y - (thickness / 2), thickness, thickness), color);
+        }
+
+        public static void DrawSineWave(Vector2 begin, Vector2 end, float amplitude, int stepSize)
+        {
+            Vector2 from = begin;
+            for(int i = 0; i < (begin - end).Length(); i += stepSize)
+            {
+                //TODO: FINISH THIS
+                //Vector2 to = 
+            }
         }
 
         public static void BeginPrimitives()

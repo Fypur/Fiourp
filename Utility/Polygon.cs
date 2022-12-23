@@ -88,10 +88,10 @@ namespace Fiourp
             {
                 points.Add(corner);
                 var r = new Raycast(Raycast.RayTypes.MapTiles, middle, corner - middle, distance, true);
-                var r2 = new Raycast(Raycast.RayTypes.MapTiles, middle, corner - middle - Vector2.UnitX * 0.1f, distance, true);
-                var r3 = new Raycast(Raycast.RayTypes.MapTiles, middle, corner - middle - Vector2.UnitY * 0.1f, distance, true);
-                var r4 = new Raycast(Raycast.RayTypes.MapTiles, middle, corner - middle + Vector2.UnitX * 0.1f, distance, true);
-                var r5 = new Raycast(Raycast.RayTypes.MapTiles, middle, corner - middle + Vector2.UnitY * 0.1f, distance, true);
+                var r2 = new Raycast(Raycast.RayTypes.MapTiles, middle, corner - middle - Vector2.UnitX * 0.1f - Vector2.UnitY * 0.1f, distance, true);
+                var r3 = new Raycast(Raycast.RayTypes.MapTiles, middle, corner - middle - Vector2.UnitX * 0.1f + Vector2.UnitY * 0.1f, distance, true);
+                var r4 = new Raycast(Raycast.RayTypes.MapTiles, middle, corner - middle + Vector2.UnitX * 0.1f - Vector2.UnitY * 0.1f, distance, true);
+                var r5 = new Raycast(Raycast.RayTypes.MapTiles, middle, corner - middle + Vector2.UnitX * 0.1f + Vector2.UnitY * 0.1f, distance, true);
                 //Debug.PointUpdate(Color.DarkGreen, r5.EndPoint);
 
                 Raycast bestRay = r;
