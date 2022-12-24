@@ -21,8 +21,8 @@ namespace Fiourp
 
         public readonly Map ParentMap;
 
-        private List<Entity> entityData;
-        private Action enterAction = null;
+        public List<Entity> EntityData;
+        public Action EnterAction = null;
 
         public Level(LevelData data)
         {
@@ -35,16 +35,16 @@ namespace Fiourp
             InsideCorners = GetLevelInsideCorners();
             Edges = GetEdges();
 
-            entityData = data.Entities;
-            if (entityData == null)
-                entityData = new List<Entity>();
-            enterAction = data.EnterAction;
+            EntityData = data.Entities;
+            if (EntityData == null)
+                EntityData = new List<Entity>();
+            EnterAction = data.EnterAction;
         }
 
         public void Load()
         {
             Engine.CurrentMap.CurrentLevel = this;
-            enterAction?.Invoke();
+            EnterAction?.Invoke();
 
             for (int y = 0; y < Organisation.GetLength(0); y++)
             {
@@ -52,12 +52,12 @@ namespace Fiourp
                 {
                     if (Organisation[y, x] != 0)
                     {
-                        entityData.Add(new SolidTile(GetTileTexture(x, y), new Vector2(Pos.X + x * TileWidth, Pos.Y + y * TileHeight), TileWidth, TileHeight));
+                        EntityData.Add(new SolidTile(GetTileTexture(x, y), new Vector2(Pos.X + x * TileWidth, Pos.Y + y * TileHeight), TileWidth, TileHeight));
                     }
                 }
             }
 
-            foreach (Entity e in entityData)
+            foreach (Entity e in EntityData)
             {
                 ParentMap.Instantiate(e);
             }
@@ -69,9 +69,9 @@ namespace Fiourp
         public void LoadNoAutoTile()
         {
             Engine.CurrentMap.CurrentLevel = this;
-            enterAction?.Invoke();
+            EnterAction?.Invoke();
 
-            foreach (Entity e in entityData)
+            foreach (Entity e in EntityData)
             {
                 ParentMap.Instantiate(e);
             }
@@ -82,7 +82,7 @@ namespace Fiourp
             if (Engine.CurrentMap.CurrentLevel == this)
                 Engine.CurrentMap.CurrentLevel = null;
 
-            foreach (Entity e in entityData)
+            foreach (Entity e in EntityData)
             {
                 ParentMap.Destroy(e);
             }
@@ -156,9 +156,9 @@ namespace Fiourp
         }
 
         public void DestroyOnUnload(Entity entity)
-            => entityData.Add(entity);
+            => EntityData.Add(entity);
         public void DontDestroyOnUnload(Entity entity)
-            => entityData.Remove(entity);
+            => EntityData.Remove(entity);
 
         public int GetOrganisation(int x, int y, int returnIfEmpty = 0)
         {

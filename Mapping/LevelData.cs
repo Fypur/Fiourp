@@ -15,16 +15,14 @@ namespace Fiourp
         public Map ParentMap;
 
         public Action EnterAction;
-        public Action ExitAction;
 
-        public LevelData(List<Entity> entityData, Vector2 position, Vector2 size, int[,] organisation, Map parentMap, Action enterAction = null, Action exitAction = null)
+        public LevelData(List<Entity> entityData, Vector2 position, Vector2 size, int[,] organisation, Map parentMap, Action enterAction = null)
         {
             Pos = position;
             Size = size;
             Entities = entityData;
             Organisation = organisation;
             EnterAction = enterAction;
-            ExitAction = exitAction;
             ParentMap = parentMap;
         }
     }

@@ -64,6 +64,7 @@ namespace Fiourp
 
             List<Vector2> allCorners = new List<Vector2>(Engine.CurrentMap.CurrentLevel.Corners);
             allCorners.AddRange(Engine.CurrentMap.CurrentLevel.InsideCorners);
+
             List<Vector2> corners = new();
             Dictionary<Vector2, float> distancesSquared = new();
 
@@ -124,13 +125,30 @@ namespace Fiourp
             }
 
             //On determine toutes les edges (non opti là ça fait par tile)
-            List<int[]> edges = Engine.CurrentMap.CurrentLevel.Edges;
+            List<Vector2[]> edgesCoord = new();
+
+            foreach(int[] edge in Engine.CurrentMap.CurrentLevel.Edges)
+            {
+                Vector2 coord1 = new Vector2(edge[0], edge[1]) * Engine.CurrentMap.CurrentLevel.TileWidth + Engine.CurrentMap.CurrentLevel.Pos;
+                Vector2 coord2 = new Vector2(edge[2], edge[3]) * Engine.CurrentMap.CurrentLevel.TileHeight + Engine.CurrentMap.CurrentLevel.Pos;
+                edgesCoord.Add(new Vector2[] { coord1, coord2 });
+            }
+
+            /*if (Engine.CurrentMap.SwitchingLevels)
+            {
+                foreach(int[] edge in Engine.CurrentMap.PreviousLevel.Edges)
+                {
+                    Vector2 coord1 = new Vector2(edge[0], edge[1]) * Engine.CurrentMap.PreviousLevel.TileWidth + Engine.CurrentMap.PreviousLevel.Pos;
+                    Vector2 coord2 = new Vector2(edge[2], edge[3]) * Engine.CurrentMap.PreviousLevel.TileHeight + Engine.CurrentMap.PreviousLevel.Pos;
+                    edgesCoord.Add(new Vector2[] { coord1, coord2 });
+                }
+            }*/
 
             //On cherche les points d'intersection sur les edges, puis on vérifie par raycast
-            foreach (int[] edge in edges)
+            foreach (Vector2[] edge in edgesCoord)
             {
-                Vector2 coord1 = new Vector2(edge[0], edge[1]) * 8 + Engine.CurrentMap.CurrentLevel.Pos;
-                Vector2 coord2 = new Vector2(edge[2], edge[3]) * 8 + Engine.CurrentMap.CurrentLevel.Pos;
+                Vector2 coord1 = edge[0];
+                Vector2 coord2 = edge[1];
 
                 if (Vector2.DistanceSquared(middle, coord1) > sqrdMaxedDist && Vector2.DistanceSquared(middle, coord2) > sqrdMaxedDist)
                     continue;
@@ -232,12 +250,12 @@ namespace Fiourp
                     if (!Aligned(index, index2))
                         return false;
 
-                    foreach (int[] edge in edges)
+                    foreach (Vector2[] edge in edgesCoord)
                     {
                         Vector2 p1 = points[index];
                         Vector2 p2 = points[index2];
-                        Vector2 edgeBegin = Engine.CurrentMap.CurrentLevel.GetOrganisationPos(edge[0], edge[1]);
-                        Vector2 edgeEnd = Engine.CurrentMap.CurrentLevel.GetOrganisationPos(edge[2], edge[3]);
+                        Vector2 edgeBegin = edge[0];
+                        Vector2 edgeEnd = edge[1];
 
                         if (!AlignedWithEdge(edgeBegin, edgeEnd))
                             continue;
