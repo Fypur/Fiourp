@@ -48,7 +48,7 @@ namespace Fiourp
         private float animTimer;
 
         public override string ToString()
-            => $"Texture: {Texture.Name}, {Color}, layerDepth: {LayerDepth}, Rect: {DesinationRectangle}, Origin {Origin}, " +
+            => $"Sprite: Texture: {Texture.Name}, {Color}, layerDepth: {LayerDepth}, Rect: {DesinationRectangle}, Origin {Origin}, " +
                 $"Scale: {Scale}, Rotation {Rotation}, SpriteEffects: {Effect}";
 
         #region Constructors

@@ -237,13 +237,18 @@ namespace Fiourp
             spriteBatch.Draw(PointTexture, new Rectangle((int)pos.X - (thickness / 2), (int)pos.Y - (thickness / 2), thickness, thickness), color);
         }
 
-        public static void DrawSineWave(Vector2 begin, Vector2 end, float amplitude, int stepSize)
+        public static void DrawSineWave(Vector2 begin, Vector2 end, float amplitude, float insideFactor, float stepSize, Color color, Func<float, float> easeI = null)
         {
+            Vector2 dir = (end - begin).Normalized();
+            float length = (begin - end).Length();
             Vector2 from = begin;
-            for(int i = 0; i < (begin - end).Length(); i += stepSize)
+            for(float i = 0; i < length; i += stepSize)
             {
                 //TODO: FINISH THIS
-                //Vector2 to = 
+                Vector2 to = begin + dir * i + VectorHelper.Normal(dir) * easeI(i / length) * (float)Math.Sin(insideFactor * i) * amplitude;
+                //Debug.PointUpdate(to);
+                Drawing.DrawLine(from, to, color, 1);
+                from = to;
             }
         }
 
