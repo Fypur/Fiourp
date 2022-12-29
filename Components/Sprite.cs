@@ -30,7 +30,8 @@ namespace Fiourp
         public Vector2 Origin = Vector2.Zero;
         public Vector2 Offset = Vector2.Zero;
         public Vector2 Scale = Vector2.One;
-        public SpriteEffects Effect = SpriteEffects.None;
+        public Effect PixelShader = null;
+        public SpriteEffects SpriteEffect = SpriteEffects.None;
         public float LayerDepth = 0.5f;
 
         public Rectangle? DesinationRectangle = null;
@@ -49,7 +50,7 @@ namespace Fiourp
 
         public override string ToString()
             => $"Sprite: Texture: {Texture.Name}, {Color}, layerDepth: {LayerDepth}, Rect: {DesinationRectangle}, Origin {Origin}, " +
-                $"Scale: {Scale}, Rotation {Rotation}, SpriteEffects: {Effect}";
+                $"Scale: {Scale}, Rotation {Rotation}, SpriteEffects: {SpriteEffect}";
 
         #region Constructors
 
@@ -168,6 +169,9 @@ namespace Fiourp
             if (Texture == null)
                 return;
 
+            if (PixelShader != Drawing.GetCurrentPixelShader())
+                Drawing.SwitchPixelShader(PixelShader);
+
             if (Texture == Drawing.PointTexture)
             {
                 if (DesinationRectangle == null)
@@ -179,21 +183,21 @@ namespace Fiourp
                         rect = Texture.Bounds;
 
                     rect.Location += Offset.ToPoint();
-                    Drawing.Draw(Texture, ParentEntity.Pos + Offset, SourceRectangle, Color, Rotation, Origin, new Vector2(rect.Width, rect.Height) * Scale, Effect, LayerDepth);
+                    Drawing.Draw(Texture, ParentEntity.Pos + Offset, SourceRectangle, Color, Rotation, Origin, new Vector2(rect.Width, rect.Height) * Scale, SpriteEffect, LayerDepth);
                 }
                 else
-                    Drawing.Draw(Texture, (Rectangle)DesinationRectangle, Color, Rotation, Origin, Scale, Effect, LayerDepth);
+                    Drawing.Draw(Texture, (Rectangle)DesinationRectangle, Color, Rotation, Origin, Scale, SpriteEffect, LayerDepth);
             }
             else if (Centered)
                 Drawing.Draw(Texture, ParentEntity.Pos + ParentEntity.HalfSize + Offset, SourceRectangle, Color, Rotation, Origin,
                     Scale, SpriteEffects.None, 1);
             else
-                Drawing.Draw(Texture, ParentEntity.Pos + Offset, SourceRectangle, Color, Rotation, Origin, Scale, Effect, LayerDepth);
+                Drawing.Draw(Texture, ParentEntity.Pos + Offset, SourceRectangle, Color, Rotation, Origin, Scale, SpriteEffect, LayerDepth);
         }
 
 
         public void Draw(Vector2 position)
-            => Drawing.Draw(Texture, position, SourceRectangle, Color, Rotation, Origin, Scale, Effect, LayerDepth);
+            => Drawing.Draw(Texture, position, SourceRectangle, Color, Rotation, Origin, Scale, SpriteEffect, LayerDepth);
 
         public void Add(string id, Animation animation)
             => animations[id] = animation;
@@ -334,7 +338,7 @@ namespace Fiourp
             s.Origin = Origin;
             s.Offset = Offset;
             s.Scale = Scale;
-            s.Effect = Effect;
+            s.SpriteEffect = SpriteEffect;
             s.LayerDepth = LayerDepth;
             s.DesinationRectangle = DesinationRectangle;
             s.Centered = Centered ;

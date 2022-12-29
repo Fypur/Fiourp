@@ -136,6 +136,13 @@ namespace Fiourp
                 Data.UIElements.Add((UIElement)entity);
             else if (entity is Decoration)
                 Data.Decorations.Add((Decoration)entity);
+
+            Type t = entity.GetType();
+            if (!Engine.CurrentMap.Data.EntitiesByType.ContainsKey(t))
+                Engine.CurrentMap.Data.EntitiesByType.Add(t, new List<Entity>() { entity });
+            else
+                Engine.CurrentMap.Data.EntitiesByType[t].Add(entity);
+
             return entity;
         }
 
@@ -158,6 +165,8 @@ namespace Fiourp
                 Data.UIElements.Remove((UIElement)entity);
             else if (entity is Decoration)
                 Data.Decorations.Remove((Decoration)entity);
+
+            Engine.CurrentMap.Data.EntitiesByType[entity.GetType()].Remove(entity);
         }
     }
 }

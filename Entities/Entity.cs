@@ -41,12 +41,6 @@ namespace Fiourp
             Width = width;
             Height = height;
 
-            Type t = GetType();
-            if (!Engine.CurrentMap.Data.EntitiesByType.ContainsKey(t))
-                Engine.CurrentMap.Data.EntitiesByType.Add(t, new List<Entity>() { this });
-            else
-                Engine.CurrentMap.Data.EntitiesByType[t].Add(this);
-
             Tag = this switch
             {
                 Actor => Tags.Actor,
@@ -162,9 +156,7 @@ namespace Fiourp
         }
 
         public virtual void OnDestroy()
-        {
-            Engine.CurrentMap.Data.EntitiesByType[GetType()].Remove(this);
-        }
+        { }
 
         public virtual bool CollidingConditions(Collider other)
             => true;

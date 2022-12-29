@@ -21,12 +21,18 @@ namespace Fiourp
         public Vector2 Velocity;
         public float StartSize;
 
+        public Color Color => Sprite.Color;
+
+        public Action<Particle> CustomUpdate;
+        public Action<Particle> CustomRender;
+
         public Particle(ParticleType type, Entity followed, Vector2 position, float Size) : base(position, (int)Size, (int)Size, new Sprite(type.Texture))
         {
             Type = type;
             Followed = followed;
             LifeTime = StartLifeTime;
             StartSize = Size;
+            Collider.DebugDraw = false;
             Collider.DebugColor = Color.LightBlue;
         }
 
@@ -52,18 +58,18 @@ namespace Fiourp
             switch (Type.FadeMode)
             {
                 case ParticleType.FadeModes.Linear:
-                    Sprite.Color.A = (byte)(LifeTime / StartLifeTime * 255);
+                    Sprite.Color.A = (byte)(LifeTime / StartLifeTime * StartColor.A);
                     break;
                 case ParticleType.FadeModes.EndLinear:
                     if (LifeTime <= StartLifeTime * 0.25f)
-                        Sprite.Color.A = (byte)(LifeTime / (StartLifeTime * 0.25f) * 255);
+                        Sprite.Color.A = (byte)(LifeTime / (StartLifeTime * 0.25f) * StartColor.A);
                     break;
                 case ParticleType.FadeModes.Smooth:
-                    Sprite.Color.A = (byte)Ease.QuintInAndOut(LifeTime / (StartLifeTime * 0.25f) * 255);
+                    Sprite.Color.A = (byte)Ease.QuintInAndOut(LifeTime / (StartLifeTime * 0.25f) * StartColor.A);
                     break;
                 case ParticleType.FadeModes.EndSmooth:
                     if (LifeTime <= StartLifeTime * 0.25f)
-                        Sprite.Color.A = (byte)Ease.QuintInAndOut(LifeTime / (StartLifeTime * 0.25f) * 255);
+                        Sprite.Color.A = (byte)Ease.QuintInAndOut(LifeTime / (StartLifeTime * 0.25f) * StartColor.A);
                     break;
                 default:
                     break;
@@ -88,6 +94,8 @@ namespace Fiourp
                 default:
                     break;
             }
+
+            CustomUpdate?.Invoke(this);
         }
 
         public override void Render()
@@ -96,6 +104,8 @@ namespace Fiourp
                 Sprite.Offset = Followed.Pos;
 
             base.Render();
+
+            CustomRender?.Invoke(this);
         }
 
         public override string ToString()

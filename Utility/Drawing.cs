@@ -1,8 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Fiourp.Utility;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Reflection.Metadata;
+using System.Runtime.CompilerServices;
 
 namespace Fiourp
 {
@@ -11,6 +13,8 @@ namespace Fiourp
         public const int maxVertices = 1000;
 
         private static SpriteBatch spriteBatch;
+        public static GraphicsDevice GraphicsDevice;
+
         private static GraphicsDevice graphicsDevice => Engine.Graphics.GraphicsDevice;
         public static Texture2D PointTexture;
         public static SpriteFont Font;
@@ -24,7 +28,15 @@ namespace Fiourp
         private static VertexPositionColor[] vertices;
         private static int[] indices;
 
-        private static BasicEffect effect;
+        private static BasicEffect basicEffect;
+
+        private static SpriteSortMode sortMode;
+        private static BlendState blendState;
+        private static SamplerState samplerState;
+        private static DepthStencilState depthStencilState;
+        private static RasterizerState rasterizerState;
+        private static Effect effect;
+        private static Matrix? transformMatrix;
 
         private static int vertexCount;
         private static int indicesCount;
@@ -35,15 +47,17 @@ namespace Fiourp
         {
             Drawing.spriteBatch = spriteBatch;
             Drawing.Font = font;
+            GraphicsDevice = spriteBatch.GraphicsDevice;
+
             PointTexture = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
             PointTexture.Name = "Point Texture";
             PointTexture.SetData(new Color[] { Color.White });
 
             vertices = new VertexPositionColor[maxVertices];
             indices = new int[maxVertices * 3];
-            effect = new BasicEffect(graphicsDevice);
+            basicEffect = new BasicEffect(graphicsDevice);
         }
-
+        
         public static void Draw(Texture2D texture, Vector2 position)
            => spriteBatch.Draw(texture, position, Color.White);
 
@@ -61,6 +75,9 @@ namespace Fiourp
 
         public static void Draw(Texture2D texture, Rectangle destinationRectangle)
            => spriteBatch.Draw(texture, destinationRectangle, Color.White);
+
+        public static void Draw(Texture2D texture, Rectangle destinationRectangle, Color color)
+           => spriteBatch.Draw(texture, destinationRectangle, color);
 
         public static void Draw(Texture2D texture, Rectangle destinationRectangle, Color color, float rotation, Vector2 origin, Vector2 scale, SpriteEffects effect = SpriteEffects.None, float layerDepth = 0)
            => spriteBatch.Draw(texture, destinationRectangle, null, color, rotation, origin, effect, layerDepth);
@@ -252,6 +269,32 @@ namespace Fiourp
             }
         }
 
+        public static void SwitchPixelShader(Effect pixelShader)
+        {
+            spriteBatch.End();
+            /*spriteBatch.Begin(spriteBatch.GetSpriteSortMode(), spriteBatch.GetBlendState(), spriteBatch.GetSamplerState(), spriteBatch.GetDepthStencilState(), spriteBatch.GetRasterizerState(), pixelShader, spriteBatch.GetSpriteEffect().TransformMatrix);*/
+            spriteBatch.Begin(sortMode, blendState, samplerState, depthStencilState, rasterizerState, pixelShader, transformMatrix);
+        }
+
+        public static Effect GetCurrentPixelShader()
+            => effect;
+
+        public static void Begin(SpriteSortMode sortMode = SpriteSortMode.Deferred, BlendState blendState = null, SamplerState samplerState = null, DepthStencilState depthStencilState = null, RasterizerState rasterizerState = null, Effect effect = null, Matrix? transformMatrix = null)
+        {
+            spriteBatch.Begin(sortMode, blendState, samplerState, depthStencilState, rasterizerState, effect, transformMatrix);
+
+            Drawing.sortMode = sortMode;
+            Drawing.blendState = blendState;
+            Drawing.samplerState = samplerState;
+            Drawing.depthStencilState = depthStencilState;
+            Drawing.rasterizerState = rasterizerState;
+            Drawing.effect = effect;
+            Drawing.transformMatrix = transformMatrix;
+        }
+
+        public static void End()
+            => spriteBatch.End();
+
         public static void BeginPrimitives()
         {
             if (hasStartedBatching)
@@ -277,15 +320,15 @@ namespace Fiourp
             if (shapesCount <= 0)
                 return;
 
-            effect.TextureEnabled = false;
-            effect.VertexColorEnabled = true;
-            effect.FogEnabled = false;
-            effect.LightingEnabled = false;
+            basicEffect.TextureEnabled = false;
+            basicEffect.VertexColorEnabled = true;
+            basicEffect.FogEnabled = false;
+            basicEffect.LightingEnabled = false;
             graphicsDevice.RasterizerState = RasterizerState.CullNone;
             graphicsDevice.BlendState = BlendState.Additive;
-            effect.World = Engine.Cam.ViewMatrix * Matrix.CreateOrthographicOffCenter(0, graphicsDevice.Viewport.Width, graphicsDevice.Viewport.Height, 0, 0, 1);
+            basicEffect.World = Engine.Cam.ViewMatrix * Matrix.CreateOrthographicOffCenter(0, graphicsDevice.Viewport.Width, graphicsDevice.Viewport.Height, 0, 0, 1);
 
-            foreach(EffectPass pass in effect.CurrentTechnique.Passes)
+            foreach(EffectPass pass in basicEffect.CurrentTechnique.Passes)
             {
                 pass.Apply();
                 graphicsDevice.DrawUserIndexedPrimitives<VertexPositionColor>(PrimitiveType.TriangleList, vertices, 0, vertexCount, indices, 0, indicesCount / 3);

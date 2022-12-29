@@ -22,7 +22,6 @@ namespace Fiourp
             Vector2 pos = levelsMerged[0].Pos;
             Vector2 size = levelsMerged[0].Size;
             Action enterAction = null;
-            Action exitAction = null;
 
             foreach (Level level in levelsMerged)
             {

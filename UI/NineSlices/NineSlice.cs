@@ -90,7 +90,7 @@ namespace Fiourp
             void DrawSlice(Texture2D texture, Vector2 position, Point size)
             {
                 if (texture != null)
-                    Drawing.Draw(texture, position + sprite.Offset, size.ToVector2() * sprite.Scale, sprite.Color, sprite.Rotation, sprite.Origin, sprite.Effect, sprite.LayerDepth);
+                    Drawing.Draw(texture, position + sprite.Offset, size.ToVector2() * sprite.Scale, sprite.Color, sprite.Rotation, sprite.Origin, sprite.SpriteEffect, sprite.LayerDepth);
                 /*Drawing.Draw
             }Edge(new Rectangle(position.ToPoint(), size.ToPoint()), 1, new Color(){ R = 255, G = 255, B = 255, A = 50 });*/
             }

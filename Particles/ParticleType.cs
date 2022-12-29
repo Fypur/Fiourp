@@ -33,6 +33,8 @@ namespace Fiourp
         public float DirectionRange;
 
         public FadeModes FadeMode;
+        public Action<Particle> CustomUpdate;
+        public Action<Particle> CustomRender;
 
         public enum FadeModes { None, Linear, Smooth, EndLinear, EndSmooth };
 
@@ -76,10 +78,14 @@ namespace Fiourp
 
             p.Followed = followed;
             p.StartLifeTime = p.LifeTime = Rand.NextFloat(LifeMin, LifeMax);
-            p.StartColor = p.Sprite.Color = color;
+            p.StartColor = color;
+            p.Sprite.Color = color;
 
             float dir = direction - 0.5f * DirectionRange + Rand.NextDouble() * DirectionRange;
             p.Velocity = VectorHelper.AngleToVector(dir) * Rand.NextFloat(SpeedMin, SpeedMax);
+            
+            p.CustomUpdate = CustomUpdate;
+            p.CustomRender = CustomRender;
 
             return p;
         }

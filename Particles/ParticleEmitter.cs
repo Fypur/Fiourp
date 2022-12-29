@@ -13,7 +13,10 @@ namespace Fiourp
         public ParticleType ParticleType;
         public Vector2 LocalPosition;
         public Rectangle LocalBounds;
+
         public int Amount;
+        public float? Direction;
+        public Color Color = Color.White;
 
         private float timer = float.NaN;
 
@@ -42,6 +45,16 @@ namespace Fiourp
             Amount = amount;
         }
 
+        public ParticleEmitter(ParticleSystem particleSystem, ParticleType particleType, Vector2 localBounds, int amount, float? direction, Color color) : base()
+        {
+            ParticleSystem = particleSystem;
+            ParticleType = particleType;
+            LocalPosition = localBounds;
+            Amount = amount;
+            Direction = direction;
+            Color = color;
+        }
+
         public ParticleEmitter(ParticleSystem particleSystem, ParticleType particleType, Rectangle localBounds, int amount, float time) : base()
         {
             ParticleSystem = particleSystem;
@@ -62,7 +75,7 @@ namespace Fiourp
             if(LocalBounds != Rectangle.Empty)
                 ParticleSystem.Emit(ParticleType, new Rectangle(ParentEntity.Pos.ToPoint() + LocalBounds.Location, LocalBounds.Size), Amount);
             else
-                ParticleSystem.Emit(ParticleType, ParentEntity.Pos + LocalPosition, Amount);
+                ParticleSystem.Emit(ParticleType, Amount, ParentEntity.Pos + LocalPosition, null, Direction.HasValue ? Direction.Value : ParticleType.Direction, Color);
         }
 
         public void Emit()

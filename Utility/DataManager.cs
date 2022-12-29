@@ -17,6 +17,7 @@ namespace Fiourp
         public static string contentDirName = new DirectoryInfo(Content.RootDirectory).FullName;
 
         public static Dictionary<string, Texture2D> Textures = new();
+        public static Dictionary<string, Effect> PixelShaders = new();
 
         public static Dictionary<int, Dictionary<string, Texture2D>> Tilesets;
         public static Dictionary<string,Texture2D> Objects = new();
@@ -64,6 +65,10 @@ namespace Fiourp
                         AddTexture(key, textures[0]);
                     for(int i = 1; i < textures.Length + 1; i++)
                         AddTexture(key + i, textures[i - 1]);
+                }
+                else if(loaded is Effect shader)
+                {
+                    PixelShaders[key.Substring(key.LastIndexOf("PixelShaders/") + 13)] = shader;
                 }
 
                 void AddTexture(string key, Texture2D texture)
