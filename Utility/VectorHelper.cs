@@ -116,5 +116,8 @@ namespace Fiourp
                 rectangle.Location.ToVector2() + new Vector2(0, rectangle.Height),
                 rectangle.Location.ToVector2() + new Vector2(rectangle.Width, rectangle.Height)
             };
+
+        public static FMOD.VECTOR ToFMODVector(this Vector2 vector)
+            => new FMOD.VECTOR() { x = vector.X, y = vector.Y };
     }
 }

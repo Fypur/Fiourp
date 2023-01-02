@@ -21,6 +21,7 @@ namespace Fiourp
         public static Entity Player;
         public static Map CurrentMap;
         public static RenderTarget2D RenderTarget;
+        public static RenderTarget2D PrimitivesRenderTarget;
 
         public static void Initialize(GraphicsDeviceManager graphicsDevice, ContentManager content, int windowsWidth, int windowHeight, RenderTarget2D renderTarget, string XMLPath)
         {
@@ -33,6 +34,8 @@ namespace Fiourp
             ScreenSize = new Vector2(graphicsDevice.PreferredBackBufferWidth, graphicsDevice.PreferredBackBufferHeight);
 
             RenderTarget = renderTarget;
+            PrimitivesRenderTarget = new RenderTarget2D(renderTarget.GraphicsDevice, renderTarget.Width, renderTarget.Height, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
+            //graphicsDevice.GraphicsDevice.SetRenderTargets(RenderTarget, PrimitivesRenderTarget);
 
             if (XMLPath != "")
             {

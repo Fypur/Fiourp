@@ -131,6 +131,8 @@ namespace Fiourp
 
             for (float x = theta; x <= 2 * Math.PI; x += theta)
             {
+                EnsureSpace(1, 3);
+
                 shapesCount++;
 
                 indices[indicesCount++] = ind;
@@ -320,6 +322,8 @@ namespace Fiourp
             if (shapesCount <= 0)
                 return;
 
+            Engine.Graphics.GraphicsDevice.SetRenderTarget(Engine.PrimitivesRenderTarget);
+
             basicEffect.TextureEnabled = false;
             basicEffect.VertexColorEnabled = true;
             basicEffect.FogEnabled = false;
@@ -333,6 +337,8 @@ namespace Fiourp
                 pass.Apply();
                 graphicsDevice.DrawUserIndexedPrimitives<VertexPositionColor>(PrimitiveType.TriangleList, vertices, 0, vertexCount, indices, 0, indicesCount / 3);
             }
+
+            Engine.Graphics.GraphicsDevice.SetRenderTarget(Engine.RenderTarget);
 
             vertexCount = 0;
             indicesCount = 0;

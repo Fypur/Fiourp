@@ -10,7 +10,7 @@ namespace Fiourp
 
         public Vector2 Pos;
         public Color DebugColor = Color.Blue;
-        public bool DebugDraw;
+        public bool DebugDraw = true;
 
         public abstract bool Collide(Vector2 point);
         public abstract bool Collide(BoxCollider other);
