@@ -352,7 +352,7 @@ namespace Fiourp
             if(shapeIndicesCount > indices.Length)
                 throw new Exception("Drawn shape has more indices that the maximum indices used per batch.");
 
-            if (vertexCount + shapeVerticesCount > vertices.Length || indicesCount + shapeIndicesCount > indices.Length)
+            if (vertexCount + shapeVerticesCount + 1 >= vertices.Length || indicesCount + shapeIndicesCount + 1 >= indices.Length)
                 Flush();
         }
 
