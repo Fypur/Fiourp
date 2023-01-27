@@ -122,7 +122,7 @@ namespace Fiourp
         public static void DrawCircle(Vector2 position, float radius, float theta, Color middleColor, Color exteriorColor)
         {
             Vector2 previous = position + new Vector2(radius, 0);
-            EnsureSpace(3, 3);
+            EnsureSpace(6, 6);
 
             int ind = vertexCount;
             vertices[vertexCount++] = new VertexPositionColor(new Vector3(position, 0), middleColor);
@@ -144,6 +144,8 @@ namespace Fiourp
             }
 
             shapesCount++;
+
+            
 
             indices[indicesCount++] = ind;
             indices[indicesCount++] = vertexCount - 1;
@@ -352,7 +354,7 @@ namespace Fiourp
             if(shapeIndicesCount > indices.Length)
                 throw new Exception("Drawn shape has more indices that the maximum indices used per batch.");
 
-            if (vertexCount + shapeVerticesCount + 1 >= vertices.Length || indicesCount + shapeIndicesCount + 1 >= indices.Length)
+            if (vertexCount + shapeVerticesCount + 2 >= vertices.Length || indicesCount + shapeIndicesCount + 2 >= indices.Length)
                 Flush();
         }
 
