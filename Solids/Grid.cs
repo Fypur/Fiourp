@@ -34,6 +34,8 @@ namespace Fiourp
             if (startPos.X > Width || startPos.Y > Height || startPos.X + Engine.RenderTarget.Width < 0 || startPos.Y + Engine.RenderTarget.Height < 0)
                 return;
 
+            
+
             Vector2 size = Engine.Cam.Size / gridCol.GridSize;
 
             for(int x = (int)startPos.X; x < startPos.X + size.X; x++)

@@ -1,10 +1,7 @@
-﻿using Fiourp.Utility;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Reflection.Metadata;
-using System.Runtime.CompilerServices;
 
 namespace Fiourp
 {
@@ -24,11 +21,17 @@ namespace Fiourp
         public static List<Tuple<Vector2, Color>> DebugPos = new List<Tuple<Vector2, Color>>();
         public static List<Tuple<Vector2, Color>> DebugPosUpdate = new List<Tuple<Vector2, Color>>();
         public static event Action DebugEvent = delegate { };
+        public static RenderTarget2D CurrentPrimitivesRenderTarget = Engine.PrimitivesRenderTarget;
 
         private static VertexPositionColor[] vertices;
         private static int[] indices;
 
         private static BasicEffect basicEffect;
+        private static BasicEffect defaultBasicEffect;
+        private static BlendState defaultBlendState;
+        private static RasterizerState defaultRasterizerState;
+        private static bool useCameraOffset;
+        private static Matrix primitivesMatrix;
 
         private static SpriteSortMode sortMode;
         private static BlendState blendState;
@@ -55,7 +58,15 @@ namespace Fiourp
 
             vertices = new VertexPositionColor[maxVertices];
             indices = new int[maxVertices * 3];
-            basicEffect = new BasicEffect(graphicsDevice);
+            defaultBasicEffect = new BasicEffect(graphicsDevice);
+
+            defaultBasicEffect.TextureEnabled = false;
+            defaultBasicEffect.VertexColorEnabled = true;
+            defaultBasicEffect.FogEnabled = false;
+            defaultBasicEffect.LightingEnabled = false;
+
+            defaultRasterizerState = RasterizerState.CullNone;
+            defaultBlendState = BlendState.Additive;
         }
         
         public static void Draw(Texture2D texture, Vector2 position)
@@ -115,61 +126,6 @@ namespace Fiourp
 
         public static void DrawArc(Vector2 middle, float radius, Vector2 arcPos1, Vector2 arcPos2, float theta, Color color, int thickness)
             => DrawArc(middle, radius, (arcPos1 - middle).ToAngle(), (arcPos2 - middle).ToAngle(), theta, color, thickness);
-
-        public static void DrawCircle(Vector2 position, float radius, float theta, Color color)
-            => DrawCircle(position, radius, theta, color, color);
-
-        public static void DrawCircle(Vector2 position, float radius, float theta, Color middleColor, Color exteriorColor)
-        {
-            Vector2 previous = position + new Vector2(radius, 0);
-            EnsureSpace(6, 6);
-
-            int ind = vertexCount;
-            vertices[vertexCount++] = new VertexPositionColor(new Vector3(position, 0), middleColor);
-            vertices[vertexCount++] = new VertexPositionColor(new Vector3(previous, 0), exteriorColor);
-            
-
-            for (float x = theta; x <= 2 * Math.PI; x += theta)
-            {
-                EnsureSpace(1, 3);
-
-                shapesCount++;
-
-                indices[indicesCount++] = ind;
-                indices[indicesCount++] = vertexCount - 1;
-                indices[indicesCount++] = vertexCount;
-
-                Vector2 pos = position + new Vector2((float)Math.Cos(x), (float)Math.Sin(x)) * radius;
-                vertices[vertexCount++] = new VertexPositionColor(new Vector3(pos, 0), exteriorColor);
-            }
-
-            shapesCount++;
-
-            
-
-            indices[indicesCount++] = ind;
-            indices[indicesCount++] = vertexCount - 1;
-            indices[indicesCount++] = ind + 1;
-        }
-
-        public static void DrawQuad(Vector2 a, Color aColor, Vector2 b, Color bColor, Vector2 c, Color cColor, Vector2 d, Color dColor)
-        {
-            EnsureSpace(4, 6);
-
-            indices[indicesCount++] = vertexCount;
-            indices[indicesCount++] = vertexCount + 1;
-            indices[indicesCount++] = vertexCount + 2;
-            indices[indicesCount++] = vertexCount;
-            indices[indicesCount++] = vertexCount + 2;
-            indices[indicesCount++] = vertexCount + 3;
-
-            vertices[vertexCount++] = new VertexPositionColor(new Vector3(a, 0), aColor);
-            vertices[vertexCount++] = new VertexPositionColor(new Vector3(b, 0), bColor);
-            vertices[vertexCount++] = new VertexPositionColor(new Vector3(c, 0), cColor);
-            vertices[vertexCount++] = new VertexPositionColor(new Vector3(d, 0), dColor);
-
-            shapesCount++;
-        }
 
         public static void DrawString(string text, Vector2 position, Color color, Vector2 origin)
             => spriteBatch.DrawString(Font, text, position, color, 0, origin,
@@ -265,9 +221,7 @@ namespace Fiourp
             Vector2 from = begin;
             for(float i = 0; i < length; i += stepSize)
             {
-                //TODO: FINISH THIS
                 Vector2 to = begin + dir * i + VectorHelper.Normal(dir) * easeI(i / length) * (float)Math.Sin(insideFactor * i) * amplitude;
-                //Debug.PointUpdate(to);
                 Drawing.DrawLine(from, to, color, 1);
                 from = to;
             }
@@ -299,12 +253,42 @@ namespace Fiourp
         public static void End()
             => spriteBatch.End();
 
-        public static void BeginPrimitives()
+        public static void BeginPrimitives(RenderTarget2D renderTarget, BasicEffect effect = null, BlendState blendState = null, bool useCameraOffset = true, RasterizerState rasterizerState = null)
         {
             if (hasStartedBatching)
                 throw new Exception("Batching already started");
 
             hasStartedBatching = true;
+
+            CurrentPrimitivesRenderTarget = renderTarget;
+
+            defaultBasicEffect.World = Matrix.CreateOrthographicOffCenter(0, CurrentPrimitivesRenderTarget.Width, CurrentPrimitivesRenderTarget.Height, 0, 0, 1);
+            if (effect == null)
+            {
+                if (useCameraOffset)
+                {
+                    basicEffect = new BasicEffect(graphicsDevice);
+                    basicEffect.TextureEnabled = defaultBasicEffect.TextureEnabled;
+                    basicEffect.VertexColorEnabled = defaultBasicEffect.VertexColorEnabled;
+                    basicEffect.FogEnabled = defaultBasicEffect.FogEnabled;
+                    basicEffect.LightingEnabled = defaultBasicEffect.LightingEnabled;
+                    basicEffect.World = defaultBasicEffect.World;
+                }
+                else
+                    basicEffect = defaultBasicEffect;
+
+                primitivesMatrix = Matrix.Identity;
+            }
+            else
+            {
+                basicEffect = effect;
+                primitivesMatrix = basicEffect.World;
+            }
+
+            Drawing.useCameraOffset = useCameraOffset;
+
+            graphicsDevice.BlendState= blendState == null ? defaultBlendState : blendState;
+            graphicsDevice.RasterizerState = rasterizerState == null ? defaultRasterizerState: rasterizerState;
         }
 
         public static void EndPrimitives()
@@ -324,17 +308,13 @@ namespace Fiourp
             if (shapesCount <= 0)
                 return;
 
-            Engine.Graphics.GraphicsDevice.SetRenderTarget(Engine.PrimitivesRenderTarget);
+            Engine.Graphics.GraphicsDevice.SetRenderTarget(CurrentPrimitivesRenderTarget);
 
-            basicEffect.TextureEnabled = false;
-            basicEffect.VertexColorEnabled = true;
-            basicEffect.FogEnabled = false;
-            basicEffect.LightingEnabled = false;
-            graphicsDevice.RasterizerState = RasterizerState.CullNone;
-            graphicsDevice.BlendState = BlendState.Additive;
-            basicEffect.World = Engine.Cam.ViewMatrix * Matrix.CreateOrthographicOffCenter(0, graphicsDevice.Viewport.Width, graphicsDevice.Viewport.Height, 0, 0, 1);
+            if (useCameraOffset)
+                basicEffect.World = Engine.Cam.ViewMatrix * defaultBasicEffect.World * primitivesMatrix;
 
-            foreach(EffectPass pass in basicEffect.CurrentTechnique.Passes)
+
+            foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
             {
                 pass.Apply();
                 graphicsDevice.DrawUserIndexedPrimitives<VertexPositionColor>(PrimitiveType.TriangleList, vertices, 0, vertexCount, indices, 0, indicesCount / 3);
@@ -372,6 +352,67 @@ namespace Fiourp
             vertices[vertexCount++] = new VertexPositionColor(new Vector3(b, 0), bColor);
             vertices[vertexCount++] = new VertexPositionColor(new Vector3(c, 0), cColor);
         }
+
+        public static void DrawCircle(Vector2 position, float radius, float theta, Color color)
+            => DrawCircle(position, radius, theta, color, color);
+
+        public static void DrawCircle(Vector2 position, float radius, float theta, Color middleColor, Color exteriorColor)
+        {
+            Vector2 previous = position + new Vector2(radius, 0);
+            EnsureSpace(6, 6);
+
+            int ind = vertexCount;
+            vertices[vertexCount++] = new VertexPositionColor(new Vector3(position, 0), middleColor);
+            vertices[vertexCount++] = new VertexPositionColor(new Vector3(previous, 0), exteriorColor);
+
+
+            for (float x = theta; x <= 2 * Math.PI; x += theta)
+            {
+                EnsureSpace(1, 3);
+
+                shapesCount++;
+
+                indices[indicesCount++] = ind;
+                indices[indicesCount++] = vertexCount - 1;
+                indices[indicesCount++] = vertexCount;
+
+                Vector2 pos = position + new Vector2((float)Math.Cos(x), (float)Math.Sin(x)) * radius;
+                vertices[vertexCount++] = new VertexPositionColor(new Vector3(pos, 0), exteriorColor);
+            }
+
+            shapesCount++;
+
+
+
+            indices[indicesCount++] = ind;
+            indices[indicesCount++] = vertexCount - 1;
+            indices[indicesCount++] = ind + 1;
+        }
+
+        public static void DrawQuad(Vector2 a, Color aColor, Vector2 b, Color bColor, Vector2 c, Color cColor, Vector2 d, Color dColor)
+        {
+            EnsureSpace(4, 6);
+
+            indices[indicesCount++] = vertexCount;
+            indices[indicesCount++] = vertexCount + 1;
+            indices[indicesCount++] = vertexCount + 2;
+            indices[indicesCount++] = vertexCount;
+            indices[indicesCount++] = vertexCount + 2;
+            indices[indicesCount++] = vertexCount + 3;
+
+            vertices[vertexCount++] = new VertexPositionColor(new Vector3(a, 0), aColor);
+            vertices[vertexCount++] = new VertexPositionColor(new Vector3(b, 0), bColor);
+            vertices[vertexCount++] = new VertexPositionColor(new Vector3(c, 0), cColor);
+            vertices[vertexCount++] = new VertexPositionColor(new Vector3(d, 0), dColor);
+
+            shapesCount++;
+        }
+
+        public static void DrawLight(Vector2 pos, float radius, Color insideColor, Color outsideColor)
+            => Lighting.DrawLight(pos, radius, insideColor, outsideColor);
+
+
+
 
         public static void DebugString()
         {

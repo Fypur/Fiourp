@@ -22,6 +22,7 @@ namespace Fiourp
         public static Map CurrentMap;
         public static RenderTarget2D RenderTarget;
         public static RenderTarget2D PrimitivesRenderTarget;
+        public static RenderTarget2D LightsRenderTarget;
 
         public static void Initialize(GraphicsDeviceManager graphicsDevice, ContentManager content, int windowsWidth, int windowHeight, RenderTarget2D renderTarget, string XMLPath)
         {
@@ -35,6 +36,8 @@ namespace Fiourp
 
             RenderTarget = renderTarget;
             PrimitivesRenderTarget = new RenderTarget2D(renderTarget.GraphicsDevice, renderTarget.Width, renderTarget.Height, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
+            LightsRenderTarget = new RenderTarget2D(renderTarget.GraphicsDevice, Lighting.LightsTargetSize, Lighting.LightsTargetSize, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
+
             //graphicsDevice.GraphicsDevice.SetRenderTargets(RenderTarget, PrimitivesRenderTarget);
 
             if (XMLPath != "")
