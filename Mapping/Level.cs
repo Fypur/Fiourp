@@ -10,6 +10,7 @@ namespace Fiourp
     {
         public int TileWidth = 8;
         public int TileHeight = 8;
+        public int ChunkSize = 8;
 
         public readonly Vector2 Pos;
 
@@ -18,6 +19,7 @@ namespace Fiourp
         public readonly Vector2[] Corners;
         public readonly Vector2[] InsideCorners;
         public readonly List<int[]> Edges;
+        public readonly List<int[]>[,] ChunksEdge;
 
         public readonly Map ParentMap;
 
@@ -33,6 +35,8 @@ namespace Fiourp
             Size = data.Size;
             Corners = GetLevelCorners();
             InsideCorners = GetLevelInsideCorners();
+
+            ChunksEdge = new List<int[]>[(int)Math.Ceiling(Organisation.GetLength(0) / (float)ChunkSize), (int)Math.Ceiling(Organisation.GetLength(1) / (float)ChunkSize)];
             Edges = GetEdges();
 
             EntityData = data.Entities;
@@ -333,15 +337,40 @@ namespace Fiourp
                     }
                 }
 
-            /*foreach (int[] edge in edges)
+
+            for (int x = 0; x < ChunksEdge.GetLength(1); x++)
+                for (int y = 0; y < ChunksEdge.GetLength(0); y++)
+                    ChunksEdge[y, x] = new List<int[]>();
+
+            foreach (int[] edge in edges)
             {
-                Debug.PointUpdate(Color.DarkOrange, new Vector2(edge[0], edge[1]) * 8 + Pos, new Vector2(edge[2], edge[3]) * 8 + Pos);
-            }*/
+                int chunk1x = edge[0] / ChunkSize + (edge[0] == Organisation.GetLength(1) ? -1 : 0);
+                int chunk1y = edge[1] / ChunkSize + (edge[1] == Organisation.GetLength(0) ? -1 : 0);
+                int chunk2x = edge[2] / ChunkSize + (edge[2] % ChunkSize == 0 && edge[2] != 0 ? -1 : 0);
+                int chunk2y = edge[3] / ChunkSize + (edge[3] % ChunkSize == 0 && edge[3] != 0 ? -1 : 0);
+
+
+                ChunksEdge[chunk1y, chunk1x].Add(edge);
+
+                if (chunk1x != chunk2x)
+                    for (int i = chunk1x + 1; i <= chunk2x; i++)
+                        ChunksEdge[chunk1y, i].Add(edge);
+
+                if (chunk1y != chunk2y)
+                    for (int i = chunk1y + 1; i <= chunk2y; i++)
+                        ChunksEdge[i, chunk1x].Add(edge);
+            }
+
+            /*foreach (int[] edge in ChunksEdge[1, 0])
+                Debug.Point(Color.DarkOrange, new Vector2(edge[0], edge[1]) * 8 + Pos, new Vector2(edge[2], edge[3]) * 8 + Pos);*/
 
             return edges;
         }
 
         public Vector2 GetOrganisationPos(int x, int y)
             => new Vector2(x * TileWidth, y * TileHeight) + Pos;
+
+        public void DebugEdge(int[] edge)
+            => Debug.PointUpdate(Color.DarkOrange, new Vector2(edge[0], edge[1]) * 8 + Pos, new Vector2(edge[2], edge[3]) * 8 + Pos);
     }
 }
