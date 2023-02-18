@@ -342,10 +342,12 @@ namespace Fiourp
                 for (int y = 0; y < ChunksEdge.GetLength(0); y++)
                     ChunksEdge[y, x] = new List<int[]>();
 
+            bool chunkdivisibleX = Organisation.GetLength(1) % ChunkSize == 0;
+            bool chunkdivisibleY = Organisation.GetLength(0) % ChunkSize == 0;
             foreach (int[] edge in edges)
             {
-                int chunk1x = edge[0] / ChunkSize + (edge[0] == Organisation.GetLength(1) ? -1 : 0);
-                int chunk1y = edge[1] / ChunkSize + (edge[1] == Organisation.GetLength(0) ? -1 : 0);
+                int chunk1x = edge[0] / ChunkSize + (edge[0] == Organisation.GetLength(1) && chunkdivisibleX ? -1 : 0);
+                int chunk1y = edge[1] / ChunkSize + (edge[1] == Organisation.GetLength(0) && chunkdivisibleY ? -1 : 0);
                 int chunk2x = edge[2] / ChunkSize + (edge[2] % ChunkSize == 0 && edge[2] != 0 ? -1 : 0);
                 int chunk2y = edge[3] / ChunkSize + (edge[3] % ChunkSize == 0 && edge[3] != 0 ? -1 : 0);
 

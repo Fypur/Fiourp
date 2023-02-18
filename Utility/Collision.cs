@@ -22,7 +22,10 @@ namespace Fiourp
             distX -= halfSize.X;
             distY -= halfSize.Y;
 
-            if(distX * distX + distY * distY < cRadius * cRadius)
+            if (distX <= halfSize.X || distY <= halfSize.Y)
+                return true;
+
+            if (distX * distX + distY * distY < cRadius * cRadius)
                 return true;
 
             return false;
