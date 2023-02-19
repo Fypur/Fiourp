@@ -38,9 +38,9 @@ namespace Fiourp
 
             Vector2 size = Engine.Cam.Size / gridCol.GridSize;
 
-            for(int x = (int)startPos.X; x < startPos.X + size.X; x++)
+            for(int x = Math.Max((int)startPos.X, 0); x < startPos.X + size.X; x++)
             {
-                for(int y = (int)startPos.Y; y < startPos.Y + size.Y; y++)
+                for(int y = Math.Max((int)startPos.Y, 0); y < startPos.Y + size.Y; y++)
                 {
                     Vector2 pos = new Vector2(x * gridCol.GridWidth, y * gridCol.GridHeight) + Collider.AbsolutePosition;
                     if(Tiles[y, x] != Sprite.None && Tiles[y, x] != null)

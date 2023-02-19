@@ -11,7 +11,7 @@ namespace Fiourp
     public static class Lighting
     {
         public const int LightsTargetSize = 2048;
-        private const int maxLightSize = 256;
+        private const int maxLightSize = 512;
         private const int numLightsPerRow = LightsTargetSize / maxLightSize;
 
         private static RenderTarget2D lightsTarget => Engine.LightsRenderTarget;
@@ -65,6 +65,7 @@ namespace Fiourp
                 Light l = lights[i];
                 Color c = new Color(Color.White, 100);
                 Drawing.DrawCircle(lights[i].RenderTargetPosition + new Vector2(maxLightSize) / 2, lights[i].Radius, 0.1f, lights[i].InsideColor, lights[i].OutsideColor);
+                //Drawing.DrawCircle(lights[i].RenderTargetPosition + new Vector2(maxLightSize) / 2, lights[i].Radius, 0.1f, c, c);
 
                 for (int y = 0; y < lvl.ChunksEdge.GetLength(0); y++)
                     for(int x = 0; x < lvl.ChunksEdge.GetLength(1); x++)
@@ -85,14 +86,14 @@ namespace Fiourp
                             if (intersection.Length == 0 && (Vector2.DistanceSquared(pos1, center) > l.Radius * l.Radius && Vector2.DistanceSquared(pos2, center) > l.Radius * l.Radius))
                                 continue;
 
+                            Vector2 maxL = new Vector2(maxLightSize);
 
-                            Vector2 pos3 = (pos1 - lights[i].WorldPosition).Normalized() * maxLightSize * 2f + new Vector2(maxLightSize) / 2;
-                            Vector2 pos4 = (pos2 - lights[i].WorldPosition).Normalized() * maxLightSize * 2f + new Vector2(maxLightSize) / 2;
+                            Vector2 pos3 = (pos1 - lights[i].WorldPosition).Normalized() * maxLightSize * 2f + maxL / 2;
+                            Vector2 pos4 = (pos2 - lights[i].WorldPosition).Normalized() * maxLightSize * 2f + maxL / 2;
 
 
                             //TODO: LINEBOX INTERSECTION TO FIND POS3 AND POS4
 
-                            Vector2 maxL = new Vector2(maxLightSize);
 
                             if (!TestIntersect(ref pos3, Vector2.Zero, maxL.OnlyX()))
                                 if (!TestIntersect(ref pos3, Vector2.Zero, maxL.OnlyY()))
