@@ -372,7 +372,7 @@ namespace Fiourp
         public Vector2 GetOrganisationPos(int x, int y)
             => new Vector2(x * TileWidth, y * TileHeight) + Pos;
 
-        public void DebugEdge(int[] edge)
-            => Debug.PointUpdate(Color.DarkOrange, new Vector2(edge[0], edge[1]) * 8 + Pos, new Vector2(edge[2], edge[3]) * 8 + Pos);
+        /*public void DebugEdge(int[] edge)
+            => Debug.PointUpdate(Color.DarkOrange, new Vector2(edge[0], edge[1]) * 8 + Pos, new Vector2(edge[2], edge[3]) * 8 + Pos);*/
     }
 }

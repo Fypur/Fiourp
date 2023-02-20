@@ -63,7 +63,7 @@ namespace Fiourp
             for (int i = 0; i < lightNum; i++)
             {
                 Light l = lights[i];
-                Color c = new Color(Color.White, 100);
+                //Color c = new Color(Color.White, 255);
                 Drawing.DrawCircle(lights[i].RenderTargetPosition + new Vector2(maxLightSize) / 2, lights[i].Radius, 0.1f, lights[i].InsideColor, lights[i].OutsideColor);
                 //Drawing.DrawCircle(lights[i].RenderTargetPosition + new Vector2(maxLightSize) / 2, lights[i].Radius, 0.1f, c, c);
 
@@ -94,6 +94,15 @@ namespace Fiourp
 
                             //TODO: LINEBOX INTERSECTION TO FIND POS3 AND POS4
 
+                            /*if (!TestIntersect(ref pos3, Vector2.One, maxL.OnlyX() + Vector2.UnitY))
+                                if (!TestIntersect(ref pos3, Vector2.One, maxL.OnlyY() + Vector2.UnitX))
+                                    if (!TestIntersect(ref pos3, maxL.OnlyX() - Vector2.UnitX, maxL - Vector2.One))
+                                        TestIntersect(ref pos3, maxL.OnlyY() - Vector2.UnitY, maxL - Vector2.One);
+
+                            if (!TestIntersect(ref pos4, Vector2.One, maxL.OnlyX() + Vector2.UnitY))
+                                if (!TestIntersect(ref pos4, Vector2.One, maxL.OnlyY() + Vector2.UnitX))
+                                    if (!TestIntersect(ref pos4, maxL.OnlyX() - Vector2.UnitX, maxL - Vector2.One))
+                                        TestIntersect(ref pos4, maxL.OnlyY() - Vector2.UnitY, maxL - Vector2.One);*/
 
                             if (!TestIntersect(ref pos3, Vector2.Zero, maxL.OnlyX()))
                                 if (!TestIntersect(ref pos3, Vector2.Zero, maxL.OnlyY()))
@@ -130,18 +139,18 @@ namespace Fiourp
                                 if (diff.X == maxLightSize)
                                 {
                                     if(mid.Y < maxLightSize / 2)
-                                        Drawing.DrawQuad(pos3, pos4, l.RenderTargetPosition, l.RenderTargetPosition + maxL.OnlyX(), Color.Black); //Top
+                                        Drawing.DrawQuad(pos3, pos4, l.RenderTargetPosition, l.RenderTargetPosition + maxL.OnlyX(), Color.Transparent); //Top
                                     else
-                                        Drawing.DrawQuad(pos3, pos4, l.RenderTargetPosition + maxL.OnlyY(), l.RenderTargetPosition + maxL, Color.Black); //Bottom
+                                        Drawing.DrawQuad(pos3, pos4, l.RenderTargetPosition + maxL.OnlyY(), l.RenderTargetPosition + maxL, Color.Transparent); //Bottom
                                 }
 
                                 if(diff.Y == maxLightSize)
                                 {
-                                    Debug.PointUpdate(Color.Orange, pos1, pos2);
+                                    //Debug.PointUpdate(Color.Orange, pos1, pos2);
                                     if (mid.X < maxLightSize / 2)
-                                        Drawing.DrawQuad(pos3, pos4, l.RenderTargetPosition, l.RenderTargetPosition + maxL.OnlyY(), Color.Black); //Left
+                                        Drawing.DrawQuad(pos3, pos4, l.RenderTargetPosition, l.RenderTargetPosition + maxL.OnlyY(), Color.Transparent); //Left
                                     else
-                                        Drawing.DrawQuad(pos3, pos4, l.RenderTargetPosition + maxL.OnlyX(), l.RenderTargetPosition + maxL, Color.Black); //Right
+                                        Drawing.DrawQuad(pos3, pos4, l.RenderTargetPosition + maxL.OnlyX(), l.RenderTargetPosition + maxL, Color.Transparent); //Right
                                 }
                             }
 
@@ -150,7 +159,7 @@ namespace Fiourp
                             //Debug.LogUpdate(Input.MousePos);
                             pos1 += lights[i].RenderTargetPosition + new Vector2(maxLightSize) / 2 - center;
                             pos2 += lights[i].RenderTargetPosition + new Vector2(maxLightSize) / 2 - center;
-                                
+
 
 
                             //Debug.PointUpdate(Color.Orange, pos1, pos2, pos3, pos4);
@@ -167,7 +176,7 @@ namespace Fiourp
 
 
 
-                            Drawing.DrawQuad(pos1, pos2, pos4, pos3, Color.Black);
+                            Drawing.DrawQuad(pos1, pos2, pos4, pos3, Color.Transparent);
                         }
                     }
             }
