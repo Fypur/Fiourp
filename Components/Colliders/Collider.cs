@@ -28,7 +28,7 @@ namespace Fiourp
 
         public virtual void Render() 
         {
-            if(DebugDraw)
+            if(Collidable && DebugDraw)
                 Drawing.DrawEdge(Bounds, 1, DebugColor);
         }
 

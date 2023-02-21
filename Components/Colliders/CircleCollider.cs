@@ -27,7 +27,7 @@ namespace Fiourp
 
         public override void Render()
         {
-            Drawing.DrawCircleEdge(AbsolutePosition, Radius, 0.1f, Color.Blue, 1);
+            Drawing.DrawCircleEdge(AbsolutePosition, Radius, 0.1f, DebugColor, 1);
         }
 
         public override bool Collide(BoxCollider other)

@@ -35,11 +35,20 @@ namespace Fiourp
             int moveX = (int)Math.Round(xRemainder);
             int moveY = (int)Math.Round(yRemainder);
 
+            if (!Collider.Collidable)
+            {
+                Pos.X += moveX;
+                xRemainder -= moveX;
+                Pos.Y += moveY;
+                yRemainder -= moveY;
+                return;
+            }
+
             if (moveX == 0 && moveY == 0) return;
 
             List<Actor> ridingActors = GetAllRidingActors();
             List<Actor> ridingActorsX = new List<Actor>(ridingActors);
-
+            
             Collider.Collidable = false;
 
             if (moveX != 0)
@@ -91,7 +100,7 @@ namespace Fiourp
                     }
                 }
 
-                foreach(Actor actor in ridingActors)
+                foreach (Actor actor in ridingActors)
                 {
                     actor.MoveY(moveY);
                     actor.LiftSpeed = new Vector2(actor.LiftSpeed.X, moveY / Engine.Deltatime);

@@ -24,7 +24,9 @@ namespace Fiourp
 
         public Texture2D Texture;
         public NineSlice NineSliceSettings;
-        public float Rotation = 0;
+        private float rotation = 0;
+        public float Rotation { get => rotation;
+            set => rotation = value % ((float)Math.PI * 2); }
 
         public Color Color = Color.White;
         public Vector2 Origin = Vector2.Zero;
