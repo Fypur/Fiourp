@@ -24,6 +24,7 @@ namespace Fiourp
         public readonly Map ParentMap;
 
         public List<Entity> EntityData;
+        public List<Entity> DontDestroyOnUnloadEntities;
         public Action EnterAction = null;
 
         public Level(LevelData data)
@@ -43,6 +44,8 @@ namespace Fiourp
             if (EntityData == null)
                 EntityData = new List<Entity>();
             EnterAction = data.EnterAction;
+
+            DontDestroyOnUnloadEntities = new();
         }
 
         public void Load()
@@ -75,9 +78,9 @@ namespace Fiourp
             Engine.CurrentMap.CurrentLevel = this;
             EnterAction?.Invoke();
 
-            foreach (Entity e in EntityData)
+            for(int i = EntityData.Count - 1; i >= 0; i--)
             {
-                ParentMap.Instantiate(e);
+                ParentMap.Instantiate(EntityData[i]);
             }
         }
 
@@ -86,9 +89,9 @@ namespace Fiourp
             if (Engine.CurrentMap.CurrentLevel == this)
                 Engine.CurrentMap.CurrentLevel = null;
 
-            foreach (Entity e in EntityData)
+            for (int i = EntityData.Count - 1; i >= 0; i--)
             {
-                ParentMap.Destroy(e);
+                ParentMap.Destroy(EntityData[i]);
             }
         }
 
@@ -160,9 +163,15 @@ namespace Fiourp
         }
 
         public void DestroyOnUnload(Entity entity)
-            => EntityData.Add(entity);
+        {
+            EntityData.Add(entity);
+            DontDestroyOnUnloadEntities.Remove(entity);
+        }
         public void DontDestroyOnUnload(Entity entity)
-            => EntityData.Remove(entity);
+        {
+            EntityData.Remove(entity);
+            DontDestroyOnUnloadEntities.Add(entity);
+        }
 
         public int GetOrganisation(int x, int y, int returnIfEmpty = 0)
         {
@@ -186,6 +195,8 @@ namespace Fiourp
             bool topLeftBlock = GetOrganisation(x - 1, y - 1, tileValue) == tileValue;
             bool bottomRightBlock = GetOrganisation(x + 1, y + 1, tileValue) == tileValue;
             bool bottomLeftBlock = GetOrganisation(x - 1, y - 1, tileValue) == tileValue;
+
+            #region testing each block
 
             if (!leftBlock && !rightBlock && !topBlock && !bottomBlock)
                 return tileSet["complete"];
@@ -243,6 +254,8 @@ namespace Fiourp
 
             if (bottomBlock && leftBlock && !bottomLeftBlock)
                 return tileSet["bottomLeftPoint"];
+
+            #endregion
 
             return tileSet["inside"];
         }

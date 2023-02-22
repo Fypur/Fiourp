@@ -184,22 +184,11 @@ namespace Fiourp
 
         public static void DrawAllLights()
         {
-            //Drawing.Draw(Engine.LightsRenderTarget, Vector2.Zero, new Rectangle(new Point(0, 0), new Point(maxLightSize, maxLightSize)), Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None);
-
             for (int i = 0; i < lightNum; i++)
             {
                 Light l = lights[i];
 
                 Drawing.Draw(Engine.LightsRenderTarget, l.WorldPosition - new Vector2(maxLightSize) / 2, new Rectangle(l.RenderTargetPosition.ToPoint(), new Point(maxLightSize, maxLightSize)), Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None);
-                //Drawing.Draw(Engine.LightsRenderTarget, l.WorldPosition - new Vector2(78) / 2, new Rectangle(l.RenderTargetPosition.ToPoint(), new Point(maxLightSize, maxLightSize)), Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None);
-
-
-
-                //Drawing.Draw(Engine.LightsRenderTarget, l.WorldPosition - new Vector2(maxLightSize) / 2, new Rectangle(l.RenderTargetPosition.ToPoint(), new Point(maxLightSize, maxLightSize)), Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None);
-
-                //Drawing.Draw(Engine.LightsRenderTarget, l.WorldPosition - new Vector2(maxLightSize) / 2, null, Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None);
-
-                //Drawing.Draw(Engine.LightsRenderTarget, Input.MousePos - new Vector2(maxLightSize) / 2, new Rectangle(l.RenderTargetPosition.ToPoint(), new Point(maxLightSize, maxLightSize)), Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None);
             }
 
             lightNum = 0;

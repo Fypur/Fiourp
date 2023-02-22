@@ -71,21 +71,14 @@ namespace Fiourp
         {
             BackgroundSystem.Render();
 
-            for(int i = Data.Decorations.Count - 1; i >= 0; i--)
-            {
-                if(i < Data.Decorations.Count && Data.Decorations[i].Visible)
-                    Data.Decorations[i].Render();
-            }
-
-
             int maxLayer = 2;
             List<Entity> loopedEntities = new List<Entity>(Data.Entities);
-            for(int l = 0; l <= maxLayer; l++)
+            for(int l = -3; l <= maxLayer; l++)
             {
                 for (int i = loopedEntities.Count - 1; i >= 0; i--)
                 {
                     maxLayer = Math.Max(loopedEntities[i].Layer, maxLayer);
-                    if (i < loopedEntities.Count && loopedEntities[i].Visible && loopedEntities[i].Tag != Entity.Tags.UI && loopedEntities[i].Tag != Entity.Tags.Decoration && loopedEntities[i].Layer == l)
+                    if (i < loopedEntities.Count && loopedEntities[i].Visible && loopedEntities[i].Tag != Entity.Tags.UI && loopedEntities[i].Layer == l)
                     {
                         loopedEntities[i].Render();
                         loopedEntities.RemoveAt(i);
