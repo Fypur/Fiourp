@@ -38,6 +38,24 @@ namespace Fiourp
             lightNum++;
         }
 
+        /*public static void DrawLight(Vector2 position, Vector2 position2, Vector2 position3, Vector2 position4, Color color)
+        {
+            if (radius > maxLightSize / 2)
+                throw new Exception("Light's Size is over the maximum size");
+
+            if (lightNum + 1 > lights.Length)
+                throw new Exception("Too much lights drawn at the same time");
+
+            Vector2 renderTargetPos = new Vector2(maxLightSize * (lightNum % numLightsPerRow), maxLightSize * (lightNum / numLightsPerRow));
+            Light l = new Light(position, renderTargetPos, radius, insideColor, outsideColor);
+
+
+            lights[lightNum] = l;
+
+
+            lightNum++;
+        }*/
+
         public class Light
         {
             public Vector2 WorldPosition;
@@ -54,6 +72,11 @@ namespace Fiourp
                 InsideColor = insideColor;
                 OutsideColor = outsideColor;
             }
+
+            public void Draw()
+            {
+                Drawing.DrawCircle(RenderTargetPosition + new Vector2(maxLightSize) / 2, Radius, 0.1f, InsideColor, OutsideColor);
+            }
         }
 
 
@@ -64,6 +87,8 @@ namespace Fiourp
             {
                 Light l = lights[i];
                 //Color c = new Color(Color.White, 255);
+                l.Draw();
+
                 Drawing.DrawCircle(lights[i].RenderTargetPosition + new Vector2(maxLightSize) / 2, lights[i].Radius, 0.1f, lights[i].InsideColor, lights[i].OutsideColor);
                 //Drawing.DrawCircle(lights[i].RenderTargetPosition + new Vector2(maxLightSize) / 2, lights[i].Radius, 0.1f, c, c);
 

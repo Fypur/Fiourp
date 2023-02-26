@@ -69,8 +69,6 @@ namespace Fiourp
 
         public void Render()
         {
-            BackgroundSystem.Render();
-
             int maxLayer = 2;
             List<Entity> loopedEntities = new List<Entity>(Data.Entities);
             for(int l = -3; l <= maxLayer; l++)
@@ -85,8 +83,11 @@ namespace Fiourp
                     }
                 }
 
+                if (l == 0)
+                    BackgroundSystem.Render();
 
-                if(l == 1)
+
+                if (l == 1)
                     MiddlegroundSystem.Render();
             }
 
