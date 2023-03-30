@@ -359,11 +359,11 @@ namespace Fiourp
         public static void DrawCircle(Vector2 position, float radius, float theta, Color middleColor, Color exteriorColor)
         {
             Vector2 previous = position + new Vector2(radius, 0);
-            EnsureSpace(6, 6);
+            EnsureSpace(2, 4);
 
             int ind = vertexCount;
             vertices[vertexCount++] = new VertexPositionColor(new Vector3(position, 0), middleColor);
-            vertices[vertexCount++] = new VertexPositionColor(new Vector3(previous, 0), exteriorColor);
+            vertices[vertexCount] = new VertexPositionColor(new Vector3(previous, 0), exteriorColor);
 
 
             for (float x = theta; x <= 2 * Math.PI; x += theta)
@@ -373,19 +373,18 @@ namespace Fiourp
                 shapesCount++;
 
                 indices[indicesCount++] = ind;
-                indices[indicesCount++] = vertexCount - 1;
                 indices[indicesCount++] = vertexCount;
+                indices[indicesCount++] = ++vertexCount;
+
 
                 Vector2 pos = position + new Vector2((float)Math.Cos(x), (float)Math.Sin(x)) * radius;
-                vertices[vertexCount++] = new VertexPositionColor(new Vector3(pos, 0), exteriorColor);
+                vertices[vertexCount] = new VertexPositionColor(new Vector3(pos, 0), exteriorColor);
             }
 
             shapesCount++;
 
-
-
             indices[indicesCount++] = ind;
-            indices[indicesCount++] = vertexCount - 1;
+            indices[indicesCount++] = vertexCount++;
             indices[indicesCount++] = ind + 1;
         }
 

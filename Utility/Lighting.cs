@@ -11,72 +11,27 @@ namespace Fiourp
     public static class Lighting
     {
         public const int LightsTargetSize = 2048;
-        private const int maxLightSize = 512;
-        private const int numLightsPerRow = LightsTargetSize / maxLightSize;
+        public const int MaxLightSize = 512;
+        private const int numLightsPerRow = LightsTargetSize / MaxLightSize;
 
         private static RenderTarget2D lightsTarget => Engine.LightsRenderTarget;
         private static RenderTarget2D mainTarget => Engine.RenderTarget;
 
-        private static Light[] lights = new Light[LightsTargetSize / maxLightSize * LightsTargetSize / maxLightSize];
+        private static Light[] lights = new Light[LightsTargetSize / MaxLightSize * LightsTargetSize / MaxLightSize];
         private static int lightNum;
 
-        public static void DrawLight(Vector2 position, float radius, Color insideColor, Color outsideColor)
+        public static void DrawLight(Light light)
         {
-            if (radius > maxLightSize / 2)
+            if (light.CheckSize())
                 throw new Exception("Light's Size is over the maximum size");
 
             if (lightNum + 1 > lights.Length)
                 throw new Exception("Too much lights drawn at the same time");
 
-            Vector2 renderTargetPos = new Vector2(maxLightSize * (lightNum % numLightsPerRow), maxLightSize * (lightNum / numLightsPerRow));
-            Light l = new Light(position, renderTargetPos, radius, insideColor, outsideColor);
+            light.RenderTargetPosition = new Vector2(MaxLightSize * (lightNum % numLightsPerRow), MaxLightSize * (lightNum / numLightsPerRow));
 
-
-            lights[lightNum] = l;
-
-
+            lights[lightNum] = light;
             lightNum++;
-        }
-
-        /*public static void DrawLight(Vector2 position, Vector2 position2, Vector2 position3, Vector2 position4, Color color)
-        {
-            if (radius > maxLightSize / 2)
-                throw new Exception("Light's Size is over the maximum size");
-
-            if (lightNum + 1 > lights.Length)
-                throw new Exception("Too much lights drawn at the same time");
-
-            Vector2 renderTargetPos = new Vector2(maxLightSize * (lightNum % numLightsPerRow), maxLightSize * (lightNum / numLightsPerRow));
-            Light l = new Light(position, renderTargetPos, radius, insideColor, outsideColor);
-
-
-            lights[lightNum] = l;
-
-
-            lightNum++;
-        }*/
-
-        public class Light
-        {
-            public Vector2 WorldPosition;
-            public Vector2 RenderTargetPosition;
-            public float Radius;
-            public Color InsideColor;
-            public Color OutsideColor;
-
-            public Light(Vector2 worldPosition, Vector2 renderTargetPosition, float radius, Color insideColor, Color outsideColor)
-            {
-                WorldPosition = worldPosition;
-                RenderTargetPosition = renderTargetPosition;
-                Radius = radius;
-                InsideColor = insideColor;
-                OutsideColor = outsideColor;
-            }
-
-            public void Draw()
-            {
-                Drawing.DrawCircle(RenderTargetPosition + new Vector2(maxLightSize) / 2, Radius, 0.1f, InsideColor, OutsideColor);
-            }
         }
 
 
@@ -86,11 +41,9 @@ namespace Fiourp
             for (int i = 0; i < lightNum; i++)
             {
                 Light l = lights[i];
-                //Color c = new Color(Color.White, 255);
-                l.Draw();
 
-                Drawing.DrawCircle(lights[i].RenderTargetPosition + new Vector2(maxLightSize) / 2, lights[i].Radius, 0.1f, lights[i].InsideColor, lights[i].OutsideColor);
-                //Drawing.DrawCircle(lights[i].RenderTargetPosition + new Vector2(maxLightSize) / 2, lights[i].Radius, 0.1f, c, c);
+                l.DrawRenderTarget();
+
 
                 for (int y = 0; y < lvl.ChunksEdge.GetLength(0); y++)
                     for(int x = 0; x < lvl.ChunksEdge.GetLength(1); x++)
@@ -111,10 +64,10 @@ namespace Fiourp
                             if (intersection.Length == 0 && (Vector2.DistanceSquared(pos1, center) > l.Radius * l.Radius && Vector2.DistanceSquared(pos2, center) > l.Radius * l.Radius))
                                 continue;
 
-                            Vector2 maxL = new Vector2(maxLightSize);
+                            Vector2 maxL = new Vector2(MaxLightSize);
 
-                            Vector2 pos3 = (pos1 - lights[i].WorldPosition).Normalized() * maxLightSize * 2f + maxL / 2;
-                            Vector2 pos4 = (pos2 - lights[i].WorldPosition).Normalized() * maxLightSize * 2f + maxL / 2;
+                            Vector2 pos3 = (pos1 - lights[i].WorldPosition).Normalized() * MaxLightSize * 2f + maxL / 2;
+                            Vector2 pos4 = (pos2 - lights[i].WorldPosition).Normalized() * MaxLightSize * 2f + maxL / 2;
 
 
                             //TODO: LINEBOX INTERSECTION TO FIND POS3 AND POS4
@@ -161,18 +114,18 @@ namespace Fiourp
                             if (mid.X != 0 && mid.Y != 0 && Vector2.DistanceSquared(mid, maxL / 2) < l.Radius * l.Radius) 
                             {
                                 //Debug.LogUpdate(mid);
-                                if (diff.X == maxLightSize)
+                                if (diff.X == MaxLightSize)
                                 {
-                                    if(mid.Y < maxLightSize / 2)
+                                    if(mid.Y < MaxLightSize / 2)
                                         Drawing.DrawQuad(pos3, pos4, l.RenderTargetPosition, l.RenderTargetPosition + maxL.OnlyX(), Color.Transparent); //Top
                                     else
                                         Drawing.DrawQuad(pos3, pos4, l.RenderTargetPosition + maxL.OnlyY(), l.RenderTargetPosition + maxL, Color.Transparent); //Bottom
                                 }
 
-                                if(diff.Y == maxLightSize)
+                                if(diff.Y == MaxLightSize)
                                 {
                                     //Debug.PointUpdate(Color.Orange, pos1, pos2);
-                                    if (mid.X < maxLightSize / 2)
+                                    if (mid.X < MaxLightSize / 2)
                                         Drawing.DrawQuad(pos3, pos4, l.RenderTargetPosition, l.RenderTargetPosition + maxL.OnlyY(), Color.Transparent); //Left
                                     else
                                         Drawing.DrawQuad(pos3, pos4, l.RenderTargetPosition + maxL.OnlyX(), l.RenderTargetPosition + maxL, Color.Transparent); //Right
@@ -182,8 +135,8 @@ namespace Fiourp
                             //Debug.PointUpdate(Color.Orange, pos1, pos2, pos3 + center - new Vector2(maxLightSize) / 2 - l.RenderTargetPosition, pos4 + center - new Vector2(maxLightSize) / 2 - l.RenderTargetPosition);
                             //Debug.PointUpdate(Color.Orange, mid + center - new Vector2(maxLightSize) / 2);
                             //Debug.LogUpdate(Input.MousePos);
-                            pos1 += lights[i].RenderTargetPosition + new Vector2(maxLightSize) / 2 - center;
-                            pos2 += lights[i].RenderTargetPosition + new Vector2(maxLightSize) / 2 - center;
+                            pos1 += lights[i].RenderTargetPosition + new Vector2(MaxLightSize) / 2 - center;
+                            pos2 += lights[i].RenderTargetPosition + new Vector2(MaxLightSize) / 2 - center;
 
 
 
@@ -213,7 +166,7 @@ namespace Fiourp
             {
                 Light l = lights[i];
 
-                Drawing.Draw(Engine.LightsRenderTarget, l.WorldPosition - new Vector2(maxLightSize) / 2, new Rectangle(l.RenderTargetPosition.ToPoint(), new Point(maxLightSize, maxLightSize)), Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None);
+                Drawing.Draw(Engine.LightsRenderTarget, l.WorldPosition - new Vector2(MaxLightSize) / 2, new Rectangle(l.RenderTargetPosition.ToPoint(), new Point(MaxLightSize, MaxLightSize)), Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None);
             }
 
             lightNum = 0;
