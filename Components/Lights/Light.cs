@@ -13,12 +13,14 @@ namespace Fiourp
         public Vector2 WorldPosition => ParentEntity.Pos + LocalPosition;
 
         public Vector2 RenderTargetPosition;
+        public float Size;
 
         public static readonly Color TransparentWhite = new Color(Color.White, 0);
 
-        public Light(Vector2 localPosition)
+        public Light(Vector2 localPosition, float size)
         {
             LocalPosition = localPosition;
+            Size = size;
         }
 
         public override void Render()
@@ -28,7 +30,7 @@ namespace Fiourp
 
         public abstract void DrawRenderTarget();
 
-        public virtual bool CheckSize()
-            => true;
+        public virtual bool OverSize()
+            => Size > Lighting.MaxLightSize / 2;
     }
 }

@@ -1,0 +1,52 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Fiourp
+{
+    public class TrailRenderer : Renderer
+    {
+        public static ParticleType Trail;
+
+        public float VelocitySizeMultiplier;
+
+        public Func<bool> Condition;
+
+        public TrailRenderer(float velocitySizeMultiplier)
+        {
+            VelocitySizeMultiplier = velocitySizeMultiplier;
+        }
+
+        public override void Render()
+        {
+            base.Render();
+
+            if (Condition != null && !Condition())
+                return;
+
+            Particle p = Trail.Create(ParentEntity.MiddlePos);
+
+            float speed;
+            if (ParentEntity is Actor actor)
+                speed = actor.Velocity.Length();
+            else if (ParentEntity is MovingSolid solid)
+                speed = solid.Velocity.Length();
+            else
+                speed = ((ParentEntity.Pos - ParentEntity.PreviousPos) / Engine.Deltatime).Length();
+
+
+            p.StartSize = Trail.Size * speed * VelocitySizeMultiplier;
+
+            int bigSide = ParentEntity.Width > ParentEntity.Height ? ParentEntity.Width : ParentEntity.Height;
+            if(p.StartSize > bigSide / 2)
+                p.StartSize = bigSide / 2;
+
+            p.Pos -= Microsoft.Xna.Framework.Vector2.One * p.StartSize / 2;
+
+            Engine.CurrentMap.MiddlegroundSystem.Emit(p);
+            Debug.LogUpdate(Engine.CurrentMap.MiddlegroundSystem.Particles.Count);
+        }
+    }
+}

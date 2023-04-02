@@ -13,7 +13,7 @@ namespace Fiourp
         public Color InsideColor;
         public Color OutsideColor;
 
-        public CircleLight(Vector2 localPosition, float radius, Color insideColor, Color outsideColor) : base(localPosition)
+        public CircleLight(Vector2 localPosition, float radius, Color insideColor, Color outsideColor) : base(localPosition, radius)
         {
             Radius = radius;
             InsideColor = insideColor;
@@ -24,8 +24,5 @@ namespace Fiourp
         {
             Drawing.DrawCircle(RenderTargetPosition + new Vector2(Lighting.MaxLightSize) / 2, Radius, 0.1f, InsideColor, OutsideColor);
         }
-
-        public override bool CheckSize()
-            => Radius > Lighting.MaxLightSize / 2;
     }
 }

@@ -410,12 +410,6 @@ namespace Fiourp
             shapesCount++;
         }
 
-        public static void DrawLight(Vector2 pos, float radius, Color insideColor, Color outsideColor)
-            => Lighting.DrawLight(pos, radius, insideColor, outsideColor);
-
-
-
-
         public static void DebugString()
         {
 #if DEBUG

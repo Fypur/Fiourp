@@ -209,7 +209,7 @@ namespace Fiourp
             foreach(KeyValuePair<string, Animation> data in animData.Animations)
                 animations[data.Key] = data.Value;
 
-            if (CurrentAnimation == null)
+            if (CurrentAnimation == null && animData.StartAnimationId != "")
                  Play(animData.StartAnimationId);
         }
 
