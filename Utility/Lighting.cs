@@ -10,8 +10,8 @@ namespace Fiourp
 {
     public static class Lighting
     {
-        public const int LightsTargetSize = 2048;
-        public const int MaxLightSize = 512;
+        public const int LightsTargetSize = 4096;
+        public const int MaxLightSize = 1024;
         private const int numLightsPerRow = LightsTargetSize / MaxLightSize;
 
         private static RenderTarget2D lightsTarget => Engine.LightsRenderTarget;
@@ -42,19 +42,32 @@ namespace Fiourp
             {
                 Light l = lights[i];
 
+                /*if (i != 6)
+                    continue;*/
+                
+
                 l.DrawRenderTarget();
+
+                
 
 
                 for (int y = 0; y < lvl.ChunksEdge.GetLength(0); y++)
                     for(int x = 0; x < lvl.ChunksEdge.GetLength(1); x++)
                     {
+                        
 
-                        if (!Collision.RectCircle(new Rectangle((int)lvl.Pos.X + x * lvl.ChunkSize * lvl.TileWidth, (int)lvl.Pos.Y + y * lvl.ChunkSize * lvl.TileHeight, lvl.ChunkSize * lvl.TileWidth, lvl.ChunkSize * lvl.TileHeight), lights[i].WorldPosition, lights[i].Size))
+                        if (!Collision.RectCircle(
+                            new Rectangle((int)lvl.Pos.X + x * lvl.ChunkSize * lvl.TileWidth, (int)lvl.Pos.Y + y * lvl.ChunkSize * lvl.TileHeight, lvl.ChunkSize * lvl.TileWidth, lvl.ChunkSize * lvl.TileHeight), 
+                            lights[i].WorldPosition, lights[i].Size))
+                        {
+                            //Debug.PointUpdate(Color.Orange, new Vector2(lvl.Pos.X + x * lvl.ChunkSize * lvl.TileWidth, (int)lvl.Pos.Y + y * lvl.ChunkSize * lvl.TileHeight + 1));
                             continue;
+                        }
+
+                        //Debug.PointUpdate(Color.Green, new Vector2(lvl.Pos.X + x * lvl.ChunkSize * lvl.TileWidth, (int)lvl.Pos.Y + y * lvl.ChunkSize * lvl.TileHeight + 1));
 
                         foreach (int[] edge in lvl.ChunksEdge[y, x])
                         {
-
                             Vector2 center = lights[i].WorldPosition;
                             Vector2 pos1 = new Vector2(edge[0] * lvl.TileWidth, edge[1] * lvl.TileHeight) + lvl.Pos;
                             Vector2 pos2 = new Vector2(edge[2] * lvl.TileWidth, edge[3] * lvl.TileHeight) + lvl.Pos;
@@ -71,16 +84,6 @@ namespace Fiourp
 
 
                             //TODO: LINEBOX INTERSECTION TO FIND POS3 AND POS4
-
-                            /*if (!TestIntersect(ref pos3, Vector2.One, maxL.OnlyX() + Vector2.UnitY))
-                                if (!TestIntersect(ref pos3, Vector2.One, maxL.OnlyY() + Vector2.UnitX))
-                                    if (!TestIntersect(ref pos3, maxL.OnlyX() - Vector2.UnitX, maxL - Vector2.One))
-                                        TestIntersect(ref pos3, maxL.OnlyY() - Vector2.UnitY, maxL - Vector2.One);
-
-                            if (!TestIntersect(ref pos4, Vector2.One, maxL.OnlyX() + Vector2.UnitY))
-                                if (!TestIntersect(ref pos4, Vector2.One, maxL.OnlyY() + Vector2.UnitX))
-                                    if (!TestIntersect(ref pos4, maxL.OnlyX() - Vector2.UnitX, maxL - Vector2.One))
-                                        TestIntersect(ref pos4, maxL.OnlyY() - Vector2.UnitY, maxL - Vector2.One);*/
 
                             if (!TestIntersect(ref pos3, Vector2.Zero, maxL.OnlyX()))
                                 if (!TestIntersect(ref pos3, Vector2.Zero, maxL.OnlyY()))
@@ -117,18 +120,18 @@ namespace Fiourp
                                 if (diff.X == MaxLightSize)
                                 {
                                     if(mid.Y < MaxLightSize / 2)
-                                        Drawing.DrawQuad(pos3, pos4, l.RenderTargetPosition, l.RenderTargetPosition + maxL.OnlyX(), Color.Black); //Top
+                                        Drawing.DrawQuad(pos3, pos4, l.RenderTargetPosition, l.RenderTargetPosition + maxL.OnlyX(), Color.Transparent); //Top
                                     else
-                                        Drawing.DrawQuad(pos3, pos4, l.RenderTargetPosition + maxL.OnlyY(), l.RenderTargetPosition + maxL, Color.Black); //Bottom
+                                        Drawing.DrawQuad(pos3, pos4, l.RenderTargetPosition + maxL.OnlyY(), l.RenderTargetPosition + maxL, Color.Transparent); //Bottom
                                 }
 
                                 if(diff.Y == MaxLightSize)
                                 {
                                     //Debug.PointUpdate(Color.Orange, pos1, pos2);
                                     if (mid.X < MaxLightSize / 2)
-                                        Drawing.DrawQuad(pos3, pos4, l.RenderTargetPosition, l.RenderTargetPosition + maxL.OnlyY(), Color.Black); //Left
+                                        Drawing.DrawQuad(pos3, pos4, l.RenderTargetPosition, l.RenderTargetPosition + maxL.OnlyY(), Color.Transparent); //Left
                                     else
-                                        Drawing.DrawQuad(pos3, pos4, l.RenderTargetPosition + maxL.OnlyX(), l.RenderTargetPosition + maxL, Color.Black); //Right
+                                        Drawing.DrawQuad(pos3, pos4, l.RenderTargetPosition + maxL.OnlyX(), l.RenderTargetPosition + maxL, Color.Transparent); //Right
                                 }
                             }
 
@@ -154,7 +157,7 @@ namespace Fiourp
 
 
 
-                            Drawing.DrawQuad(pos1, pos2, pos4, pos3, Color.Black);
+                            Drawing.DrawQuad(pos1, pos2, pos4, pos3, Color.Transparent);
                         }
                     }
             }

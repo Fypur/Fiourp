@@ -16,18 +16,28 @@ namespace Fiourp
         public Color InsideColor;
         public Color OutsideColor;
         
-        public QuadPointLight(Vector2 localPosition, Vector2 SecondQuadLocalPosition, Vector2 direction, float length, Color insideColor, Color outsideColor, float range) : base(localPosition, length)
+        public QuadPointLight(Vector2 localPosition, Vector2 SecondQuadLocalPosition, float direction, float range, float length, Color insideColor, Color outsideColor) : base(localPosition, length)
         {
-            Direction = direction;
+            if(Math.Abs(direction) % 360 < 90)
+            {
+                Vector2 v = LocalPosition;
+                LocalPosition = SecondQuadLocalPosition;
+                SecondQuadLocalPosition = v;
+            }
+
+
+            direction = MathHelper.ToRadians(direction);
+            Direction = new Vector2((float)Math.Cos(direction), (float)Math.Sin(direction));
             InsideColor = insideColor;
             OutsideColor = outsideColor;
             Range = range;
-            QuadPos2 = SecondQuadLocalPosition;
+            QuadPos2 = SecondQuadLocalPosition - LocalPosition;
         }
 
         public override void DrawRenderTarget()
         {
             Vector2 init = RenderTargetPosition + new Vector2(Lighting.MaxLightSize) / 2;
+
             Drawing.DrawQuad(init, InsideColor, init + QuadPos2, InsideColor, init + QuadPos2 + VectorHelper.RotateDeg(Direction * Size, -Range), OutsideColor, init + VectorHelper.RotateDeg(Direction * Size, Range), OutsideColor);
         }
 

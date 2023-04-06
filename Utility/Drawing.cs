@@ -391,6 +391,9 @@ namespace Fiourp
         public static void DrawQuad(Vector2 a, Vector2 b, Vector2 c, Vector2 d, Color color)
             => DrawQuad(a, color, b, color, c, color, d, color);
 
+        public static void DrawQuad(Vector2 a, Vector2 b, Color color)
+            => DrawQuad(a, color, new Vector2(b.X, a.Y), color, b, color, new Vector2(a.X, b.Y), color);
+
         public static void DrawQuad(Vector2 a, Color aColor, Vector2 b, Color bColor, Vector2 c, Color cColor, Vector2 d, Color dColor)
         {
             EnsureSpace(4, 6);

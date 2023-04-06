@@ -239,6 +239,8 @@ namespace Fiourp
 
 
                 Slices = ((List<Slice>)((object[])Frames[0].Tag)[1]).ToArray();
+                if(Slices.Length != 0)
+                { }
                 Frames[0].Tag = ((object[])Frames[0].Tag)[0];
             }
 
@@ -255,18 +257,21 @@ namespace Fiourp
                 public Rectangle Rect;
                 public NineSlice NiceSlice;
                 public string Name;
+                public Color Color;
 
-                public Slice(string name, Rectangle rect, NineSlice niceSlice)
+                public Slice(string name, Rectangle rect, NineSlice niceSlice, Color color)
                 {
                     Name = name;
                     Rect = rect;
                     NiceSlice = niceSlice;
+                    Color = color;
                 }
 
-                public Slice(string name, Rectangle rect)
+                public Slice(string name, Rectangle rect, Color color)
                 {
                     Name = name;
                     Rect = rect;
+                    Color = color;
                 }
             }
         }

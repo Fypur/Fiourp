@@ -306,9 +306,10 @@ namespace Fiourp
 
             result[0].Tag = new object[2];
             List<Sprite.Animation.Slice> slices = new();
+
             foreach(AsepriteSlice slice in doc.Slices.Values)
             {
-                slices.Add(new(slice.Name, new Rectangle(slice.SliceKeys[0].X, slice.SliceKeys[0].Y, slice.SliceKeys[0].Width, slice.SliceKeys[0].Height)));
+                slices.Add(new Sprite.Animation.Slice(slice.Name, new Rectangle(slice.SliceKeys[0].X, slice.SliceKeys[0].Y, slice.SliceKeys[0].Width, slice.SliceKeys[0].Height), slice.Color));
             }
 
             ((object[])result[0].Tag)[1] = slices;

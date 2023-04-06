@@ -24,7 +24,7 @@ namespace Fiourp
         public override void DrawRenderTarget()
         {
             Vector2 init = RenderTargetPosition + new Vector2(Lighting.MaxLightSize) / 2;
-            Drawing.DrawTriangle(init, InsideColor, init + VectorHelper.RotateDeg(Direction * Size, -Range), OutsideColor, init + VectorHelper.RotateDeg(Direction * Size, Range), OutsideColor);
+            //Drawing.DrawTriangle(init, InsideColor, init + VectorHelper.RotateDeg(Direction * Size, -Range), OutsideColor, init + VectorHelper.RotateDeg(Direction * Size, Range), OutsideColor);
         }
     }
 }
