@@ -46,7 +46,6 @@ namespace Fiourp
             p.Pos -= Microsoft.Xna.Framework.Vector2.One * p.StartSize / 2;
 
             Engine.CurrentMap.MiddlegroundSystem.Emit(p);
-            Debug.LogUpdate(Engine.CurrentMap.MiddlegroundSystem.Particles.Count);
         }
     }
 }

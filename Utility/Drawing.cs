@@ -313,7 +313,6 @@ namespace Fiourp
             if (useCameraOffset)
                 basicEffect.World = Engine.Cam.ViewMatrix * defaultBasicEffect.World * primitivesMatrix;
 
-
             foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
             {
                 pass.Apply();
@@ -359,33 +358,31 @@ namespace Fiourp
         public static void DrawCircle(Vector2 position, float radius, float theta, Color middleColor, Color exteriorColor)
         {
             Vector2 previous = position + new Vector2(radius, 0);
-            EnsureSpace(2, 4);
+            EnsureSpace(2 + (int)Math.Ceiling(2 * Math.PI / theta), 3 + 3 * (int)Math.Ceiling(2 * Math.PI / theta));
 
             int ind = vertexCount;
-            vertices[vertexCount++] = new VertexPositionColor(new Vector3(position, 0), middleColor);
-            vertices[vertexCount] = new VertexPositionColor(new Vector3(previous, 0), exteriorColor);
+            vertices[vertexCount++] = new VertexPositionColor(new Vector3(position, 0), middleColor); //v0
+            vertices[vertexCount] = new VertexPositionColor(new Vector3(previous, 0), exteriorColor); //v1
 
 
             for (float x = theta; x <= 2 * Math.PI; x += theta)
             {
-                EnsureSpace(1, 3);
-
-                shapesCount++;
-
-                indices[indicesCount++] = ind;
-                indices[indicesCount++] = vertexCount;
-                indices[indicesCount++] = ++vertexCount;
-
+                indices[indicesCount++] = ind; //v0
+                indices[indicesCount++] = vertexCount++; //v1 -> v2
 
                 Vector2 pos = position + new Vector2((float)Math.Cos(x), (float)Math.Sin(x)) * radius;
-                vertices[vertexCount] = new VertexPositionColor(new Vector3(pos, 0), exteriorColor);
+                vertices[vertexCount] = new VertexPositionColor(new Vector3(pos, 0), exteriorColor); //Calculating v2
+
+
+                indices[indicesCount++] = vertexCount; //v2 -> v3
             }
 
             shapesCount++;
 
-            indices[indicesCount++] = ind;
-            indices[indicesCount++] = vertexCount++;
-            indices[indicesCount++] = ind + 1;
+            indices[indicesCount++] = ind; //v0
+            indices[indicesCount++] = vertexCount++; //v3
+            indices[indicesCount++] = ind + 1; //v1
+            
         }
 
         public static void DrawQuad(Vector2 a, Vector2 b, Vector2 c, Vector2 d, Color color)

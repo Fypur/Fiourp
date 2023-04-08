@@ -11,7 +11,7 @@ namespace Fiourp
     public static class Lighting
     {
         public const int LightsTargetSize = 4096;
-        public const int MaxLightSize = 1024;
+        public const int MaxLightSize = 512;
         private const int numLightsPerRow = LightsTargetSize / MaxLightSize;
 
         private static RenderTarget2D lightsTarget => Engine.LightsRenderTarget;
@@ -41,15 +41,10 @@ namespace Fiourp
             for (int i = 0; i < lightNum; i++)
             {
                 Light l = lights[i];
-
-                /*if (i != 6)
-                    continue;*/
-                
+               
 
                 l.DrawRenderTarget();
-
                 
-
 
                 for (int y = 0; y < lvl.ChunksEdge.GetLength(0); y++)
                     for(int x = 0; x < lvl.ChunksEdge.GetLength(1); x++)
@@ -59,41 +54,36 @@ namespace Fiourp
                         if (!Collision.RectCircle(
                             new Rectangle((int)lvl.Pos.X + x * lvl.ChunkSize * lvl.TileWidth, (int)lvl.Pos.Y + y * lvl.ChunkSize * lvl.TileHeight, lvl.ChunkSize * lvl.TileWidth, lvl.ChunkSize * lvl.TileHeight), 
                             lights[i].WorldPosition, lights[i].Size))
-                        {
-                            //Debug.PointUpdate(Color.Orange, new Vector2(lvl.Pos.X + x * lvl.ChunkSize * lvl.TileWidth, (int)lvl.Pos.Y + y * lvl.ChunkSize * lvl.TileHeight + 1));
                             continue;
-                        }
-
-                        //Debug.PointUpdate(Color.Green, new Vector2(lvl.Pos.X + x * lvl.ChunkSize * lvl.TileWidth, (int)lvl.Pos.Y + y * lvl.ChunkSize * lvl.TileHeight + 1));
 
                         foreach (int[] edge in lvl.ChunksEdge[y, x])
                         {
-                            Vector2 center = lights[i].WorldPosition;
-                            Vector2 pos1 = new Vector2(edge[0] * lvl.TileWidth, edge[1] * lvl.TileHeight) + lvl.Pos;
-                            Vector2 pos2 = new Vector2(edge[2] * lvl.TileWidth, edge[3] * lvl.TileHeight) + lvl.Pos;
+                            Vector2 lightWorldPos = lights[i].WorldPosition;
+                            Vector2 edgePos1 = new Vector2(edge[0] * lvl.TileWidth, edge[1] * lvl.TileHeight) + lvl.Pos;
+                            Vector2 edgePos2 = new Vector2(edge[2] * lvl.TileWidth, edge[3] * lvl.TileHeight) + lvl.Pos;
 
-                            Vector2[] intersection = Collision.LineCircleIntersection(pos1, pos2, l.WorldPosition, l.Size);
+                            Vector2[] intersection = Collision.LineCircleIntersection(edgePos1, edgePos2, l.WorldPosition, l.Size);
 
-                            if (intersection.Length == 0 && (Vector2.DistanceSquared(pos1, center) > l.Size * l.Size && Vector2.DistanceSquared(pos2, center) > l.Size * l.Size))
+                            if (intersection.Length == 0 && (Vector2.DistanceSquared(edgePos1, lightWorldPos) > l.Size * l.Size && Vector2.DistanceSquared(edgePos2, lightWorldPos) > l.Size * l.Size))
                                 continue;
 
                             Vector2 maxL = new Vector2(MaxLightSize);
 
-                            Vector2 pos3 = (pos1 - lights[i].WorldPosition).Normalized() * MaxLightSize * 2f + maxL / 2;
-                            Vector2 pos4 = (pos2 - lights[i].WorldPosition).Normalized() * MaxLightSize * 2f + maxL / 2;
+                            Vector2 projectedEdgePos1 = (edgePos1 - lightWorldPos).Normalized() * MaxLightSize * 2f + maxL / 2;
+                            Vector2 projectedEdgePos2 = (edgePos2 - lightWorldPos).Normalized() * MaxLightSize * 2f + maxL / 2;
 
 
                             //TODO: LINEBOX INTERSECTION TO FIND POS3 AND POS4
 
-                            if (!TestIntersect(ref pos3, Vector2.Zero, maxL.OnlyX()))
-                                if (!TestIntersect(ref pos3, Vector2.Zero, maxL.OnlyY()))
-                                    if (!TestIntersect(ref pos3, maxL.OnlyX(), maxL))
-                                        TestIntersect(ref pos3, maxL.OnlyY(), maxL);
+                            if (!TestIntersect(ref projectedEdgePos1, Vector2.Zero, maxL.OnlyX()))
+                                if (!TestIntersect(ref projectedEdgePos1, Vector2.Zero, maxL.OnlyY()))
+                                    if (!TestIntersect(ref projectedEdgePos1, maxL.OnlyX(), maxL))
+                                        TestIntersect(ref projectedEdgePos1, maxL.OnlyY(), maxL);
 
-                            if (!TestIntersect(ref pos4, Vector2.Zero, maxL.OnlyX()))
-                                if (!TestIntersect(ref pos4, Vector2.Zero, maxL.OnlyY()))
-                                    if (!TestIntersect(ref pos4, maxL.OnlyX(), maxL))
-                                        TestIntersect(ref pos4, maxL.OnlyY(), maxL);
+                            if (!TestIntersect(ref projectedEdgePos2, Vector2.Zero, maxL.OnlyX()))
+                                if (!TestIntersect(ref projectedEdgePos2, Vector2.Zero, maxL.OnlyY()))
+                                    if (!TestIntersect(ref projectedEdgePos2, maxL.OnlyX(), maxL))
+                                        TestIntersect(ref projectedEdgePos2, maxL.OnlyY(), maxL);
 
                             bool TestIntersect(ref Vector2 pos, Vector2 box1, Vector2 box2)
                             {
@@ -106,61 +96,69 @@ namespace Fiourp
                                 return false;
                             }
 
-                            Vector2 mid = (pos3 + pos4) / 2;
-                            Vector2 diff = VectorHelper.Abs(pos3 - pos4);
+                            Vector2 midProjected = (projectedEdgePos1 + projectedEdgePos2) / 2;
+                            Vector2 diff = VectorHelper.Abs(projectedEdgePos1 - projectedEdgePos2);
 
-                            pos3 += lights[i].RenderTargetPosition;
-                            pos4 += lights[i].RenderTargetPosition;
+                            projectedEdgePos1 += lights[i].RenderTargetPosition;
+                            projectedEdgePos2 += lights[i].RenderTargetPosition;
 
+                            //Debug.PointUpdate(Color.Orange, edgePos1 - lightWorldPos + lights[i].RenderTargetPosition + maxL / 2, edgePos2 - lightWorldPos + lights[i].RenderTargetPosition + maxL / 2);
+                            //Debug.PointUpdate(Color.Yellow, projectedEdgePos1, projectedEdgePos2);
 
-                            //Drawing.DrawQuad(pos3, pos4, l.RenderTargetPosition + maxL.OnlyY(), l.RenderTargetPosition + maxL, Color.Black);
-                            if (mid.X != 0 && mid.Y != 0 && Vector2.DistanceSquared(mid, maxL / 2) < l.Size * l.Size) 
+                            //Drawing.DrawQuad(pos3, pos4, l.RenderTargetPosition + maxL.OnlyY(), l.RenderTargetPosition + maxL, Color.Transparent);
+                            if (midProjected.X != 0 && midProjected.Y != 0 && Vector2.DistanceSquared(midProjected, maxL / 2) < l.Size * l.Size) 
                             {
+                                
                                 //Debug.LogUpdate(mid);
                                 if (diff.X == MaxLightSize)
                                 {
-                                    if(mid.Y < MaxLightSize / 2)
-                                        Drawing.DrawQuad(pos3, pos4, l.RenderTargetPosition, l.RenderTargetPosition + maxL.OnlyX(), Color.Transparent); //Top
+                                    if (midProjected.Y < MaxLightSize / 2)
+                                    Drawing.DrawQuad(projectedEdgePos1, projectedEdgePos2, l.RenderTargetPosition + maxL.OnlyX(), l.RenderTargetPosition, Color.Transparent); //Top
                                     else
-                                        Drawing.DrawQuad(pos3, pos4, l.RenderTargetPosition + maxL.OnlyY(), l.RenderTargetPosition + maxL, Color.Transparent); //Bottom
+                                        Drawing.DrawQuad(projectedEdgePos1, projectedEdgePos2, l.RenderTargetPosition + maxL.OnlyY(), l.RenderTargetPosition + maxL, Color.Transparent); //Bottom
                                 }
 
                                 if(diff.Y == MaxLightSize)
                                 {
                                     //Debug.PointUpdate(Color.Orange, pos1, pos2);
-                                    if (mid.X < MaxLightSize / 2)
-                                        Drawing.DrawQuad(pos3, pos4, l.RenderTargetPosition, l.RenderTargetPosition + maxL.OnlyY(), Color.Transparent); //Left
+                                    if (midProjected.X < MaxLightSize / 2)
+                                        Drawing.DrawQuad(projectedEdgePos1, projectedEdgePos2, l.RenderTargetPosition, l.RenderTargetPosition + maxL.OnlyY(), Color.Transparent); //Left
                                     else
-                                        Drawing.DrawQuad(pos3, pos4, l.RenderTargetPosition + maxL.OnlyX(), l.RenderTargetPosition + maxL, Color.Transparent); //Right
+                                        Drawing.DrawQuad(projectedEdgePos1, projectedEdgePos2, l.RenderTargetPosition + maxL.OnlyX(), l.RenderTargetPosition + maxL, Color.Transparent); //Right
                                 }
                             }
 
+
+
+
+                            //Debug.PointUpdate(Color.Orange, edgePos1, edgePos2);
                             //Debug.PointUpdate(Color.Orange, pos1, pos2, pos3 + center - new Vector2(maxLightSize) / 2 - l.RenderTargetPosition, pos4 + center - new Vector2(maxLightSize) / 2 - l.RenderTargetPosition);
                             //Debug.PointUpdate(Color.Orange, mid + center - new Vector2(maxLightSize) / 2);
                             //Debug.LogUpdate(Input.MousePos);
-                            pos1 += lights[i].RenderTargetPosition + new Vector2(MaxLightSize) / 2 - center;
-                            pos2 += lights[i].RenderTargetPosition + new Vector2(MaxLightSize) / 2 - center;
+                            edgePos1 += lights[i].RenderTargetPosition + new Vector2(MaxLightSize) / 2 - lightWorldPos;
+                            edgePos2 += lights[i].RenderTargetPosition + new Vector2(MaxLightSize) / 2 - lightWorldPos;
 
 
 
                             //Debug.PointUpdate(Color.Orange, pos1, pos2, pos3, pos4);
-                            //Debug.PointUpdate(Color.Orange, pos1, pos2);
-                            //Drawing.DrawLine(pos1, pos2, Color.Orange);
+                            
+                            //Drawing.DrawLine(pos1, pos2, Color.Orange);dq
                             //Debug.PointUpdate(Color.Orange, pos1, pos2);
 
                             //pos1 -= center + new Vector2(maxLightSize) + lights[i].WorldPosition; ;
                             //pos1 = Vector2.One * 100;
                             //pos1 += new Vector2(maxLightSize) + lights[i].WorldPosition;
 
-                            //Drawing.DrawQuad(pos1, pos1 + new Vector2(5, 0), pos1 + new Vector2(5, 5), pos1 + new Vector2(0, 5), Color.Blue);
+                            //Drawing.DrawQuad(edgePos1, edgePos1 + new Vector2(5, 0), edgePos1 + new Vector2(5, 5), edgePos1 + new Vector2(0, 5), Color.Blue);
 
 
 
 
-                            Drawing.DrawQuad(pos1, pos2, pos4, pos3, Color.Transparent);
+                            Drawing.DrawQuad(edgePos1, edgePos2, projectedEdgePos2, projectedEdgePos1, Color.Transparent);
                         }
                     }
             }
+
         }
 
         public static void DrawAllLights()

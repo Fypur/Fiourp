@@ -36,7 +36,7 @@ namespace Fiourp
         public static ControlList UIActionBack = new ControlList(Keys.Escape, Buttons.B, Keys.X, Keys.O);
         public static ControlList ButtonClear = new ControlList(Keys.V, Buttons.Y);
 
-        public class State
+        public struct State
         {
             public KeyboardState KbState;
             public MouseState MouseState;
