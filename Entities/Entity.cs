@@ -33,6 +33,8 @@ namespace Fiourp
         public List<Renderer> Renderers = new List<Renderer>();
 
         public List<Entity> Children = new List<Entity>();
+        public Entity Parent;
+
         public Vector2 PreviousPos;
 
         public Entity(Vector2 position, int width, int height, Sprite sprite)
@@ -84,6 +86,9 @@ namespace Fiourp
         public virtual void Awake()
         {
             PreviousPos = ExactPos;
+
+            foreach(Entity child in Children)
+                child.Awake();
         }
 
         public virtual void Update()
@@ -156,7 +161,10 @@ namespace Fiourp
         }
 
         public virtual void OnDestroy()
-        { }
+        {
+            for(int i = Children.Count - 1; i >= 0; i--)
+                Children[i].OnDestroy();
+        }
 
         public virtual bool CollidingConditions(Collider other)
             => true;
@@ -250,8 +258,8 @@ namespace Fiourp
 
         public Entity AddChild(Entity child)
         {
+            child.Parent = this;
             Children.Add(child);
-            child.Awake();
             return child;
         }
 
@@ -263,6 +271,7 @@ namespace Fiourp
 
         public void RemoveChild(Entity child)
         {
+            child.Parent = null;
             Children.Remove(child);
             child.OnDestroy();
         }
