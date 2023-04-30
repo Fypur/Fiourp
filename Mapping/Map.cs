@@ -43,7 +43,7 @@ namespace Fiourp
         public void LoadMap(Level initLevel)
         {
             DefaultLoad(initLevel);
-            CurrentLevel.Load();
+            CurrentLevel.LoadAutoTile();
         }
 
         public void LoadMapNoAutoTile(Level initLevel)

@@ -48,7 +48,7 @@ namespace Fiourp
             DontDestroyOnUnloadEntities = new();
         }
 
-        public void Load()
+        public void LoadAutoTile()
         {
             Engine.CurrentMap.CurrentLevel = this;
             EnterAction?.Invoke();
