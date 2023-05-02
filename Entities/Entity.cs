@@ -35,7 +35,7 @@ namespace Fiourp
         public List<Entity> Children = new List<Entity>();
         public Entity Parent;
 
-        public Vector2 PreviousPos;
+        public Vector2 PreviousExactPos;
 
         public Entity(Vector2 position, int width, int height, Sprite sprite)
         {
@@ -85,7 +85,7 @@ namespace Fiourp
         /// </summary>
         public virtual void Awake()
         {
-            PreviousPos = ExactPos;
+            PreviousExactPos = ExactPos;
 
             foreach(Entity child in Children)
                 child.Awake();
@@ -102,8 +102,8 @@ namespace Fiourp
                 if (i >= Children.Count)
                     return;
 
-                Children[i].Pos += ExactPos - PreviousPos;
-                if(Pos - PreviousPos != Vector2.Zero)
+                Children[i].ExactPos += ExactPos - PreviousExactPos;
+                if(Pos - PreviousExactPos != Vector2.Zero)
                 { }
                 if (Children[i].Active)
                     Children[i].Update();
@@ -118,7 +118,7 @@ namespace Fiourp
                     Children[i].LateUpdate();
             }
 
-            PreviousPos = ExactPos;
+            PreviousExactPos = ExactPos;
         }
 
         public virtual void LateUpdate()
@@ -130,10 +130,10 @@ namespace Fiourp
         {
             foreach(Entity child in Children)
             {
-                child.ExactPos += ExactPos - PreviousPos;
+                child.ExactPos += ExactPos - PreviousExactPos;
             }
 
-            PreviousPos = ExactPos;
+            PreviousExactPos = ExactPos;
         }
 
         public virtual void Render()

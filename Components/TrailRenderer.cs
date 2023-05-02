@@ -34,7 +34,7 @@ namespace Fiourp
             else if (ParentEntity is MovingSolid solid)
                 speed = solid.Velocity.Length();
             else
-                speed = ((ParentEntity.Pos - ParentEntity.PreviousPos) / Engine.Deltatime).Length();
+                speed = ((ParentEntity.Pos - ParentEntity.PreviousExactPos) / Engine.Deltatime).Length();
 
 
             p.StartSize = Trail.Size * speed * VelocitySizeMultiplier;

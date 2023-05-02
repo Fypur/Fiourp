@@ -128,7 +128,7 @@ namespace Fiourp
 
                 while (move != 0)
                 {
-                    if (!Collider.CollideAt(Pos + new Vector2(finalX + sign, 0)))
+                    if (!Collider.CollideAt(new List<Entity>(Engine.CurrentMap.Data.Solids), Pos + new Vector2(finalX + sign, 0), out Entity other))
                     {
                         finalX += sign;
                         move -= sign;
@@ -141,6 +141,7 @@ namespace Fiourp
                 }
             }
 
+            //throw new Exception("The remainder is negative and it messes with positions with switches between positive and negative values");
             yRemainder += amountY;
             move = (int)Math.Round(yRemainder);
 
@@ -151,7 +152,7 @@ namespace Fiourp
 
                 while (move != 0)
                 {
-                    if (!Collider.CollideAt(Pos + new Vector2(0, finalY + sign)))
+                    if (!Collider.CollideAt(new List<Entity>(Engine.CurrentMap.Data.Solids), Pos + new Vector2(0, finalY + sign), out Entity other))
                     {
                         finalY += sign;
                         move -= sign;
@@ -163,6 +164,9 @@ namespace Fiourp
                     }
                 }
             }
+
+            Debug.LogUpdate(Math.Sign(yRemainder));
+
 
             Move(finalX, finalY);
         }

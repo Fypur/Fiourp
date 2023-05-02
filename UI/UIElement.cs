@@ -114,7 +114,7 @@ namespace Fiourp
             base.Awake();
 
             Pos = Pos / Options.DefaultUISizeMultiplier * Options.CurrentScreenSizeMultiplier;
-            PreviousPos = ExactPos;
+            PreviousExactPos = ExactPos;
             Size = Size / Options.DefaultUISizeMultiplier * Options.CurrentScreenSizeMultiplier;
         }
 
