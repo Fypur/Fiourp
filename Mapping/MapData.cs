@@ -24,5 +24,13 @@ namespace Fiourp
                 return new List<T>();
             return entities.Cast<T>().ToList();
         }
+
+        public T GetEntity<T>() where T : Entity
+        {
+            EntitiesByType.TryGetValue(typeof(T), out List<Entity> entities);
+            if (entities == null)
+                return null;
+            return (T)entities[0];
+        }
     }
 }
