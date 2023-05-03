@@ -133,6 +133,7 @@ namespace Fiourp
                     {
                         finalX += sign;
                         move -= sign;
+                        
                     }
                     else
                     {
@@ -141,6 +142,7 @@ namespace Fiourp
                         else
                             finalX = other.Pos.X + other.Width - Pos.X;*/
 
+                        xRemainder = 0;
                         CallbackOnCollisionX?.Invoke();
                         break;
                     }
@@ -170,14 +172,12 @@ namespace Fiourp
                         else
                             finalY = other.Pos.Y + other.Height - Pos.Y;*/
 
+                        yRemainder = 0;
                         CallbackOnCollisionY?.Invoke();
                         break;
                     }
                 }
             }
-
-            Debug.LogUpdate(yRemainder);
-
 
             Move(finalX, finalY);
         }

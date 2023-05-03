@@ -89,6 +89,7 @@ namespace Fiourp
                     }
                     else
                     {
+                        xRemainder = 0;
                         CallbackOnCollision?.Invoke(collided);
                         break;
                     }
@@ -115,6 +116,7 @@ namespace Fiourp
                     }
                     else
                     {
+                        yRemainder = 0;
                         CallbackOnCollision?.Invoke(collided);
                         break;
                     }

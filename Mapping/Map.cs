@@ -142,8 +142,8 @@ namespace Fiourp
 
         public void Destroy(Entity entity)
         {
-            foreach (Component component in entity.Components)
-                component.Removed();
+            for(int i = entity.Components.Count - 1; i >= 0; i--)
+                entity.Components[i].Destroy();
 
             entity.OnDestroy();
             Data.Entities.Remove(entity);
