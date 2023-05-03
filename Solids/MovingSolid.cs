@@ -32,8 +32,9 @@ namespace Fiourp
         {
             xRemainder += x;
             yRemainder += y;
-            int moveX = (int)Math.Round(xRemainder);
-            int moveY = (int)Math.Round(yRemainder);
+
+            int moveX = (int)Math.Floor(xRemainder);
+            int moveY = (int)Math.Floor(yRemainder);
 
             if (!Collider.Collidable)
             {
@@ -119,7 +120,7 @@ namespace Fiourp
             float finalY = 0;
 
             xRemainder += amountX;
-            int move = (int)Math.Round(xRemainder);
+            int move = (int)Math.Floor(xRemainder);
 
             if (move != 0)
             {
@@ -135,6 +136,11 @@ namespace Fiourp
                     }
                     else
                     {
+                        /*if (move > 0)
+                            finalX = other.Pos.X - Pos.X - Width;
+                        else
+                            finalX = other.Pos.X + other.Width - Pos.X;*/
+
                         CallbackOnCollisionX?.Invoke();
                         break;
                     }
@@ -143,7 +149,7 @@ namespace Fiourp
 
             //throw new Exception("The remainder is negative and it messes with positions with switches between positive and negative values");
             yRemainder += amountY;
-            move = (int)Math.Round(yRemainder);
+            move = (int)Math.Floor(yRemainder);
 
             if (move != 0)
             {
@@ -159,13 +165,18 @@ namespace Fiourp
                     }
                     else
                     {
+                        /*if (move > 0)
+                            finalY = other.Pos.Y - Pos.Y - Height;
+                        else
+                            finalY = other.Pos.Y + other.Height - Pos.Y;*/
+
                         CallbackOnCollisionY?.Invoke();
                         break;
                     }
                 }
             }
 
-            Debug.LogUpdate(Math.Sign(yRemainder));
+            Debug.LogUpdate(yRemainder);
 
 
             Move(finalX, finalY);

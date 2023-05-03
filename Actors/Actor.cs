@@ -72,7 +72,7 @@ namespace Fiourp
         public void MoveX(float amount, List<Entity> checkedCollision, Action<Entity> CallbackOnCollision = null)
         {
             xRemainder += amount;
-            int move = (int)Math.Round(xRemainder);
+            int move = (int)Math.Floor(xRemainder);
 
             if (move != 0)
             {
@@ -99,7 +99,7 @@ namespace Fiourp
         public void MoveY(float amount, List<Entity> checkedCollision, Action<Entity> CallbackOnCollision = null)
         {
             yRemainder += amount;
-            int move = (int)Math.Round(yRemainder);
+            int move = (int)Math.Floor(yRemainder);
 
             if (move != 0)
             {

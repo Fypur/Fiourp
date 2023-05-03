@@ -118,12 +118,12 @@ namespace Fiourp
                     Children[i].LateUpdate();
             }
 
-            PreviousExactPos = ExactPos;
+            
         }
 
         public virtual void LateUpdate()
         {
-
+            PreviousExactPos = ExactPos;
         }
 
         public void UpdateChildrenPos()
