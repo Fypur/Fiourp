@@ -118,5 +118,12 @@ namespace Fiourp
         {
             yield return new PausedUntil(Until);
         }
+
+        public static IEnumerator Do(Action action)
+        {
+            action();
+            yield return null;
+        }
+
     }
 }

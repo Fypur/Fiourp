@@ -36,6 +36,7 @@ namespace Fiourp
         public Entity Parent;
 
         public Vector2 PreviousExactPos;
+        private Vector2 previousPos;
 
         public Entity(Vector2 position, int width, int height, Sprite sprite)
         {
@@ -86,9 +87,10 @@ namespace Fiourp
         public virtual void Awake()
         {
             PreviousExactPos = ExactPos;
+            previousPos = Pos;
 
-            foreach(Entity child in Children)
-                child.Awake();
+            /*foreach(Entity child in Children)
+                child.Awake();*/
         }
 
         public virtual void Update()
@@ -96,15 +98,20 @@ namespace Fiourp
             for (int i = Components.Count - 1; i >= 0; i--)
                 if(Components.Count > i && Components[i].Active)
                     Components[i].Update();
+        }
 
+        public virtual void LateUpdate()
+        {
             for (int i = Children.Count - 1; i >= 0; i--)
             {
                 if (i >= Children.Count)
                     return;
 
-                Children[i].ExactPos += ExactPos - PreviousExactPos;
-                if(Pos - PreviousExactPos != Vector2.Zero)
-                { }
+                Children[i].ExactPos += Pos - previousPos;
+#if DEBUG
+                if (Pos - previousPos != Vector2.Zero)
+                {  }
+#endif
                 if (Children[i].Active)
                     Children[i].Update();
             }
@@ -116,24 +123,24 @@ namespace Fiourp
 
                 if (Children[i].Active)
                     Children[i].LateUpdate();
+
+                //If a child is added through Late Update, it won't be updated until the next frame.
+                //There is no way to make sure every child is updated if the elements are added and removed to the Children list
+                //I therefore prefered making sure removing children is supported instead of adding them
             }
 
-            
-        }
-
-        public virtual void LateUpdate()
-        {
             PreviousExactPos = ExactPos;
+            previousPos = Pos;
         }
 
         public void UpdateChildrenPos()
         {
             foreach(Entity child in Children)
             {
-                child.ExactPos += ExactPos - PreviousExactPos;
+                child.ExactPos += Pos - previousPos;
             }
 
-            PreviousExactPos = ExactPos;
+            previousPos = Pos;
         }
 
         public virtual void Render()
@@ -260,6 +267,7 @@ namespace Fiourp
         {
             child.Parent = this;
             Children.Add(child);
+            child.Awake();
             return child;
         }
 
@@ -292,6 +300,11 @@ namespace Fiourp
         }
 
         public void SelfDestroy()
-            => Engine.CurrentMap.Destroy(this);
+        {
+            if (Parent != null)
+                Parent.RemoveChild(this);
+            else
+                Engine.CurrentMap.Destroy(this);
+        }
     }
 }

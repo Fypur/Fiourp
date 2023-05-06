@@ -99,6 +99,7 @@ namespace Fiourp
         {
             RemoveComponent(Collider);
             Centered = false;
+            PreviousExactPos = ExactPos;
         }
 
         public UIElement(Vector2 position, int width, int height, bool centered, Sprite sprite) : base(position, width, height, sprite)
@@ -107,6 +108,7 @@ namespace Fiourp
             Centered = centered;
             if (centered)
                 CenteredPos = Pos;
+            PreviousExactPos = ExactPos;
         }
 
         public override void Awake()

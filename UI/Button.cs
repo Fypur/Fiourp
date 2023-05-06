@@ -96,30 +96,42 @@ namespace Fiourp
 
         public virtual void OnHover()
         {
-            Sprite.Color.R -= 20;
-            Sprite.Color.B -= 20;
-            Sprite.Color.G -= 20;
+            if(Sprite != null)
+            {
+                Sprite.Color.R -= 20;
+                Sprite.Color.B -= 20;
+                Sprite.Color.G -= 20;
+            }
         }
 
         public virtual void OnLeaveHover()
         {
-            Sprite.Color.R += 20;
-            Sprite.Color.B += 20;
-            Sprite.Color.G += 20;
+            if (Sprite != null)
+            {
+                Sprite.Color.R += 20;
+                Sprite.Color.B += 20;
+                Sprite.Color.G += 20;
+            }
         }
 
         public virtual void OnHold()
         {
-            Sprite.Color.R -= 20;
-            Sprite.Color.B -= 20;
-            Sprite.Color.G -= 20;
+            if (Sprite != null)
+            {
+                Sprite.Color.R -= 20;
+                Sprite.Color.B -= 20;
+                Sprite.Color.G -= 20;
+            }
         }
 
         public virtual void OnLeaveHold()
         {
-            Sprite.Color.R += 20;
-            Sprite.Color.B += 20;
-            Sprite.Color.G += 20;
+            if (Sprite != null)
+            {
+                Sprite.Color.R += 20;
+                Sprite.Color.B += 20;
+                Sprite.Color.G += 20;
+            }
         }
     }
 }

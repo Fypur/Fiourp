@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -81,8 +82,10 @@ namespace Fiourp
 
         public void SwitchTo(SubMenu subMenu)
         {
-            SelfDestroy();
-            subMenu.Instantiate();
+            Parent.AddChild(subMenu);
+            Coroutine c = (Coroutine)AddComponent(new Coroutine(OnClose(), Coroutine.Do(SelfDestroy)));
+            //subMenu.Update();
+            subMenu.LateUpdate();
         }
 
         public void SelectFirstElement()
@@ -97,11 +100,64 @@ namespace Fiourp
             }
         }
 
-        public void Instantiate()
+        public override void Awake()
         {
-            Engine.CurrentMap.Instantiate(this);
             RefreshElements();
             SelectFirstElement();
+            Coroutine c = (Coroutine)AddComponent(new Coroutine(OnOpen()));
+
+            base.Awake();
+        }
+
+        public virtual IEnumerator OnOpen()
+        {
+            yield return null;
+        }
+
+        public virtual IEnumerator OnClose()
+        {
+            yield return null;
+        }
+
+        public static IEnumerator Slide(float time, Vector2 offset, List<Entity> entities)
+        {
+            Vector2[] finalPos = entities.Select((e) => e.ExactPos).ToArray();
+
+            float initTime = time;
+            float timeOffset = time / (finalPos.Length + 2);
+
+            for (int i = 0; i < finalPos.Length; i++)
+            {
+                //entities[i].ExactPos = finalPos[i] + offset;
+                entities[i].Pos = Vector2.Zero;
+            }
+
+            yield return null;
+
+            /*float t = 0;
+            while (t < initTime)
+            {
+                for (int i = 0; i < finalPos.Length; i++)
+                {
+                    if (i * timeOffset > t)
+                        break;
+
+                    float a = (t - i * timeOffset) / timeOffset;
+
+                    if (a > 1)
+                        a = 1;
+
+                    entities[i].ExactPos = Vector2.Lerp(finalPos[i] + offset, finalPos[i], Ease.QuintInAndOut(a));
+                }
+
+                t += Engine.Deltatime;
+                yield return null;
+            }
+
+            for (int i = 0; i < finalPos.Length; i++)
+            {
+                entities[i].ExactPos = finalPos[i];
+            }*/
         }
     }
 }
