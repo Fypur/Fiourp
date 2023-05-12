@@ -12,7 +12,7 @@ namespace Fiourp
         public T CurrentValue { get => Values[CurrentIndex]; set => SetValue(value); }
         private T[] Values;
 
-        public EnumSwitcher(Vector2 position, int width, int height, bool centered, string fieldName, T startValue, Dictionary<T, Action> actions) : base(position, width, height, centered, fieldName, GetParams(startValue, actions, out T[] values, out var intActions), values.Length, intActions)
+        public EnumSwitcher(Vector2 position, int width, int height, bool centered, string fieldName, string fontID, Sprite sprite, T startValue, Dictionary<T, Action> actions) : base(position, width, height, centered, fieldName, fontID, sprite, GetParams(startValue, actions, out T[] values, out var intActions), values.Length, intActions)
         {
             Values = values;
             CurrentValue = startValue;

@@ -106,8 +106,10 @@ namespace Fiourp
         {
             RemoveComponent(Collider);
             Centered = centered;
+
             if (centered)
                 CenteredPos = Pos;
+
             PreviousExactPos = ExactPos;
         }
 
@@ -116,8 +118,9 @@ namespace Fiourp
             base.Awake();
 
             Pos = Pos / Options.DefaultUISizeMultiplier * Options.CurrentScreenSizeMultiplier;
-            PreviousExactPos = ExactPos;
             Size = Size / Options.DefaultUISizeMultiplier * Options.CurrentScreenSizeMultiplier;
+            ResetPreviousPos();
+            PreviousExactPos = ExactPos;
         }
 
         public override void Update()
@@ -190,12 +193,14 @@ namespace Fiourp
 
         public virtual void OnAddSelectable()
         {
-            Sprite.Color = new Color(Sprite.Color.ToVector3() + new Color(100, 100, 100).ToVector3());
+            if (Sprite != null)
+                Sprite.Color = new Color(Sprite.Color.ToVector3() + new Color(100, 100, 100).ToVector3());
         }
 
         public virtual void OnRemoveSelectable()
         {
-            Sprite.Color = new Color(Sprite.Color.ToVector3() - new Color(100, 100, 100).ToVector3());
+            if(Sprite != null)
+                Sprite.Color = new Color(Sprite.Color.ToVector3() - new Color(100, 100, 100).ToVector3());
         }
 
         public virtual void OnSizeChange() { }

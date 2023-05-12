@@ -12,6 +12,7 @@ namespace Fiourp
         public string Text { get; protected set; }
         public string FontID;
         protected float textScale;
+        public bool CenteredText;
         public float TextScale { get => textScale / Options.DefaultUISizeMultiplier * Options.CurrentScreenSizeMultiplier; set => textScale = value; }
 
         public Color Color = Color.White;
@@ -20,14 +21,20 @@ namespace Fiourp
 
         public enum Style { Normal, Bold, Italic }
 
-        public TextBox(string text, string fontID, Vector2 position, int width, int height, float fontSize, Color color, bool centered = false)
-            : base(position, width, height, false, null)
+        public TextBox(string text, string fontID, Vector2 position, int width, int height, float fontSize, Color color, bool centeredUI = false, bool centeredText = false)
+            : base(position, width, height, centeredUI, null)
         {
             FontID = fontID;
             textScale = fontSize;
             Text = GenerateText(text);
             CustomCenter = true;
-            Centered = centered;
+            Centered = centeredUI;
+
+            if (centeredUI && !centeredText)
+                CenteredText = true;
+            else
+                CenteredText = centeredText;
+
             Color = color;
         }
 
@@ -78,7 +85,7 @@ namespace Fiourp
 
             if (Text != null)
             {
-                if (!Centered)
+                if (!CenteredText)
                     Drawing.DrawString(Text, Pos, Color, Font, TextScale);
                 else
                 {

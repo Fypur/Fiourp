@@ -10,7 +10,7 @@ namespace Fiourp
     public class BoolSwitcher : Switcher
     {
         public bool CurrentValue { get => CurrentIndex == 2; set => CurrentIndex = value ? 1 : 0; }
-        public BoolSwitcher(Vector2 position, int width, int height, bool centered, string fieldName, bool startValue, Action onOn, Action onOff) : base(position, width, height, centered, fieldName, startValue ? 2 : 1, 4, new() { { 0, onOn }, { 1, onOff }, { 2, onOn }, { 3, onOff } })
+        public BoolSwitcher(Vector2 position, int width, int height, bool centered, string fieldName, string fontID, Sprite sprite, bool startValue, Action onOn, Action onOff) : base(position, width, height, centered, fieldName, fontID, sprite, startValue ? 2 : 1, 4, new() { { 0, onOn }, { 1, onOff }, { 2, onOn }, { 3, onOff } })
         {
             ValueTextBox.SetText(startValue ? "On" : "Off");
         }

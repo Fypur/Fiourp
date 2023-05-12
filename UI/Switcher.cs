@@ -14,31 +14,31 @@ namespace Fiourp
         public int MaxValue;
 
         public TextBox FieldTextBox;
-        protected TextBox ValueTextBox;
+        public TextBox ValueTextBox;
 
         protected Dictionary<int, Action> Actions;
         protected Action<int> Action;
         
 
-        public Switcher(Vector2 position, int width, int height, bool centered, string fieldName, int startValue, int numValues, Dictionary<int, Action> actions) : base(position, width, height, centered, new Sprite(Color.White))
+        public Switcher(Vector2 position, int width, int height, bool centered, string fieldName, string fontID, Sprite sprite, int startValue, int numValues, Dictionary<int, Action> actions) : base(position, width, height, centered, sprite)
         {
             CurrentIndex = startValue;
             MaxValue = numValues;
             this.Actions = actions;
-            
-            FieldTextBox = (TextBox)AddChild(new TextBox(fieldName, "LexendDeca", Pos, width / 2, height, 1, Color.Black, true));
-            ValueTextBox = (TextBox)AddChild(new TextBox(CurrentIndex.ToString(), "LexendDeca", Pos + HalfSize.OnlyX(), width / 2, height, 1, Color.Black, true));
+
+            FieldTextBox = (TextBox)AddChild(new TextBox(fieldName, fontID, Pos, width / 2, height, 1, Color.Black, false, true));
+            ValueTextBox = (TextBox)AddChild(new TextBox(CurrentIndex.ToString(), fontID, Pos + HalfSize.OnlyX(), width / 2, height, 1, Color.Black, false, true));
         }
 
-        public Switcher(Vector2 position, int width, int height, bool centered, string fieldName, int startValue, int minValue, int maxValue, Action<int> action) : base(position, width, height, centered, new Sprite(Color.White))
+        public Switcher(Vector2 position, int width, int height, bool centered, string fieldName, string fontID, Sprite sprite, int startValue, int minValue, int maxValue, Action<int> action) : base(position, width, height, centered, sprite)
         {
             CurrentIndex = startValue;
             MinValue = minValue;
             MaxValue = maxValue;
             Action = action;
 
-            FieldTextBox = (TextBox)AddChild(new TextBox(fieldName, "LexendDeca", Pos, width / 2, height, 1, Color.Black, true));
-            ValueTextBox = (TextBox)AddChild(new TextBox(CurrentIndex.ToString(), "LexendDeca", Pos + HalfSize.OnlyX(), width / 2, height, 1, Color.Black, true));
+            FieldTextBox = (TextBox)AddChild(new TextBox(fieldName, fontID, Pos, width / 2, height, 1, Color.Black, false, true));
+            ValueTextBox = (TextBox)AddChild(new TextBox(CurrentIndex.ToString(), fontID, Pos + HalfSize.OnlyX(), width / 2, height, 1, Color.Black, false, true));
         }
 
         public override void Update()

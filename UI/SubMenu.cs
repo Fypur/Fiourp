@@ -11,6 +11,7 @@ namespace Fiourp
     public class SubMenu : UIElement
     {
         public bool Vertical;
+        public bool SelectElementOnOpen = true;
 
         public SubMenu(Vector2 position, int width, int height, bool vertical) : base(position, width, height, null)
         {
@@ -103,8 +104,12 @@ namespace Fiourp
         public override void Awake()
         {
             RefreshElements();
-            SelectFirstElement();
+
             Coroutine c = (Coroutine)AddComponent(new Coroutine(OnOpen()));
+
+            if(SelectElementOnOpen)
+                SelectFirstElement();
+
 
             base.Awake();
         }
@@ -119,22 +124,52 @@ namespace Fiourp
             yield return null;
         }
 
-        public static IEnumerator Slide(float time, Vector2 offset, List<Entity> entities)
+        public IEnumerator Slide(float time, Vector2 offset, List<Entity> entities, bool waitToSelect = false)
         {
+            Vector2[] offsets = new Vector2[entities.Count];
+            Array.Fill(offsets, offset);
+
+            return Slide(time, offsets, entities, waitToSelect);
+        }
+
+        public IEnumerator SlideTo(float time, Vector2 offset, List<Entity> entities, bool waitToSelect = false)
+        {
+            Vector2[] offsets = new Vector2[entities.Count];
+            Array.Fill(offsets, offset);
+
+            return SlideTo(time, offsets, entities, waitToSelect);
+        }
+
+        public IEnumerator SlideTo(float time, Vector2[] offsets, List<Entity> entities, bool waitToSelect = false)
+        {
+            for(int i = 0; i < entities.Count; i++)
+            {
+                entities[i].Pos += offsets[i];
+                offsets[i] = -offsets[i];
+            }
+
+            return Slide(time, offsets, entities, waitToSelect);
+        }
+
+        public IEnumerator Slide(float time, Vector2[] offsets, List<Entity> entities, bool waitToSelect = false)
+        {
+            //This bugs out the final position of the UIElement f size is changed through it (finalPos[i] is not changed)
+            if (waitToSelect)
+                SelectElementOnOpen = false;
+
             Vector2[] finalPos = entities.Select((e) => e.ExactPos).ToArray();
 
             float initTime = time;
-            float timeOffset = time / (finalPos.Length + 2);
+            float timeOffset = time / finalPos.Length;
 
             for (int i = 0; i < finalPos.Length; i++)
             {
-                //entities[i].ExactPos = finalPos[i] + offset;
-                entities[i].Pos = Vector2.Zero;
+                entities[i].ExactPos = finalPos[i] + offsets[i] / Options.DefaultUISizeMultiplier * Options.CurrentScreenSizeMultiplier;
             }
 
             yield return null;
 
-            /*float t = 0;
+            float t = 0;
             while (t < initTime)
             {
                 for (int i = 0; i < finalPos.Length; i++)
@@ -147,7 +182,7 @@ namespace Fiourp
                     if (a > 1)
                         a = 1;
 
-                    entities[i].ExactPos = Vector2.Lerp(finalPos[i] + offset, finalPos[i], Ease.QuintInAndOut(a));
+                    entities[i].ExactPos = Vector2.Lerp(finalPos[i] + offsets[i] / Options.DefaultUISizeMultiplier * Options.CurrentScreenSizeMultiplier, finalPos[i], Ease.QuintInAndOut(a));
                 }
 
                 t += Engine.Deltatime;
@@ -157,7 +192,10 @@ namespace Fiourp
             for (int i = 0; i < finalPos.Length; i++)
             {
                 entities[i].ExactPos = finalPos[i];
-            }*/
+            }
+
+            if(waitToSelect)
+                SelectFirstElement();
         }
     }
 }
