@@ -26,8 +26,8 @@ namespace Fiourp
             MaxValue = numValues;
             this.Actions = actions;
 
-            FieldTextBox = (TextBox)AddChild(new TextBox(fieldName, fontID, Pos, width / 2, height, 1, Color.Black, false, true));
-            ValueTextBox = (TextBox)AddChild(new TextBox(CurrentIndex.ToString(), fontID, Pos + HalfSize.OnlyX(), width / 2, height, 1, Color.Black, false, true));
+            FieldTextBox = (TextBox)AddChild(new TextBox(fieldName, fontID, Pos, width / 2, height, 1, Color.White, false, TextBox.Alignement.Left));
+            ValueTextBox = (TextBox)AddChild(new TextBox(CurrentIndex.ToString(), fontID, Pos + HalfSize.OnlyX(), width / 2, height, 1, Color.White, false, TextBox.Alignement.Right));
         }
 
         public Switcher(Vector2 position, int width, int height, bool centered, string fieldName, string fontID, Sprite sprite, int startValue, int minValue, int maxValue, Action<int> action) : base(position, width, height, centered, sprite)
@@ -37,8 +37,8 @@ namespace Fiourp
             MaxValue = maxValue;
             Action = action;
 
-            FieldTextBox = (TextBox)AddChild(new TextBox(fieldName, fontID, Pos, width / 2, height, 1, Color.Black, false, true));
-            ValueTextBox = (TextBox)AddChild(new TextBox(CurrentIndex.ToString(), fontID, Pos + HalfSize.OnlyX(), width / 2, height, 1, Color.Black, false, true));
+            FieldTextBox = (TextBox)AddChild(new TextBox(fieldName, fontID, Pos, width / 2, height, 1, Color.White, false, TextBox.Alignement.Left));
+            ValueTextBox = (TextBox)AddChild(new TextBox(CurrentIndex.ToString(), fontID, Pos + HalfSize.OnlyX(), width / 2, height, 1, Color.White, false, TextBox.Alignement.Right));
         }
 
         public override void Update()
@@ -72,7 +72,7 @@ namespace Fiourp
 
         public virtual void GoRight()
         {
-            if (CurrentIndex >= MaxValue - 1)
+            if (CurrentIndex >= MaxValue)
             {
                 NotPossible();
                 return;

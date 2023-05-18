@@ -44,7 +44,9 @@ namespace Fiourp
                
 
                 l.DrawRenderTarget();
-                
+
+                if (!l.CollideWithWalls)
+                    continue;
 
                 for (int y = 0; y < lvl.ChunksEdge.GetLength(0); y++)
                     for(int x = 0; x < lvl.ChunksEdge.GetLength(1); x++)

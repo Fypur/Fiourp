@@ -14,15 +14,15 @@ namespace Fiourp
 
         private bool destroyOnComplete;
 
-        private Action onComplete;
-        private Action<Timer> updateAction;
+        public Action OnComplete;
+        public Action<Timer> UpdateAction;
         
         public Timer(float maxValue, bool destroyOnComplete = true, Action<Timer> UpdateAction = null, Action OnComplete = null)
         {
             this.MaxValue = maxValue;
             Value = maxValue;
-            onComplete = OnComplete;
-            this.updateAction = UpdateAction;
+            this.OnComplete = OnComplete;
+            this.UpdateAction = UpdateAction;
             this.destroyOnComplete = destroyOnComplete;
         }
 
@@ -34,12 +34,12 @@ namespace Fiourp
                 if (Value <= 0)
                 {
                     Value = 0;
-                    onComplete?.Invoke();
+                    OnComplete?.Invoke();
                     if (destroyOnComplete)
                         ParentEntity.RemoveComponent(this);
                 }
                 else
-                    updateAction?.Invoke(this);
+                    UpdateAction?.Invoke(this);
             }
 
             if (Paused && PausedFunc())
@@ -51,7 +51,7 @@ namespace Fiourp
 
         public void End()
         {
-            onComplete?.Invoke();
+            OnComplete?.Invoke();
             ParentEntity.RemoveComponent(this);
         }
 

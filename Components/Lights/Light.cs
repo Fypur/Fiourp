@@ -17,6 +17,10 @@ namespace Fiourp
 
         public static readonly Color TransparentWhite = new Color(Color.White, 0);
 
+        public bool CollideWithWalls = true;
+
+        private Timer blinkTimer;
+
         public Light(Vector2 localPosition, float size)
         {
             LocalPosition = localPosition;
@@ -32,5 +36,29 @@ namespace Fiourp
 
         public virtual bool OverSize()
             => Size > Lighting.MaxLightSize / 2;
+
+        public void StartBlink(float blinkTime)
+        {
+            blinkTimer = (Timer)ParentEntity.AddComponent(new Timer(blinkTime, false, null, () =>
+            {
+                Visible = false;
+                RefreshBlink(true);
+            }));
+        }
+
+        private void RefreshBlink(bool visible)
+        {
+            blinkTimer.Value = blinkTimer.MaxValue;
+            blinkTimer.OnComplete =  () =>
+            {
+                Visible = visible;
+                RefreshBlink(!visible);
+            };
+        }
+
+        public void StopBlink()
+        {
+            ParentEntity.RemoveComponent(blinkTimer);
+        }
     }
 }

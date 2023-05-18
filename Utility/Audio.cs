@@ -9,6 +9,7 @@ namespace Fiourp
     public static class Audio
     {
         public static FMOD.Studio.System system;
+        public static FMOD.System coreSystem;
         private static Dictionary<string, EventDescription> cachedEventDescriptions = new Dictionary<string,EventDescription>();
 
         public static void Initialize()
@@ -22,6 +23,8 @@ namespace Fiourp
 #endif
 
             Load();
+
+            system.getCoreSystem(out coreSystem);
         }
 
         private static void Load()
@@ -29,6 +32,7 @@ namespace Fiourp
             foreach(string path in DataManager.GetAllFMODBanksPaths())
             {
                 RESULT result = system.loadBankFile(path, LOAD_BANK_FLAGS.NORMAL, out _);
+                system.getBankCount(out int count);
                 if (result != RESULT.OK)
                     throw new Exception("Bank Loading failed: " + result);
             }
@@ -73,6 +77,44 @@ namespace Fiourp
                 default:
                     throw new Exception("Event problems: " + system.getEvent(path, out _));
             }
+        }
+
+        public static void SetGroupVolume(string groupID, float volume)
+        {
+            RESULT result = system.getBus("bus:/" + groupID, out Bus bus);
+            if (result != RESULT.OK)
+                throw new Exception("help + " + result);
+
+            bus.setVolume(volume);
+        }
+
+        public static float GetGroupVolume(string groupID)
+        {
+            RESULT result = system.getBus("bus:/" + groupID, out Bus bus);
+            if (result != RESULT.OK)
+                throw new Exception("help + " + result);
+
+            bus.getVolume(out float volume);
+            return volume;
+        }
+
+        public static void SetMasterVolume(float volume)
+        {
+            RESULT result = system.getBus("bus:/", out Bus bus);
+            if (result != RESULT.OK)
+                throw new Exception("help + " + result);
+
+            bus.setVolume(volume);
+        }
+
+        public static float GetMasterVolume()
+        {
+            RESULT result = system.getBus("bus:/", out Bus bus);
+            if (result != RESULT.OK)
+                throw new Exception("help + " + result);
+
+            bus.getVolume(out float volume);
+            return volume;
         }
 
         public static void Update()

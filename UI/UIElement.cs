@@ -183,24 +183,41 @@ namespace Fiourp
             AddComponent(new Coroutine(Coroutine.WaitFramesThen(1, () => Selected = true)));
             if(Sprite != null)
                 Sprite.Color = new Color(Sprite.Color.ToVector3() - new Color(50, 50, 50).ToVector3());
+
+            for (int i = Children.Count - 1; i >= 0; i--)
+                if (Children[i] is UIElement ui)
+                    ui.OnSelected();
         }
         public virtual void OnLeaveSelected() 
         {
             Selected = false;
             if (Sprite != null)
                 Sprite.Color = new Color(Sprite.Color.ToVector3() + new Color(50, 50, 50).ToVector3());
+
+            for (int i = Children.Count - 1; i >= 0; i--)
+                if (Children[i] is UIElement ui)
+                    ui.OnLeaveSelected();
         }
 
         public virtual void OnAddSelectable()
         {
             if (Sprite != null)
                 Sprite.Color = new Color(Sprite.Color.ToVector3() + new Color(100, 100, 100).ToVector3());
+
+
+            for (int i = Children.Count - 1; i >= 0; i--)
+                if (Children[i] is UIElement ui)
+                    ui.OnAddSelectable();
         }
 
         public virtual void OnRemoveSelectable()
         {
             if(Sprite != null)
                 Sprite.Color = new Color(Sprite.Color.ToVector3() - new Color(100, 100, 100).ToVector3());
+
+            for (int i = Children.Count - 1; i >= 0; i--)
+                if (Children[i] is UIElement ui)
+                    ui.OnRemoveSelectable();
         }
 
         public virtual void OnSizeChange() { }

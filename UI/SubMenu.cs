@@ -144,7 +144,7 @@ namespace Fiourp
         {
             for(int i = 0; i < entities.Count; i++)
             {
-                entities[i].Pos += offsets[i];
+                entities[i].Pos += offsets[i] / Options.DefaultUISizeMultiplier * Options.CurrentScreenSizeMultiplier;
                 offsets[i] = -offsets[i];
             }
 
@@ -157,14 +157,20 @@ namespace Fiourp
             if (waitToSelect)
                 SelectElementOnOpen = false;
 
-            Vector2[] finalPos = entities.Select((e) => e.ExactPos).ToArray();
+            int origSize = Options.CurrentScreenSizeMultiplier;
+            int currentSize = origSize;
+            Vector2[] finalPos = entities.Select((e) => e.Pos).ToArray();
+            //Vector2[] orig = (Vector2[])finalPos.Clone();
+            Vector2[] orig = new Vector2[finalPos.Length];
+
 
             float initTime = time;
             float timeOffset = time / finalPos.Length;
 
             for (int i = 0; i < finalPos.Length; i++)
             {
-                entities[i].ExactPos = finalPos[i] + offsets[i] / Options.DefaultUISizeMultiplier * Options.CurrentScreenSizeMultiplier;
+                entities[i].Pos = finalPos[i] + offsets[i] / Options.DefaultUISizeMultiplier * Options.CurrentScreenSizeMultiplier;
+                orig[i] = finalPos[i];
             }
 
             yield return null;
@@ -172,6 +178,15 @@ namespace Fiourp
             float t = 0;
             while (t < initTime)
             {
+                if(currentSize != Options.CurrentScreenSizeMultiplier)
+                {
+                    for (int i = 0; i < finalPos.Length; i++)
+                        finalPos[i] = orig[i] / origSize * Options.CurrentScreenSizeMultiplier;
+
+                    currentSize = Options.CurrentScreenSizeMultiplier;
+                }
+
+
                 for (int i = 0; i < finalPos.Length; i++)
                 {
                     if (i * timeOffset > t)
@@ -182,16 +197,23 @@ namespace Fiourp
                     if (a > 1)
                         a = 1;
 
-                    entities[i].ExactPos = Vector2.Lerp(finalPos[i] + offsets[i] / Options.DefaultUISizeMultiplier * Options.CurrentScreenSizeMultiplier, finalPos[i], Ease.QuintInAndOut(a));
+                    entities[i].Pos = Vector2.Lerp(finalPos[i] + offsets[i] / Options.DefaultUISizeMultiplier * Options.CurrentScreenSizeMultiplier, finalPos[i], Ease.CubeInAndOut(a));
                 }
 
                 t += Engine.Deltatime;
                 yield return null;
             }
 
+            if (origSize != Options.CurrentScreenSizeMultiplier)
+            {
+                for (int i = 0; i < finalPos.Length; i++)
+                    finalPos[i] = orig[i] / origSize * Options.CurrentScreenSizeMultiplier;
+                origSize = Options.CurrentScreenSizeMultiplier;
+            }
+
             for (int i = 0; i < finalPos.Length; i++)
             {
-                entities[i].ExactPos = finalPos[i];
+                entities[i].Pos = finalPos[i];
             }
 
             if(waitToSelect)

@@ -12,7 +12,7 @@ namespace Fiourp
         public string Text { get; protected set; }
         public string FontID;
         protected float textScale;
-        public bool CenteredText;
+        public Alignement TextAlignement;
         public float TextScale { get => textScale / Options.DefaultUISizeMultiplier * Options.CurrentScreenSizeMultiplier; set => textScale = value; }
 
         public Color Color = Color.White;
@@ -20,8 +20,9 @@ namespace Fiourp
         public SpriteFont Font => DataManager.Fonts[FontID]["Normal"];
 
         public enum Style { Normal, Bold, Italic }
+        public enum Alignement { TopLeft, TopCenter, TopRight, Left, Center, Right, BottomLeft, BottomCenter, BottomRight }
 
-        public TextBox(string text, string fontID, Vector2 position, int width, int height, float fontSize, Color color, bool centeredUI = false, bool centeredText = false)
+        public TextBox(string text, string fontID, Vector2 position, int width, int height, float fontSize, Color color, bool centeredUI = false, Alignement alignement = Alignement.Center)
             : base(position, width, height, centeredUI, null)
         {
             FontID = fontID;
@@ -30,10 +31,7 @@ namespace Fiourp
             CustomCenter = true;
             Centered = centeredUI;
 
-            if (centeredUI && !centeredText)
-                CenteredText = true;
-            else
-                CenteredText = centeredText;
+            TextAlignement = alignement;
 
             Color = color;
         }
@@ -56,10 +54,10 @@ namespace Fiourp
             string[] words = text.Split(" ");
             string newText = "";
             float lineSize = 0;
-            float spaceSize = Font.MeasureString(" ").X * TextScale;
+            float spaceSize = Font.MeasureString(" ").X * textScale;
             foreach (string word in words)
             {
-                float wordSize = Font.MeasureString(word).X * TextScale;
+                float wordSize = Font.MeasureString(word).X * textScale;
                 lineSize += wordSize;
 
                 if (word.Contains('\n'))
@@ -85,13 +83,38 @@ namespace Fiourp
 
             if (Text != null)
             {
-                if (!CenteredText)
-                    Drawing.DrawString(Text, Pos, Color, Font, TextScale);
-                else
+                Vector2 textSize = Font.MeasureString(Text);
+
+                switch (TextAlignement)
                 {
-                    Vector2 textSize = Font.MeasureString(Text);
-                    Drawing.DrawString(Text, Pos + HalfSize, Color, Font, textSize / 2, TextScale, 0);
-                }        
+                    case Alignement.TopLeft:
+                        Drawing.DrawString(Text, Pos, Color, Font, TextScale);
+                        break;
+                    case Alignement.TopCenter:
+                        Drawing.DrawString(Text, Pos + HalfSize.OnlyX(), Color, Font, textSize.OnlyX() / 2, TextScale, 0);
+                        break;
+                    case Alignement.TopRight:
+                        Drawing.DrawString(Text, Pos + Size.OnlyX() - textSize.OnlyX(), Color, Font, TextScale);
+                        break;
+                    case Alignement.Left:
+                        Drawing.DrawString(Text, Pos + HalfSize.OnlyY() - (textSize / 2).OnlyY(), Color, Font, TextScale);
+                        break;
+                    case Alignement.Center:
+                        Drawing.DrawString(Text, Pos + HalfSize, Color, Font, textSize / 2, TextScale, 0);
+                        break;
+                    case Alignement.Right:
+                        Drawing.DrawString(Text, Pos + HalfSize.OnlyY() - (textSize / 2).OnlyY() + Size.OnlyX() - textSize.OnlyX(), Color, Font, TextScale);
+                        break;
+                    case Alignement.BottomLeft:
+                        Drawing.DrawString(Text, Pos + Size.OnlyY() - textSize.OnlyY(), Color, Font, TextScale);
+                        break;
+                    case Alignement.BottomCenter:
+                        Drawing.DrawString(Text, Pos + HalfSize.OnlyX() + Size.OnlyY() - textSize.OnlyX() / 2 - textSize.OnlyY(), Color, Font, TextScale);
+                        break; 
+                    case Alignement.BottomRight:
+                        Drawing.DrawString(Text, Pos + Size - textSize, Color, Font, TextScale);
+                        break;
+                }
             }
             if (Debug.DebugMode)
                 Drawing.DrawEdge(new Rectangle(Pos.ToPoint(), Size.ToPoint()), 1, Color.Blue);

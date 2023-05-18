@@ -65,11 +65,11 @@ namespace Fiourp
                         Sprite.Color.A = (byte)(LifeTime / (StartLifeTime * 0.25f) * StartColor.A);
                     break;
                 case ParticleType.FadeModes.Smooth:
-                    Sprite.Color.A = (byte)Ease.QuintInAndOut(LifeTime / (StartLifeTime * 0.25f) * StartColor.A);
+                    Sprite.Color.A = (byte)Ease.CubeInAndOut(LifeTime / (StartLifeTime * 0.25f) * StartColor.A);
                     break;
                 case ParticleType.FadeModes.EndSmooth:
                     if (LifeTime <= StartLifeTime * 0.25f)
-                        Sprite.Color.A = (byte)Ease.QuintInAndOut(LifeTime / (StartLifeTime * 0.25f) * StartColor.A);
+                        Sprite.Color.A = (byte)Ease.CubeInAndOut(LifeTime / (StartLifeTime * 0.25f) * StartColor.A);
                     break;
                 default:
                     break;
@@ -89,7 +89,7 @@ namespace Fiourp
                     break;
                 case ParticleType.FadeModes.EndSmooth:
                     if (LifeTime <= StartLifeTime * 0.25f)
-                        Size = Vector2.One * StartSize * Ease.QuintInAndOut(LifeTime / (StartLifeTime * 0.25f));
+                        Size = Vector2.One * StartSize * Ease.CubeInAndOut(LifeTime / (StartLifeTime * 0.25f));
                     break;
                 default:
                     break;

@@ -20,11 +20,15 @@ namespace Fiourp
         public Action OnChange;
 
         private bool recording;
+        public Color TextColor;
+        public Color SelectedTextColor = new Color(255, 255, 120);
 
-        public ControlTaker(Vector2 position, int width, int height, bool centered, string fieldName, ControlList modified, Action onChange) : base(position, width, height, centered, new Sprite(Color.White))
+        public ControlTaker(Vector2 position, int width, int height, bool centered, Sprite sprite, Color textColor, string fontID, int fontSize, string fieldName, ControlList modified, Action onChange) : base(position, width, height, centered, sprite)
         {
-            FieldTextBox = (TextBox)AddChild(new TextBox(fieldName, "Recursive", Pos, width / 2, height, 0.5f, Color.Black, true));
-            valueTextBox = (TextBox)AddChild(new TextBox(modified.GetAllControlNames(), "Recursive", Pos + HalfSize.OnlyX(), width / 2, height, 0.3f, Color.Black, true));
+            TextColor = textColor;
+
+            FieldTextBox = (TextBox)AddChild(new TextBox(fieldName, fontID, Pos, width / 2, height, fontSize, TextColor, false, TextBox.Alignement.Left));
+            valueTextBox = (TextBox)AddChild(new TextBox(modified.GetAllControlNames(), fontID, Pos + HalfSize.OnlyX(), width / 2, height, fontSize, TextColor, false, TextBox.Alignement.Right));
 
             Modified = modified;
             foreach(Control control in modified)
@@ -65,7 +69,14 @@ namespace Fiourp
                 else if ((Input.UIAction1.IsDown() || Input.GetKeyDown(Microsoft.Xna.Framework.Input.Keys.Enter)) && !recording)
                 {
                     recording = true;
-                    Sprite.Color = Color.DarkRed;
+
+                    if(Sprite != null)
+                        Sprite.Color = Color.DarkRed;
+                    else
+                    {
+                        FieldTextBox.Color = Color.Red;
+                        valueTextBox.Color = Color.Red;
+                    }
                     //Return to not record the input that is pressed to enable recording
                     return;
                 }
@@ -93,7 +104,13 @@ namespace Fiourp
 
             //Ending recording
             recording = false;
-            Sprite.Color = Color.White;
+            if(Sprite != null)
+                Sprite.Color = Color.White;
+            else
+            {
+                FieldTextBox.Color = new Color(255, 255, 120);
+                valueTextBox.Color = new Color(255, 255, 120);
+            }
 
             if (Controls.Contains(pressedControls[0]))
                 return;
@@ -107,6 +124,22 @@ namespace Fiourp
             Controls.Add(pressedControls[0]);
 
             valueTextBox.SetText(Controls.GetAllControlNames());
+        }
+
+        public override void OnSelected()
+        {
+            base.OnSelected();
+
+            FieldTextBox.Color = SelectedTextColor;
+            valueTextBox.Color = SelectedTextColor;
+        }
+
+        public override void OnLeaveSelected()
+        {
+            base.OnLeaveSelected();
+
+            FieldTextBox.Color = TextColor;
+            valueTextBox.Color = TextColor;
         }
     }
 }
