@@ -14,8 +14,8 @@ namespace Fiourp
 
         public enum DrawMode { Centered, TopLeft, ScaledTopLeft }
 
-        public float Width { get => Texture.Width; }
-        public float Height { get => Texture.Height; }
+        public int Width { get => Texture.Width; }
+        public int Height { get => Texture.Height; }
 
         public Action OnLastFrame;
         public Action OnLoop;
@@ -112,12 +112,12 @@ namespace Fiourp
 
             animTimer += Engine.Deltatime;
 
-            if (animTimer < CurrentAnimation.Delay)
+            if (animTimer < CurrentAnimation.Delay[CurrentFrame])
                 return;
 
             //Next Frame
 
-            animTimer -= CurrentAnimation.Delay;
+            animTimer -= CurrentAnimation.Delay[CurrentFrame];
             CurrentFrame++;
             OnFrameChange?.Invoke();
 
@@ -229,7 +229,7 @@ namespace Fiourp
 
         public class Animation
         {
-            public Animation(Texture2D[] frames, float delay, string goTo, bool isLoop = false, int loopAmount = 1)
+            public Animation(Texture2D[] frames, float[] delay, string goTo, bool isLoop = false, int loopAmount = 1)
             {
                 Frames = frames;
                 Delay = delay;
@@ -244,7 +244,7 @@ namespace Fiourp
                 Frames[0].Tag = ((object[])Frames[0].Tag)[0];
             }
 
-            public float Delay;
+            public float[] Delay;
             public Texture2D[] Frames;
             public string GoTo;
             public bool IsLoop;
@@ -304,13 +304,27 @@ namespace Fiourp
 
                 foreach (XmlElement anim in element)
                 {
+                    string id = anim.GetAttribute("id");
+                    string animPath = anim.GetAttribute("path");
+                    string animGoto = anim.GetAttribute("goto");
+
+                    Texture2D[] textures = DataManager.LoadAllGraphicsWithName(animPath, path);
+
+                    string d = anim.GetAttribute("delay");
+                    
+                    float[] delays = new float[textures.Length];
+
+                    if (d != "")
+                    {
+                        float delay = float.Parse(d, System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
+                        Array.Fill(delays, delay);
+                    }
+                    else
+                        delays = DataManager.GetAnimationDelays(path + animPath);
+                    
+
                     if (anim.Name == "Anim")
-                        AllAnimData[element.Name].Animations[anim.GetAttribute("id")] = 
-                            new Animation(
-                                DataManager.LoadAllGraphicsWithName(anim.GetAttribute("path"), path),
-                                float.Parse(anim.GetAttribute("delay"),
-                                System.Globalization.CultureInfo.InvariantCulture.NumberFormat),
-                                anim.GetAttribute("goto"));
+                        AllAnimData[element.Name].Animations[id] = new Animation(textures, delays, animGoto);
 
                     else if (anim.Name == "Loop")
                     {
@@ -319,11 +333,10 @@ namespace Fiourp
                         if(int.TryParse(anim.GetAttribute("loop"), out int l))
                             loopAmount = l;
 
-                        string animGoto = anim.GetAttribute("goto");
                         if (animGoto == "")
                             animGoto = anim.GetAttribute("id");
 
-                        AllAnimData[element.Name].Animations[anim.GetAttribute("id")] = new Animation(DataManager.LoadAllGraphicsWithName(anim.GetAttribute("path"), path), float.Parse(anim.GetAttribute("delay"), System.Globalization.CultureInfo.InvariantCulture.NumberFormat), animGoto, true, loopAmount);
+                        AllAnimData[element.Name].Animations[anim.GetAttribute("id")] = new Animation(textures, delays, animGoto, true, loopAmount);
                     }
                 }
 

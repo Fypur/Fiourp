@@ -133,6 +133,18 @@ namespace Fiourp
             return textures.ToArray();
         }
 
+        public static float[] GetAnimationDelays(string asepritePath)
+        {
+            AsepriteDocument ase = Content.Load<AsepriteDocument>("Graphics/" + asepritePath);
+
+            float[] delays = new float[ase.Frames.Count];
+
+            for(int i = 0; i < ase.Frames.Count; i++)
+                delays[i] = ase.Frames[i].Duration;
+
+            return delays;
+        }
+
         public static Dictionary<string, Dictionary<string, SpriteFont>> GetFonts()
         {
             if (!Directory.Exists(Content.RootDirectory + "/Fonts"))
@@ -302,7 +314,9 @@ namespace Fiourp
         {
             Texture2D[] result = new Texture2D[doc.Frames.Count];
             for (int i = 0; i < doc.Frames.Count; i++)
+            {
                 result[i] = doc.Texture.CropTo(new Vector2(doc.Frames[i].X, doc.Frames[i].Y), new Vector2(doc.Frames[i].Width, doc.Frames[i].Height));
+            }
 
             result[0].Tag = new object[2];
             List<Sprite.Animation.Slice> slices = new();
@@ -327,6 +341,16 @@ namespace Fiourp
 
             return result;
         }
+
+        //TODO: Refractor all of this to have a class that encapsulates both a simple Texture2D and an Aseprite Document to have a lot more data easily
+        /*public struct TextureData
+        {
+            public string Tag = "";
+            public float Duration = 0f;
+            public List<Sprite.Animation.Slice> Slices = null;
+
+            public TextureData() { }
+        }*/
 
         public static string[] GetAllFMODBanksPaths()
         {

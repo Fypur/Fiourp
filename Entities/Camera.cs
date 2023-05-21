@@ -68,7 +68,7 @@ namespace Fiourp
 
         public override Vector2 ExactPos { get => base.Pos + Size / 2; set => CenteredPos = value; }
 
-        private Vector2 WholePos => VectorHelper.Round(Pos);
+        public Vector2 WholePos => VectorHelper.Round(Pos);
 
         private float rot;
         public float Rotation
@@ -135,6 +135,13 @@ namespace Fiourp
 
             if (Engine.Player != null && FollowsPlayer && !Locked && (!HasComponent(out Timer timer) || timer.Value <= 0) && !HasComponent<Shaker>())
                 Follow(Engine.Player, 3, 3, StrictFollowBounds);
+        }
+
+        public override void LateUpdate()
+        {
+            base.LateUpdate();
+
+            PreviousPos = WholePos;
         }
 
         public void Refresh()

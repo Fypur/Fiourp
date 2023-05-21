@@ -61,7 +61,10 @@ namespace Fiourp
             BackgroundSystem.Update();
             MiddlegroundSystem.Update();
             ForegroundSystem.Update();
+        }
 
+        public void LateUpdate()
+        {
             for (int i = Data.Entities.Count - 1; i >= 0; i--)
                 if (i < Data.Entities.Count && Data.Entities[i].Active)
                     Data.Entities[i].LateUpdate();
