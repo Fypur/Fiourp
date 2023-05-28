@@ -58,7 +58,7 @@ namespace Fiourp
             subdivs = (float)Math.Ceiling(HyperBolic(subdivs));
 
 
-            Debug.PointUpdate(Color.Blue, ControlPoints.ToArray());
+            //Debug.PointUpdate(Color.Blue, ControlPoints.ToArray());
             for (float t = 0; t <= 1 - 0.5f/subdivs; t += 1 / subdivs)
             {
                 Drawing.DrawLine(Generic(t), Generic(t + 1 / subdivs), Color, Thickness);

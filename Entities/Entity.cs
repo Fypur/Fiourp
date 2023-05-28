@@ -89,8 +89,8 @@ namespace Fiourp
             PreviousExactPos = ExactPos;
             PreviousPos = Pos;
 
-            /*foreach(Entity child in Children)
-                child.Awake();*/
+            foreach(Entity child in Children)
+                child.Awake(); //We need this to be here for children to have CurrentLevel != null
         }
 
         public virtual void Update()
@@ -266,11 +266,11 @@ namespace Fiourp
             return false;
         }
 
-        public Entity AddChild(Entity child)
+        public virtual Entity AddChild(Entity child)
         {
             child.Parent = this;
             Children.Add(child);
-            child.Awake();
+            //child.Awake();
             return child;
         }
 

@@ -10,8 +10,8 @@ namespace Fiourp
 {
     public class WritingTextBox : TextBox
     {
-        public WritingTextBox(string text, string fontID, Vector2 position, int width, int height, float fontSize, Color color, bool centered, float timePerCharacter)
-            : base("", fontID, position, width, height, fontSize, color, centered)
+        public WritingTextBox(string text, string fontID, Vector2 position, int width, int height, float fontSize, Color color, bool centeredUI, Alignement alignement, float timePerCharacter)
+            : base("", fontID, position, width, height, fontSize, color, centeredUI, alignement)
         {
             ProgressiveDraw(GenerateText(text), timePerCharacter);
         }

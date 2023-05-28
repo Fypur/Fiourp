@@ -115,7 +115,8 @@ namespace Fiourp
 
         public override void Awake()
         {
-            base.Awake();
+            PreviousExactPos = ExactPos;
+            PreviousPos = Pos;
 
             Pos = Pos / Options.DefaultUISizeMultiplier * Options.CurrentScreenSizeMultiplier;
             Size = Size / Options.DefaultUISizeMultiplier * Options.CurrentScreenSizeMultiplier;
@@ -238,6 +239,14 @@ namespace Fiourp
 
             foreach (UIElement element in uiElements)
                 RemoveChild(element);
+        }
+
+        public override Entity AddChild(Entity child)
+        {
+            base.AddChild(child);
+            child.Awake();
+            return child;
+
         }
 
         public void RemoveAllElements()

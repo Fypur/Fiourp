@@ -62,5 +62,8 @@ namespace Fiourp
             PausedFunc = pausedUntil;
             Paused = true;
         }
+
+        public float AmountCompleted()
+            => Ease.Reverse(Value / MaxValue);
     }
 }

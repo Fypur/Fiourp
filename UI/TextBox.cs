@@ -39,7 +39,7 @@ namespace Fiourp
         public override void Awake()
         {
             base.Awake();
-            Collider.DebugColor = Color.Cyan;
+            Collider.DebugDraw = false;
             selectableField = false;
         }
 
@@ -81,6 +81,14 @@ namespace Fiourp
             //(Font, Text, Pos, Color, rotation, origin, scale, effects, layerDepth);
             base.Render();
 
+            Vector2 p = Pos;
+            if (Parent != null && Parent is not UIElement)
+            {
+                Pos = Engine.Cam.RenderTargetToWorldPosition(Pos);
+                Width *= (int)Engine.Cam.RenderTargetScreenSizeCoef;
+                Height *= (int)Engine.Cam.RenderTargetScreenSizeCoef;
+            }
+
             if (Text != null)
             {
                 Vector2 textSize = Font.MeasureString(Text);
@@ -116,8 +124,16 @@ namespace Fiourp
                         break;
                 }
             }
+
             if (Debug.DebugMode)
-                Drawing.DrawEdge(new Rectangle(Pos.ToPoint(), Size.ToPoint()), 1, Color.Blue);
+                Drawing.DrawEdge(new Rectangle(Pos.ToPoint(), Size.ToPoint()), 1, Color.Cyan);
+
+            Pos = p;
+            if(Parent != null && Parent is not UIElement)
+            {
+                Width /= (int)Engine.Cam.RenderTargetScreenSizeCoef;
+                Height /= (int)Engine.Cam.RenderTargetScreenSizeCoef;
+            }
         }
 
         public override string ToString()

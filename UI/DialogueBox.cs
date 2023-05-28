@@ -21,7 +21,7 @@ namespace Fiourp
         {
             Dialogue = dialogue;
             this.skipDialogControls = skipDialogueControls;
-            TextBox = new WritingTextBox(dialogue[0], "Pixel", Pos + new Vector2(20, 20), Width - 30, Height - 20, 3, Color.White, false, 0.01f);
+            TextBox = new WritingTextBox(dialogue[0], "Pixel", Pos + new Vector2(20, 20), Width - 30, Height - 20, 3, Color.White, false, Fiourp.TextBox.Alignement.TopLeft, 0.01f);
             currentGeneratedString = TextBox.GenerateText(dialogue[0]);
 
             AddChild(TextBox);

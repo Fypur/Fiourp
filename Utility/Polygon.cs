@@ -65,6 +65,8 @@ namespace Fiourp
             List<Vector2> allCorners = new List<Vector2>(Engine.CurrentMap.CurrentLevel.Corners);
             allCorners.AddRange(Engine.CurrentMap.CurrentLevel.InsideCorners);
 
+            
+
             List<Vector2> corners = new();
             Dictionary<Vector2, float> distancesSquared = new();
 
@@ -124,9 +126,8 @@ namespace Fiourp
                 }
             }
 
-            //On determine toutes les edges (non opti là ça fait par tile)
             List<Vector2[]> edgesCoord = new();
-
+            //On determine toutes les edges
             foreach(int[] edge in Engine.CurrentMap.CurrentLevel.Edges)
             {
                 Vector2 coord1 = new Vector2(edge[0], edge[1]) * Engine.CurrentMap.CurrentLevel.TileWidth + Engine.CurrentMap.CurrentLevel.Pos;
