@@ -29,7 +29,7 @@ namespace Fiourp
             set => rotation = value % ((float)Math.PI * 2); }
 
         public Color Color = Color.White;
-        public Vector2 Origin = Vector2.Zero;
+        public Vector2 Origin = Vector2.Zero; //This is relative to the size of the TEXTURE not the entity
         public Vector2 Offset = Vector2.Zero;
         public Vector2 Scale = Vector2.One;
         public Effect PixelShader = null;

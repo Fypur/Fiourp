@@ -18,9 +18,6 @@ namespace Fiourp
         {
             LocalPosition = localPosition;
             trigger = new Trigger(localPosition, new Vector2(width, height), triggerers, Sprite.None);
-            trigger.OnTriggerEnterAction = OnTriggerEnter;
-            trigger.OnTriggerStayAction = OnTriggerStay;
-            trigger.OnTriggerExitAction = OnTriggerExit;
         }
 
         public TriggerComponent(Vector2 localPosition, float radius, List<Type> triggerers)
@@ -28,13 +25,22 @@ namespace Fiourp
             LocalPosition = localPosition;
             trigger = new Trigger(localPosition, new Vector2(radius * 2, radius * 2), triggerers, Sprite.None);
             trigger.Collider = (Collider)trigger.AddComponent(new CircleCollider(Vector2.Zero, radius));
-            trigger.OnTriggerEnterAction = OnTriggerEnter;
-            trigger.OnTriggerStayAction = OnTriggerStay;
-            trigger.OnTriggerExitAction = OnTriggerExit;
+        }
+
+        public TriggerComponent(Vector2 localPosition, Collider collider, List<Type> triggerers)
+        {
+            LocalPosition = localPosition;
+            trigger = new Trigger(localPosition, collider, triggerers, Sprite.None);
         }
 
         public override void Added()
         {
+            base.Added();
+
+            trigger.OnTriggerEnterAction = OnTriggerEnter;
+            trigger.OnTriggerStayAction = OnTriggerStay;
+            trigger.OnTriggerExitAction = OnTriggerExit;
+
             trigger.Pos += ParentEntity.Pos;
         }
 

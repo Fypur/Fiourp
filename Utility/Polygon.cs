@@ -182,7 +182,7 @@ namespace Fiourp
             //On sort les points par angle
             Dictionary<Vector2, float> angles = new();
             foreach (Vector2 point in points)
-                angles[point] = (point - middle).ToAngle();
+                angles[point] = (point - middle).VectorToAngle();
 
             points.Sort((vec1, vec2) =>
             {
@@ -340,7 +340,7 @@ namespace Fiourp
                     if (Vector2.DistanceSquared(Input.MousePos, polygon[i].Position) < 1f)
                     {
                         Debug.LogUpdate(i, polygon[i].ArchedLeft, polygon[i].ArchedRight, polygon[i].Position);
-                        Debug.LogUpdate("Angle : " + (polygon[i].Position - middle).ToAngle());
+                        Debug.LogUpdate("Angle : " + (polygon[i].Position - middle).VectorToAngle());
                         Debug.LogUpdate("Sqrd Dist : " + distancesSquared[polygon[i].Position]);
                     }
                 }

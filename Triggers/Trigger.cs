@@ -34,6 +34,17 @@ namespace Fiourp
             : this(bounds.Location.ToVector2(), bounds.Size.ToVector2(), triggerers, sprite)
         { }
 
+        public Trigger(Vector2 position, Collider collider, List<Type> triggerers, Sprite sprite)
+            : this(position, 1, 1, triggerers, sprite)
+        {
+            RemoveComponent(Collider);
+            Collider = collider;
+            AddComponent(Collider);
+
+            Width = (int)collider.Width;
+            Height = (int)collider.Height;
+        }
+
         public override void Update()
         {
             base.Update();

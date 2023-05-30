@@ -28,8 +28,8 @@ namespace Fiourp
 
         public virtual void Render() 
         {
-            if(Collidable && DebugDraw)
-                Drawing.DrawEdge(Bounds, 1, DebugColor);
+            if (Collidable && DebugDraw)
+                DebugRender();
         }
 
         public bool Collide(Collider other)
@@ -126,6 +126,9 @@ namespace Fiourp
 
         public bool CollideAt(Entity entity, Vector2 position)
             => CollideAt(new List<Entity>() { entity }, position);
+
+        protected virtual void DebugRender()
+            => Drawing.DrawEdge(Bounds, 1, DebugColor);
 
         public float CenterX
         {

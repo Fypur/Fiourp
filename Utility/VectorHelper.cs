@@ -7,7 +7,7 @@ namespace Fiourp
 {
     public static class VectorHelper
     {
-        public static float ToAngle(this Vector2 vector)
+        public static float VectorToAngle(this Vector2 vector)
             => (float)Math.Atan2(vector.Y, vector.X);
 
         public static float ToAngleDegrees(this Vector2 vector)
@@ -50,8 +50,11 @@ namespace Fiourp
             return segmentPoint + v * MathHelper.Clamp(Vector2.Dot(point - segmentPoint, v) / v.LengthSquared(), 0f, 1f);
         }
 
-        public static Vector2 AngleToVector(float angle)
-            => new Vector2((float)Math.Cos(MathHelper.ToRadians(angle)), (float)Math.Sin(MathHelper.ToRadians(angle)));
+        public static Vector2 AngleToVector(float angleDeg)
+            => new Vector2((float)Math.Cos(MathHelper.ToRadians(angleDeg)), (float)Math.Sin(MathHelper.ToRadians(angleDeg)));
+
+        public static Vector2 AngleToVectorRad(float angleRad)
+            => new Vector2((float)Math.Cos(angleRad), (float)Math.Sin(angleRad));
 
         public static Vector2 VectorBetween(this Random random, Vector2 a, Vector2 b)
         {
@@ -92,7 +95,7 @@ namespace Fiourp
         public static Vector2 Rotate(Vector2 vector, float angleRad)
         {
             float length = vector.Length();
-            float angle = vector.ToAngle();
+            float angle = vector.VectorToAngle();
             return new Vector2((float)(length * Math.Cos(angle + angleRad)), (float)(length * Math.Sin(angle + angleRad)));
         }
 

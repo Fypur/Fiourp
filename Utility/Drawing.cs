@@ -125,7 +125,7 @@ namespace Fiourp
         }
 
         public static void DrawArc(Vector2 middle, float radius, Vector2 arcPos1, Vector2 arcPos2, float theta, Color color, int thickness)
-            => DrawArc(middle, radius, (arcPos1 - middle).ToAngle(), (arcPos2 - middle).ToAngle(), theta, color, thickness);
+            => DrawArc(middle, radius, (arcPos1 - middle).VectorToAngle(), (arcPos2 - middle).VectorToAngle(), theta, color, thickness);
 
         public static void DrawString(string text, Vector2 position, Color color, Vector2 origin)
             => spriteBatch.DrawString(Font, text, position, color, 0, origin,

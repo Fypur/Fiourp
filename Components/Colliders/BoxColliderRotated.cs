@@ -30,14 +30,14 @@ public class BoxColliderRotated : Collider
     /// <param name="localPosition"></param>
     /// <param name="width">Width of the collider when facing right</param>
     /// <param name="height">Height of the collider when facing right</param>
-    /// <param name="rotation"></param>
+    /// <param name="rotationDeg"></param>
     /// <param name="pivotPoint">Point around which the collider rotates</param>
-    public BoxColliderRotated(Vector2 localPosition, int width, int height, float rotation, Vector2 pivotPoint) : base()
+    public BoxColliderRotated(Vector2 localPosition, int width, int height, float rotationDeg, Vector2 pivotPoint) : base()
     {
         Pos = localPosition;
         widthPercentage = width;
         heightPercentage = height;
-        this.rotation = rotation;
+        this.rotation = MathHelper.ToRadians(rotationDeg);
         PivotPoint = pivotPoint;
     }
 
@@ -71,7 +71,7 @@ public class BoxColliderRotated : Collider
 
     public Vector2 AbsolutePivotPoint
     {
-        get => AbsolutePosition + PivotPoint;
+        get => ParentEntity.Pos + PivotPoint;
     }
 
     public override bool Collide(Vector2 point)
@@ -96,18 +96,22 @@ public class BoxColliderRotated : Collider
         => Collision.SeparatingAxisTheorem(Rect, other.Bounds.ToPoints());
 
     public override bool Collide(CircleCollider other)
-    {
-        return Collision.RectCircle(Bounds, other.Pos, other.Radius);
-    }
+        => Collision.RectCircle(Bounds, other.Pos, other.Radius);
 
     public override bool Collide(GridCollider other)
-    {
-        throw new System.NotImplementedException();
-    }
+        => other.Collide(this);
 
     public void Rotate(float radians)
     {
         throw new NotImplementedException("Here make Collider rotate while checking Collisions");
+    }
+
+    protected override void DebugRender()
+    {
+        Drawing.DrawLine(Rect[0], Rect[1], DebugColor, 1);
+        Drawing.DrawLine(Rect[1], Rect[2], DebugColor, 1);
+        Drawing.DrawLine(Rect[2], Rect[3], DebugColor, 1);
+        Drawing.DrawLine(Rect[3], Rect[0], DebugColor, 1);
     }
 
     public float TrueWidth { get => widthPercentage * ParentEntity.Width; set => widthPercentage = value / ParentEntity.Width; }
@@ -136,7 +140,7 @@ public class BoxColliderRotated : Collider
                     minX = point.X;
             }
 
-            return minX;
+            return minX - ParentEntity.Pos.X;
         }
         
         set
@@ -157,7 +161,7 @@ public class BoxColliderRotated : Collider
                     maxX = point.X;
             }
 
-            return maxX;
+            return maxX - ParentEntity.Pos.X;
         }
         
         set
@@ -178,7 +182,7 @@ public class BoxColliderRotated : Collider
                     minY = point.Y;
             }
 
-            return minY;
+            return minY - ParentEntity.Pos.Y;
         }
         
         set
@@ -199,7 +203,7 @@ public class BoxColliderRotated : Collider
                     maxY = point.Y;
             }
 
-            return maxY;
+            return maxY - ParentEntity.Pos.Y;
         }
 
         set

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,12 +11,14 @@ namespace Fiourp
     {
         public static ParticleType Trail;
 
+        public Vector2 LocalPosition;
         public float VelocitySizeMultiplier;
 
         public Func<bool> Condition;
 
-        public TrailRenderer(float velocitySizeMultiplier)
+        public TrailRenderer(Vector2 localPosition, float velocitySizeMultiplier)
         {
+            LocalPosition = localPosition;
             VelocitySizeMultiplier = velocitySizeMultiplier;
         }
 
@@ -26,7 +29,7 @@ namespace Fiourp
             if (Condition != null && !Condition())
                 return;
 
-            Particle p = Trail.Create(ParentEntity.MiddlePos);
+            Particle p = Trail.Create(ParentEntity.Pos + LocalPosition);
 
             float speed;
             if (ParentEntity is Actor actor)
