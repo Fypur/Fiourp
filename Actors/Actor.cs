@@ -58,10 +58,10 @@ namespace Fiourp
         }
 
         public void MoveX(float amount, Action CallbackOnCollision)
-            => MoveX(amount, (entity) => CallbackOnCollision());
+            => MoveX(amount, (entity) => CallbackOnCollision?.Invoke());
 
         public void MoveY(float amount, Action CallbackOnCollision)
-            => MoveY(amount, (entity) => CallbackOnCollision());
+            => MoveY(amount, (entity) => CallbackOnCollision?.Invoke());
 
         public void MoveX(float amount, Action<Entity> CallbackOnCollision = null)
             => MoveX(amount, new List<Entity>(Engine.CurrentMap.Data.Solids), CallbackOnCollision);

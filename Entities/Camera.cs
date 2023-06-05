@@ -12,6 +12,8 @@ namespace Fiourp
         public bool FollowsPlayer;
         public bool Locked;
 
+        public Func<Vector2, Vector2> TreatBoundsPos;
+
         private Vector2 offset;
         public Vector2 Offset
         {
@@ -135,6 +137,9 @@ namespace Fiourp
 
             if (Engine.Player != null && FollowsPlayer && !Locked && (!HasComponent(out Timer timer) || timer.Value <= 0) && !HasComponent<Shaker>())
                 Follow(Engine.Player, 3, 3, StrictFollowBounds);
+
+            Debug.LogUpdate(Input.MousePos);
+            Debug.LogUpdate(InBoundsPos(Input.MousePos));
         }
 
         public override void LateUpdate()
@@ -185,8 +190,6 @@ namespace Fiourp
                 AddComponent(new Shaker(time, intensity, () => FollowedPos(Engine.Player, 3, 3, StrictFollowBounds,
                 Bounds), false));
             }
-
-            
         }
 
         public Vector2 InBoundsPos(Vector2 position, out bool changed)
@@ -200,7 +203,7 @@ namespace Fiourp
                 return position;
             }
 
-            if ((Bounds.Contains(position - Engine.ScreenSize / 2 / RenderTargetScreenSizeCoef) && Bounds.Contains(position + Engine.ScreenSize / 2 / RenderTargetScreenSizeCoef)) || Bounds == Rectangle.Empty)
+            if ((Bounds.Contains(position - HalfSize) && Bounds.Contains(position + HalfSize)) || Bounds == Rectangle.Empty)
             {
                 if(position != CenteredPos)
                     changed = true;
@@ -218,10 +221,16 @@ namespace Fiourp
 
         public Vector2 InBoundsPos(Vector2 position)
         {
-            if ((Bounds.Contains(position - Engine.ScreenSize / 2 / RenderTargetScreenSizeCoef) && Bounds.Contains(position + Engine.ScreenSize / 2 / RenderTargetScreenSizeCoef)) || Bounds == Rectangle.Empty)
+            if ((Bounds.Contains(position - HalfSize) && Bounds.Contains(position + HalfSize)) || Bounds == Rectangle.Empty)
                 return position;
 
-            return new Vector2(InBoundsPosX(position.X), InBoundsPosY(position.Y));
+            Vector2 inBounds = new Vector2(InBoundsPosX(position.X), InBoundsPosY(position.Y));
+
+            Vector2? a = TreatBoundsPos?.Invoke(inBounds);
+            if(a != null)
+                inBounds = a.Value;
+
+            return inBounds;
         }
 
         public Vector2 InBoundsPos(Vector2 position, Rectangle bounds)
@@ -238,19 +247,18 @@ namespace Fiourp
 
         private float InBoundsPosX(float x)
         {
-            if (x - Engine.ScreenSize.X / 2 / RenderTargetScreenSizeCoef > Bounds.X && x - Engine.ScreenSize.X / 2 / RenderTargetScreenSizeCoef < Bounds.X + Bounds.Width &&
-                x + Engine.ScreenSize.X / 2 / RenderTargetScreenSizeCoef > Bounds.X && x + Engine.ScreenSize.X / 2 / RenderTargetScreenSizeCoef < Bounds.X + Bounds.Width)
+            if (x - HalfSize.X > Bounds.X && x + HalfSize.X < Bounds.X + Bounds.Width)
                 return x;
             else
             {
-                float correctedX = x - Engine.ScreenSize.X / 2 / RenderTargetScreenSizeCoef;
+                float correctedX = x - HalfSize.X;
 
                 if (correctedX < Bounds.X)
                     correctedX = Bounds.X;
-                else if (correctedX + Engine.ScreenSize.X / RenderTargetScreenSizeCoef > Bounds.X + Bounds.Width)
-                    correctedX = Bounds.X + Bounds.Width - Engine.ScreenSize.X / RenderTargetScreenSizeCoef;
+                else if (correctedX + Size.X > Bounds.X + Bounds.Width)
+                    correctedX = Bounds.X + Bounds.Width - Size.X;
 
-                correctedX += Engine.ScreenSize.X / 2 / RenderTargetScreenSizeCoef;
+                correctedX += HalfSize.X;
 
                 return correctedX;
             }
@@ -258,19 +266,19 @@ namespace Fiourp
 
         private float InBoundsPosY(float y)
         {
-            if (y - Engine.ScreenSize.Y / 2 / RenderTargetScreenSizeCoef > Bounds.Y && y - Engine.ScreenSize.Y / 2 / RenderTargetScreenSizeCoef < Bounds.Y + Bounds.Height &&
-                y + Engine.ScreenSize.Y / 2 / RenderTargetScreenSizeCoef > Bounds.Y && y + Engine.ScreenSize.Y / 2 / RenderTargetScreenSizeCoef < Bounds.Y + Bounds.Height)
+            //float halfSizeY = Engine.ScreenSize.Y / 2 / RenderTargetScreenSizeCoef;
+            if (y - HalfSize.Y > Bounds.Y && y + HalfSize.Y < Bounds.Y + Bounds.Height)
                 return y;
             else
             {
-                float correctedY = y - Engine.ScreenSize.Y / 2 / RenderTargetScreenSizeCoef;
+                float correctedY = y - HalfSize.Y;
 
                 if (correctedY < Bounds.Y)
                     correctedY = Bounds.Y;
-                else if (correctedY + Engine.ScreenSize.Y / RenderTargetScreenSizeCoef > Bounds.Y + Bounds.Height)
-                    correctedY = Bounds.Y + Bounds.Height - Engine.ScreenSize.Y / RenderTargetScreenSizeCoef;
+                else if (correctedY + Size.Y > Bounds.Y + Bounds.Height)
+                    correctedY = Bounds.Y + Bounds.Height - Size.Y;
 
-                correctedY += Engine.ScreenSize.Y / 2 / RenderTargetScreenSizeCoef;
+                correctedY += HalfSize.Y;
 
                 return correctedY;
             }

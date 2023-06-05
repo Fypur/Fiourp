@@ -36,11 +36,11 @@ namespace Fiourp
 
             
 
-            Vector2 size = Engine.Cam.Size / gridCol.GridSize;
+            Vector2 size = new Vector2((float)Engine.RenderTarget.Width / gridCol.GridWidth, (float)Engine.RenderTarget.Height / gridCol.GridHeight);
 
-            for(int x = Math.Max((int)startPos.X, 0); x < startPos.X + size.X; x++)
+            for(int x = Math.Max((int)startPos.X, 0); x < Math.Min(startPos.X + size.X, Tiles.GetLength(1)); x++)
             {
-                for(int y = Math.Max((int)startPos.Y, 0); y < startPos.Y + size.Y; y++)
+                for(int y = Math.Max((int)startPos.Y, 0); y < Math.Min(startPos.Y + size.Y, Tiles.GetLength(0)); y++)
                 {
                     Vector2 pos = new Vector2(x * gridCol.GridWidth, y * gridCol.GridHeight) + Collider.AbsolutePosition;
                     if(Tiles[y, x] != Sprite.None && Tiles[y, x] != null)

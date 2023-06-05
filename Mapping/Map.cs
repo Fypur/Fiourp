@@ -118,6 +118,7 @@ namespace Fiourp
         public Entity Instantiate(Entity entity)
         {
             Data.Entities.Add(entity);
+
             entity.Awake();
             if(entity is Platform)
             {
@@ -149,6 +150,7 @@ namespace Fiourp
                 entity.Components[i].Destroy();
 
             entity.OnDestroy();
+
             Data.Entities.Remove(entity);
 
             if (entity is Platform)

@@ -270,6 +270,7 @@ namespace Fiourp
         {
             child.Parent = this;
             Children.Add(child);
+
             //child.Awake();
             return child;
         }
