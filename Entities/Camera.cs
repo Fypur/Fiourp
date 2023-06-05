@@ -138,8 +138,8 @@ namespace Fiourp
             if (Engine.Player != null && FollowsPlayer && !Locked && (!HasComponent(out Timer timer) || timer.Value <= 0) && !HasComponent<Shaker>())
                 Follow(Engine.Player, 3, 3, StrictFollowBounds);
 
-            Debug.LogUpdate(Input.MousePos);
-            Debug.LogUpdate(InBoundsPos(Input.MousePos));
+            /*Debug.LogUpdate(Input.MousePos);
+            Debug.LogUpdate(InBoundsPos(Input.MousePos));*/
         }
 
         public override void LateUpdate()
