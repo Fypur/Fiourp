@@ -51,7 +51,6 @@ namespace Fiourp
                 for (int y = 0; y < lvl.ChunksEdge.GetLength(0); y++)
                     for(int x = 0; x < lvl.ChunksEdge.GetLength(1); x++)
                     {
-                        
 
                         if (!Collision.RectCircle(
                             new Rectangle((int)lvl.Pos.X + x * lvl.ChunkSize * lvl.TileWidth, (int)lvl.Pos.Y + y * lvl.ChunkSize * lvl.TileHeight, lvl.ChunkSize * lvl.TileWidth, lvl.ChunkSize * lvl.TileHeight), 
@@ -63,13 +62,40 @@ namespace Fiourp
                             Vector2 lightWorldPos = lights[i].WorldPosition;
                             Vector2 edgePos1 = new Vector2(edge[0] * lvl.TileWidth, edge[1] * lvl.TileHeight) + lvl.Pos;
                             Vector2 edgePos2 = new Vector2(edge[2] * lvl.TileWidth, edge[3] * lvl.TileHeight) + lvl.Pos;
+                            Vector2 maxL = new Vector2(MaxLightSize);
 
                             Vector2[] intersection = Collision.LineCircleIntersection(edgePos1, edgePos2, l.WorldPosition, l.Size);
 
                             if (intersection.Length == 0 && (Vector2.DistanceSquared(edgePos1, lightWorldPos) > l.Size * l.Size && Vector2.DistanceSquared(edgePos2, lightWorldPos) > l.Size * l.Size))
                                 continue;
 
-                            Vector2 maxL = new Vector2(MaxLightSize);
+
+                            edgePos1 += maxL / 2 - lightWorldPos;
+                            edgePos2 += maxL / 2 - lightWorldPos;
+
+                            if (edgePos1.X < 0)
+                                edgePos1.X = 0;
+                            if (edgePos1.Y < 0)
+                                edgePos1.Y = 0;
+                            if (edgePos1.X > MaxLightSize)
+                                edgePos1.X = MaxLightSize;
+                            if (edgePos1.Y > MaxLightSize)
+                                edgePos1.Y = MaxLightSize;
+
+                            if (edgePos2.X < 0)
+                                edgePos2.X = 0;
+                            if (edgePos2.Y < 0)
+                                edgePos2.Y = 0;
+                            if (edgePos2.X > MaxLightSize)
+                                edgePos2.X = MaxLightSize;
+                            if (edgePos2.Y > MaxLightSize)
+                                edgePos2.Y = MaxLightSize;
+
+                            edgePos1 -= maxL / 2 - lightWorldPos;
+                            edgePos2 -= maxL / 2 - lightWorldPos;
+
+
+
 
                             Vector2 projectedEdgePos1 = (edgePos1 - lightWorldPos).Normalized() * MaxLightSize * 2f + maxL / 2;
                             Vector2 projectedEdgePos2 = (edgePos2 - lightWorldPos).Normalized() * MaxLightSize * 2f + maxL / 2;
@@ -134,23 +160,34 @@ namespace Fiourp
 
 
 
-                            Debug.PointUpdate(Color.Orange, edgePos1, edgePos2);
+                            //Debug.PointUpdate(Color.Orange, edgePos1, edgePos2);
+                            //Debug.PointUpdate(Color.Orange, projectedEdgePos1 + l.WorldPosition - l.RenderTargetPosition, projectedEdgePos2 + l.WorldPosition - l.RenderTargetPosition);
 
                             //Debug.PointUpdate(Color.Orange, pos1, pos2, pos3 + center - new Vector2(maxLightSize) / 2 - l.RenderTargetPosition, pos4 + center - new Vector2(maxLightSize) / 2 - l.RenderTargetPosition);
                             //Debug.PointUpdate(Color.Orange, mid + center - new Vector2(maxLightSize) / 2);
                             //Debug.LogUpdate(Input.MousePos);
-                            edgePos1 += new Vector2(MaxLightSize) / 2 - lightWorldPos;
-                            edgePos2 += new Vector2(MaxLightSize) / 2 - lightWorldPos;
 
-                            if (edgePos1.X < 0) edgePos1.X = 0;
-                            if (edgePos1.Y < 0) edgePos1.Y = 0;
-                            if (edgePos1.X > MaxLightSize) edgePos1.X = MaxLightSize;
-                            if (edgePos1.Y > MaxLightSize) edgePos1.Y = MaxLightSize;
 
-                            if (edgePos2.X < 0) edgePos2.X = 0;
-                            if (edgePos2.Y < 0) edgePos2.Y = 0;
-                            if (edgePos2.X > MaxLightSize) edgePos2.X = MaxLightSize;
-                            if (edgePos2.Y > MaxLightSize) edgePos2.Y = MaxLightSize;
+                            edgePos1 += maxL / 2 - lightWorldPos;
+                            edgePos2 += maxL / 2 - lightWorldPos;
+
+                            if (edgePos1.X < 0)
+                                edgePos1.X = 0;
+                            if (edgePos1.Y < 0)
+                                edgePos1.Y = 0;
+                            if (edgePos1.X > MaxLightSize)
+                                edgePos1.X = MaxLightSize;
+                            if (edgePos1.Y > MaxLightSize)
+                                edgePos1.Y = MaxLightSize;
+
+                            if (edgePos2.X < 0)
+                                edgePos2.X = 0;
+                            if (edgePos2.Y < 0)
+                                edgePos2.Y = 0;
+                            if (edgePos2.X > MaxLightSize)
+                                edgePos2.X = MaxLightSize;
+                            if (edgePos2.Y > MaxLightSize)
+                                edgePos2.Y = MaxLightSize;
 
                             edgePos1 += lights[i].RenderTargetPosition;
                             edgePos2 += lights[i].RenderTargetPosition;
@@ -170,7 +207,8 @@ namespace Fiourp
 
 
 
-                            Drawing.DrawQuad(edgePos1, edgePos2, projectedEdgePos2, projectedEdgePos1, Color.Transparent);
+                            //Drawing.DrawQuad(edgePos1, edgePos2, projectedEdgePos2, projectedEdgePos1, Color.Transparent);
+                            Drawing.DrawQuad(projectedEdgePos2, projectedEdgePos1, edgePos1, edgePos2, Color.Transparent);
                         }
                     }
             }
