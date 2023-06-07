@@ -7,7 +7,7 @@ namespace Fiourp
 {
     public static class VectorHelper
     {
-        public static float VectorToAngle(this Vector2 vector)
+        public static float ToAngleRad(this Vector2 vector)
             => (float)Math.Atan2(vector.Y, vector.X);
 
         public static float ToAngleDegrees(this Vector2 vector)
@@ -95,7 +95,7 @@ namespace Fiourp
         public static Vector2 Rotate(Vector2 vector, float angleRad)
         {
             float length = vector.Length();
-            float angle = vector.VectorToAngle();
+            float angle = vector.ToAngleRad();
             return new Vector2((float)(length * Math.Cos(angle + angleRad)), (float)(length * Math.Sin(angle + angleRad)));
         }
 

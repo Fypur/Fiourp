@@ -95,6 +95,7 @@ namespace Fiourp
                                     pos = u;
                                     return true;
                                 }
+
                                 return false;
                             }
 
@@ -133,17 +134,31 @@ namespace Fiourp
 
 
 
-                            //Debug.PointUpdate(Color.Orange, edgePos1, edgePos2);
+                            Debug.PointUpdate(Color.Orange, edgePos1, edgePos2);
+
                             //Debug.PointUpdate(Color.Orange, pos1, pos2, pos3 + center - new Vector2(maxLightSize) / 2 - l.RenderTargetPosition, pos4 + center - new Vector2(maxLightSize) / 2 - l.RenderTargetPosition);
                             //Debug.PointUpdate(Color.Orange, mid + center - new Vector2(maxLightSize) / 2);
                             //Debug.LogUpdate(Input.MousePos);
-                            edgePos1 += lights[i].RenderTargetPosition + new Vector2(MaxLightSize) / 2 - lightWorldPos;
-                            edgePos2 += lights[i].RenderTargetPosition + new Vector2(MaxLightSize) / 2 - lightWorldPos;
+                            edgePos1 += new Vector2(MaxLightSize) / 2 - lightWorldPos;
+                            edgePos2 += new Vector2(MaxLightSize) / 2 - lightWorldPos;
+
+                            if (edgePos1.X < 0) edgePos1.X = 0;
+                            if (edgePos1.Y < 0) edgePos1.Y = 0;
+                            if (edgePos1.X > MaxLightSize) edgePos1.X = MaxLightSize;
+                            if (edgePos1.Y > MaxLightSize) edgePos1.Y = MaxLightSize;
+
+                            if (edgePos2.X < 0) edgePos2.X = 0;
+                            if (edgePos2.Y < 0) edgePos2.Y = 0;
+                            if (edgePos2.X > MaxLightSize) edgePos2.X = MaxLightSize;
+                            if (edgePos2.Y > MaxLightSize) edgePos2.Y = MaxLightSize;
+
+                            edgePos1 += lights[i].RenderTargetPosition;
+                            edgePos2 += lights[i].RenderTargetPosition;
 
 
 
                             //Debug.PointUpdate(Color.Orange, pos1, pos2, pos3, pos4);
-                            
+
                             //Drawing.DrawLine(pos1, pos2, Color.Orange);dq
                             //Debug.PointUpdate(Color.Orange, pos1, pos2);
 
@@ -152,7 +167,6 @@ namespace Fiourp
                             //pos1 += new Vector2(maxLightSize) + lights[i].WorldPosition;
 
                             //Drawing.DrawQuad(edgePos1, edgePos1 + new Vector2(5, 0), edgePos1 + new Vector2(5, 5), edgePos1 + new Vector2(0, 5), Color.Blue);
-
 
 
 

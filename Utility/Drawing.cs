@@ -119,13 +119,34 @@ namespace Fiourp
             for (float x = angleStartRad + theta; x < angleEndRad; x += theta)
             {
                 Vector2 pos = middle + new Vector2((float)(Math.Cos(x) * radius), (float)(Math.Sin(x) * radius));
+
                 DrawLine(pos, previous, color, thickness);
+
                 previous = pos;
             }
         }
 
         public static void DrawArc(Vector2 middle, float radius, Vector2 arcPos1, Vector2 arcPos2, float theta, Color color, int thickness)
-            => DrawArc(middle, radius, (arcPos1 - middle).VectorToAngle(), (arcPos2 - middle).VectorToAngle(), theta, color, thickness);
+            => DrawArc(middle, radius, (arcPos1 - middle).ToAngleRad(), (arcPos2 - middle).ToAngleRad(), theta, color, thickness);
+
+        public static void DrawFilledArc(Vector2 middle, float radius, float angleStartRad, float angleEndRad, float theta, Color insideColor, Color outsideColor)
+        {
+            while (angleEndRad < angleStartRad)
+                angleEndRad += (float)Math.PI * 2;
+
+            Vector2 previous = middle + new Vector2((float)(Math.Cos(angleStartRad) * radius), (float)(Math.Sin(angleStartRad) * radius));
+            for (float x = angleStartRad + theta; x < angleEndRad; x += theta)
+            {
+                Vector2 pos = middle + new Vector2((float)(Math.Cos(x) * radius), (float)(Math.Sin(x) * radius));
+
+                DrawTriangle(middle, insideColor, previous, outsideColor, pos, insideColor);
+
+                previous = pos;
+            }
+        }
+
+        public static void DrawFilledArc(Vector2 middle, float radius, Vector2 arcPos1, Vector2 arcPos2, float theta, Color insideColor, Color outsideColor)
+            => DrawFilledArc(middle, radius, (arcPos1 - middle).ToAngleRad(), (arcPos2 - middle).ToAngleRad(), theta, insideColor, outsideColor);
 
         public static void DrawString(string text, Vector2 position, Color color, Vector2 origin)
             => spriteBatch.DrawString(Font, text, position, color, 0, origin,
