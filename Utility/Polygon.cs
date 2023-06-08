@@ -225,7 +225,8 @@ namespace Fiourp
             if (points.Count > 1)
             {
                 CompareAndRemove(0, points.Count - 1);
-                CompareAndRemove(1, points.Count - 1);
+                if (points.Count > 1)
+                    CompareAndRemove(1, points.Count - 1);
             }
             if (points.Count > 2)
             {
