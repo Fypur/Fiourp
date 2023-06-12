@@ -3,7 +3,7 @@ using System;
 
 namespace Fiourp
 {
-    public class Camera : Entity
+    public class Camera : Actor
     {
         public new Rectangle Bounds = Rectangle.Empty;
         public static Rectangle StrictFollowBounds = new Rectangle(new Vector2(-Engine.ScreenSize.X / 6, -Engine.ScreenSize.Y / 12).ToPoint(), new Vector2(Engine.ScreenSize.X / 3, Engine.ScreenSize.Y / 6).ToPoint());
@@ -12,9 +12,9 @@ namespace Fiourp
         public bool FollowsPlayer;
         public bool Locked;
 
-        public Func<Vector2, Vector2> TreatBoundsPos;
-
         private Vector2 offset;
+        private Timer moveTimer;
+        private Vector2 shakerInitPos;
         public Vector2 Offset
         {
             get => offset;
@@ -119,7 +119,7 @@ namespace Fiourp
         public float RenderTargetScreenSizeCoef { get => Engine.ScreenSize.X / Engine.RenderTarget.Width; }
 
         public Camera(Vector2 position, float rotation, float zoomLevel, Rectangle? bounds = null)
-            : base(position, (int)Engine.ScreenSize.X, (int)Engine.ScreenSize.Y, null)
+            : base(position, (int)Engine.ScreenSize.X, (int)Engine.ScreenSize.Y, 0, null)
         {
             Engine.Cam = this;
 
@@ -129,13 +129,15 @@ namespace Fiourp
 
             if (bounds != null)
                 SetBoundaries((Rectangle)bounds);
+
+            shakerInitPos = CenteredPos;
         }
         
         public override void Update()
         {
             base.Update();
 
-            if (Engine.Player != null && FollowsPlayer && !Locked && (!HasComponent(out Timer timer) || timer.Value <= 0) && !HasComponent<Shaker>())
+            if (Engine.Player != null && FollowsPlayer && !Locked && (moveTimer == null || moveTimer.Value <= 0))
                 Follow(Engine.Player, 3, 3, StrictFollowBounds);
 
             /*Debug.LogUpdate(Input.MousePos);
@@ -153,7 +155,32 @@ namespace Fiourp
             => hasChanged = true;
 
         public Vector2 Follow(Entity actor, float xSmooth, float ySmooth, Rectangle strictFollowBounds)
-            => CenteredPos = FollowedPos(actor, xSmooth, ySmooth, strictFollowBounds, Bounds);
+        {
+            if (HasComponent<Shaker>())
+                CenteredPos = shakerInitPos;
+
+            Vector2 amount = FollowedPos(actor, xSmooth, ySmooth, strictFollowBounds, Bounds) - CenteredPos;
+
+            Vector2 previous = CenteredPos;
+            MoveX(amount.X, new System.Collections.Generic.List<Entity>(Engine.CurrentMap.Data.CameraSolids), null);
+            MoveY(amount.Y, new System.Collections.Generic.List<Entity>(Engine.CurrentMap.Data.CameraSolids), null);
+
+            shakerInitPos += previous - CenteredPos;
+
+            if (HasComponent<Shaker>())
+                CenteredPos = previous;
+            else
+            {
+                if (amount != Vector2.Zero)
+                    hasChanged = true;
+            }
+
+            Debug.LogUpdate(shakerInitPos);
+            Debug.LogUpdate("amount " + amount);
+
+
+            return CenteredPos;
+        }
 
         public Vector2 FollowedPos(Entity followed, float xSmooth, float ySmooth, Rectangle strictFollowBounds, Rectangle bounds)
         {
@@ -170,12 +197,12 @@ namespace Fiourp
         {
             Vector2 initPos = CenteredPos;
             Vector2 newPos = CenteredPos + offset;
-            AddComponent(new Timer(time, true, (t) =>
+            moveTimer = (Timer)AddComponent(new Timer(time, true, (t) =>
 
                 CenteredPos = Vector2.Lerp(initPos, newPos,
                      (easingFunction ?? Ease.None).Invoke(Ease.Reverse(t.Value / t.MaxValue))),
 
-                () => CenteredPos = newPos));
+                () => { CenteredPos = newPos; moveTimer = null; }));
         }
 
         public void LightShake()
@@ -187,8 +214,8 @@ namespace Fiourp
             if(shaker == null || time > shaker.Time ||  intensity > shaker.Intensity)
             {
                 RemoveComponent(shaker);
-                AddComponent(new Shaker(time, intensity, () => FollowedPos(Engine.Player, 3, 3, StrictFollowBounds,
-                Bounds), false));
+                shakerInitPos = CenteredPos;
+                AddComponent(new Shaker(time, intensity, () => shakerInitPos));
             }
         }
 
@@ -225,10 +252,6 @@ namespace Fiourp
                 return position;
 
             Vector2 inBounds = new Vector2(InBoundsPosX(position.X), InBoundsPosY(position.Y));
-
-            Vector2? a = TreatBoundsPos?.Invoke(inBounds);
-            if(a != null)
-                inBounds = a.Value;
 
             return inBounds;
         }

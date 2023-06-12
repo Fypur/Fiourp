@@ -81,7 +81,6 @@ namespace Fiourp
 
                 while (move != 0)
                 {
-                    //Console.WriteLine($"XRemainder: {xRemainder}; move: {move}; sign: {sign}");
                     if (!Collider.CollideAt(checkedCollision, Pos + new Vector2(sign, 0), out Entity collided))
                     {
                         Pos.X += sign;

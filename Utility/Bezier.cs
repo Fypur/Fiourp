@@ -33,9 +33,21 @@ namespace Fiourp
             return sum;
         }
 
+        /// <summary>
+        /// Uses 3 Control Points
+        /// </summary>
+        /// <param name="controlPoints"></param>
+        /// <param name="t"></param>
+        /// <returns></returns>
         public static Vector2 Quadratic(IList<Vector2> controlPoints, float t)
             => (1 - t) * (1 - t) * controlPoints[0] + 2 * (1 - t) * t * controlPoints[1] + t * t * controlPoints[2];
 
+        /// <summary>
+        /// Uses 4 Control Points
+        /// </summary>
+        /// <param name="controlPoints"></param>
+        /// <param name="t"></param>
+        /// <returns></returns>
         public static Vector2 Cubic(IList<Vector2> controlPoints, float t)
             => (1 - t) * (1 - t) * (1 - t) * controlPoints[0] + 3 * (1 - t) * (1 - t) * t * controlPoints[1] + 3 * (1 - t) * t * t * controlPoints[2] + t * t * t * controlPoints[3];
 

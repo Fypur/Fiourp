@@ -73,10 +73,10 @@ namespace Fiourp
                 {
                     if (ParentEntity is MovingSolid s)
                         s.Move(move);
-                    else if (ParentEntity is Actor a)
-                        a.Move(move);
                     else if (ParentEntity is Camera cam)
                         cam.NoBoundsPos += move;
+                    else if (ParentEntity is Actor a)
+                        a.Move(move);
                     else
                         ParentEntity.Pos += move;
                 }
@@ -85,10 +85,10 @@ namespace Fiourp
                 {
                     if (ParentEntity is MovingSolid so)
                         so.MoveTo(pos);
-                    else if (ParentEntity is Actor ac)
-                        ac.MoveTo(pos);
                     else if (ParentEntity is Camera cam)
                         cam.NoBoundsPos = pos;
+                    else if (ParentEntity is Actor ac)
+                        ac.MoveTo(pos);
                     else
                         ParentEntity.Pos = pos;
                 }
