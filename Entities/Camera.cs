@@ -135,11 +135,10 @@ namespace Fiourp
         
         public override void Update()
         {
-            base.Update();
-
             if (Engine.Player != null && FollowsPlayer && !Locked && (moveTimer == null || moveTimer.Value <= 0))
                 Follow(Engine.Player, 3, 3, StrictFollowBounds);
 
+            base.Update();
             /*Debug.LogUpdate(Input.MousePos);
             Debug.LogUpdate(InBoundsPos(Input.MousePos));*/
         }
@@ -154,32 +153,30 @@ namespace Fiourp
         public void Refresh()
             => hasChanged = true;
 
-        public Vector2 Follow(Entity actor, float xSmooth, float ySmooth, Rectangle strictFollowBounds)
+        public void Follow(Entity actor, float xSmooth, float ySmooth, Rectangle strictFollowBounds)
         {
-            if (HasComponent<Shaker>())
-                CenteredPos = shakerInitPos;
-
             Vector2 amount = FollowedPos(actor, xSmooth, ySmooth, strictFollowBounds, Bounds) - CenteredPos;
 
-            Vector2 previous = CenteredPos;
-            MoveX(amount.X, new System.Collections.Generic.List<Entity>(Engine.CurrentMap.Data.CameraSolids), null);
-            MoveY(amount.Y, new System.Collections.Generic.List<Entity>(Engine.CurrentMap.Data.CameraSolids), null);
+            Vector2 previous = ExactPos;
 
-            shakerInitPos += previous - CenteredPos;
+            if(Math.Abs(amount.X) >= 1)
+                MoveX(amount.X, new System.Collections.Generic.List<Entity>(Engine.CurrentMap.Data.CameraSolids), null);
+            if (Math.Abs(amount.Y) >= 1)
+                MoveY(amount.Y, new System.Collections.Generic.List<Entity>(Engine.CurrentMap.Data.CameraSolids), null);
 
             if (HasComponent<Shaker>())
-                CenteredPos = previous;
-            else
             {
-                if (amount != Vector2.Zero)
-                    hasChanged = true;
+                //ExactPos = previous;
+                shakerInitPos += ExactPos - previous;
             }
 
+            if (amount != Vector2.Zero)
+                hasChanged = true;
+
             Debug.LogUpdate(shakerInitPos);
+            Debug.LogUpdate(CenteredPos);
             Debug.LogUpdate("amount " + amount);
 
-
-            return CenteredPos;
         }
 
         public Vector2 FollowedPos(Entity followed, float xSmooth, float ySmooth, Rectangle strictFollowBounds, Rectangle bounds)
