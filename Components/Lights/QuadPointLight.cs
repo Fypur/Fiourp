@@ -26,8 +26,7 @@ namespace Fiourp
             }
 
 
-            direction = MathHelper.ToRadians(direction);
-            Direction = new Vector2((float)Math.Cos(direction), (float)Math.Sin(direction));
+            Direction = VectorHelper.AngleToVector(direction);
             InsideColor = insideColor;
             OutsideColor = outsideColor;
             Range = range;

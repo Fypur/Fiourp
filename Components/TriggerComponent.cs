@@ -9,52 +9,52 @@ namespace Fiourp
     {
         public Vector2 LocalPosition;
         
-        public Vector2 Size { get => trigger.Size; set => trigger.Size = value; }
-        public List<Type> Triggerers { get => trigger.Triggerers; set => trigger.Triggerers = value; }
+        public Vector2 Size { get => Trigger.Size; set => Trigger.Size = value; }
+        public List<Type> Triggerers { get => Trigger.Triggerers; set => Trigger.Triggerers = value; }
 
-        public Trigger trigger;
+        public Trigger Trigger;
 
         public TriggerComponent(Vector2 localPosition, float width, float height, List<Type> triggerers)
         {
             LocalPosition = localPosition;
-            trigger = new Trigger(localPosition, new Vector2(width, height), triggerers, Sprite.None);
+            Trigger = new Trigger(localPosition, new Vector2(width, height), triggerers, Sprite.None);
         }
 
         public TriggerComponent(Vector2 localPosition, float radius, List<Type> triggerers)
         {
             LocalPosition = localPosition;
-            trigger = new Trigger(localPosition, new Vector2(radius * 2, radius * 2), triggerers, Sprite.None);
-            trigger.Collider = (Collider)trigger.AddComponent(new CircleCollider(Vector2.Zero, radius));
+            Trigger = new Trigger(localPosition, new Vector2(radius * 2, radius * 2), triggerers, Sprite.None);
+            Trigger.Collider = (Collider)Trigger.AddComponent(new CircleCollider(Vector2.Zero, radius));
         }
 
         public TriggerComponent(Vector2 localPosition, Collider collider, List<Type> triggerers)
         {
             LocalPosition = localPosition;
-            trigger = new Trigger(localPosition, collider, triggerers, Sprite.None);
+            Trigger = new Trigger(localPosition, collider, triggerers, Sprite.None);
         }
 
         public override void Added()
         {
             base.Added();
 
-            trigger.OnTriggerEnterAction = OnTriggerEnter;
-            trigger.OnTriggerStayAction = OnTriggerStay;
-            trigger.OnTriggerExitAction = OnTriggerExit;
+            Trigger.OnTriggerEnterAction = OnTriggerEnter;
+            Trigger.OnTriggerStayAction = OnTriggerStay;
+            Trigger.OnTriggerExitAction = OnTriggerExit;
 
-            trigger.Pos += ParentEntity.Pos;
+            Trigger.Pos += ParentEntity.Pos;
         }
 
         public override void Update()
         {
-            trigger.Pos = ParentEntity.Pos + LocalPosition;
-            if(trigger.Active)
-                trigger.Update();
+            Trigger.Pos = ParentEntity.Pos + LocalPosition;
+            if(Trigger.Active)
+                Trigger.Update();
         }
 
         public override void Render()
         {
-            if(trigger.Visible)
-                trigger.Render();
+            if(Trigger.Visible)
+                Trigger.Render();
         }
 
         public virtual void OnTriggerEnter(Entity entity) { }

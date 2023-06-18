@@ -129,7 +129,7 @@ namespace Fiourp
         public static void DrawArc(Vector2 middle, float radius, Vector2 arcPos1, Vector2 arcPos2, float theta, Color color, int thickness)
             => DrawArc(middle, radius, (arcPos1 - middle).ToAngleRad(), (arcPos2 - middle).ToAngleRad(), theta, color, thickness);
 
-        public static void DrawFilledArc(Vector2 middle, float radius, float angleStartRad, float angleEndRad, float theta, Color insideColor, Color outsideColor)
+        /*public static void DrawFilledArc(Vector2 middle, float radius, float angleStartRad, float angleEndRad, float theta, Color insideColor, Color outsideColor)
         {
             while (angleEndRad < angleStartRad)
                 angleEndRad += (float)Math.PI * 2;
@@ -143,6 +143,35 @@ namespace Fiourp
 
                 previous = pos;
             }
+        }*/
+        public static void DrawFilledArc(Vector2 position, float radius, float angleStartRad, float angleEndRad, float theta, Color insideColor, Color outsideColor)
+        {
+            while (angleEndRad < angleStartRad)
+                angleEndRad += (float)Math.PI * 2;
+
+            Vector2 previous = position + new Vector2((float)Math.Cos(angleStartRad), (float)Math.Sin(angleStartRad)) * radius;
+            EnsureSpace(2 + (int)Math.Ceiling((angleEndRad - angleStartRad) / theta), 3 + 3 * (int)Math.Ceiling((angleEndRad - angleStartRad) / theta));
+
+            int ind = vertexCount;
+            vertices[vertexCount++] = new VertexPositionColor(new Vector3(position, 0), insideColor); //v0
+            vertices[vertexCount] = new VertexPositionColor(new Vector3(previous, 0), outsideColor); //v1
+
+
+            for (float x = angleStartRad + theta; x <= angleEndRad; x += theta)
+            {
+                indices[indicesCount++] = ind; //v0
+                indices[indicesCount++] = vertexCount++; //v1 -> v2
+
+                Vector2 pos = position + new Vector2((float)Math.Cos(x), (float)Math.Sin(x)) * radius;
+                vertices[vertexCount] = new VertexPositionColor(new Vector3(pos, 0), outsideColor); //Calculating v2
+
+
+                indices[indicesCount++] = vertexCount; //v2 -> v3
+            }
+
+            vertexCount++;
+
+            shapesCount++;
         }
 
         public static void DrawFilledArc(Vector2 middle, float radius, Vector2 arcPos1, Vector2 arcPos2, float theta, Color insideColor, Color outsideColor)

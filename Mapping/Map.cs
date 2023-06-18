@@ -120,26 +120,26 @@ namespace Fiourp
             Data.Entities.Add(entity);
 
             entity.Awake();
-            if(entity is Platform)
+            if(entity is Platform p)
             {
-                Data.Platforms.Add((Platform)entity);
-                if (entity is Solid)
-                    Data.Solids.Add((Solid)entity);
+                Data.Platforms.Add(p);
+                if (entity is Solid s)
+                    Data.Solids.Add(s);
             }
-            else if (entity is Actor)
-                Data.Actors.Add((Actor)entity);
-            else if (entity is Trigger)
-                Data.Triggers.Add((Trigger)entity);
-            else if (entity is UIElement)
-                Data.UIElements.Add((UIElement)entity);
-            else if (entity is Decoration)
-                Data.Decorations.Add((Decoration)entity);
+            else if (entity is Actor a)
+                Data.Actors.Add(a);
+            else if (entity is Trigger t)
+                Data.Triggers.Add(t);
+            else if (entity is UIElement u)
+                Data.UIElements.Add(u);
+            else if (entity is Decoration d)
+                Data.Decorations.Add(d);
 
-            Type t = entity.GetType();
-            if (!Engine.CurrentMap.Data.EntitiesByType.ContainsKey(t))
-                Engine.CurrentMap.Data.EntitiesByType.Add(t, new List<Entity>() { entity });
+            Type type = entity.GetType();
+            if (!Engine.CurrentMap.Data.EntitiesByType.ContainsKey(type))
+                Engine.CurrentMap.Data.EntitiesByType.Add(type, new List<Entity>() { entity });
             else
-                Engine.CurrentMap.Data.EntitiesByType[t].Add(entity);
+                Engine.CurrentMap.Data.EntitiesByType[type].Add(entity);
 
             return entity;
         }
@@ -153,20 +153,24 @@ namespace Fiourp
 
             Data.Entities.Remove(entity);
 
-            if (entity is Platform)
+            if (entity is Platform p)
             {
-                Data.Platforms.Remove((Platform)entity);
-                if (entity is Solid)
-                    Data.Solids.Remove((Solid)entity);
+                Data.Platforms.Remove(p);
+                if (entity is Solid s)
+                {
+                    Data.Solids.Remove(s);
+                    if (Data.CameraSolids.Contains(s))
+                        Data.CameraSolids.Remove(s);
+                }
             }
-            else if (entity is Actor)
-                Data.Actors.Remove((Actor)entity);
-            else if (entity is Trigger)
-                Data.Triggers.Remove((Trigger)entity);
-            else if (entity is UIElement)
-                Data.UIElements.Remove((UIElement)entity);
-            else if (entity is Decoration)
-                Data.Decorations.Remove((Decoration)entity);
+            else if (entity is Actor a)
+                Data.Actors.Remove(a);
+            else if (entity is Trigger t)
+                Data.Triggers.Remove(t);
+            else if (entity is UIElement u)
+                Data.UIElements.Remove(u);
+            else if (entity is Decoration d)
+                Data.Decorations.Remove(d);
 
             Engine.CurrentMap.Data.EntitiesByType[entity.GetType()].Remove(entity);
         }

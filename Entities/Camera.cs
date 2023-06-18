@@ -12,17 +12,29 @@ namespace Fiourp
         public bool FollowsPlayer;
         public bool Locked;
 
-        private Vector2 offset;
         private Timer moveTimer;
-        private Vector2 shakerInitPos;
-        public Vector2 Offset
+
+        private Vector2 inBoundsOffset;
+        public Vector2 InBoundsOffset
         {
-            get => offset;
+            get => inBoundsOffset;
             set
             {
-                if (value != offset)
+                if (value != inBoundsOffset)
                     hasChanged = true;
-                offset = value;
+                inBoundsOffset = value;
+            }
+        }
+
+        private Vector2 trueOffset;
+        public Vector2 TrueOffset
+        {
+            get => trueOffset;
+            set
+            {
+                if (value != trueOffset)
+                    hasChanged = true;
+                trueOffset = value;
             }
         }
 
@@ -102,7 +114,7 @@ namespace Fiourp
                 if (hasChanged)
                 {
                     hasChanged = false;
-                    return view = Matrix.CreateTranslation(new Vector3(-WholePos, 0.0f)) *
+                    return view = Matrix.CreateTranslation(new Vector3(-VectorHelper.Round(Pos + trueOffset), 0.0f)) *
                            Matrix.CreateScale(ZoomLevel) *
                            Matrix.CreateRotationZ(MathHelper.ToRadians(Rotation));
                 }
@@ -129,18 +141,16 @@ namespace Fiourp
 
             if (bounds != null)
                 SetBoundaries((Rectangle)bounds);
-
-            shakerInitPos = CenteredPos;
         }
         
         public override void Update()
         {
-            if (Engine.Player != null && FollowsPlayer && !Locked && (moveTimer == null || moveTimer.Value <= 0))
-                Follow(Engine.Player, 3, 3, StrictFollowBounds);
-
             base.Update();
-            /*Debug.LogUpdate(Input.MousePos);
-            Debug.LogUpdate(InBoundsPos(Input.MousePos));*/
+
+            if (Engine.Player != null && FollowsPlayer && !Locked && (moveTimer == null || moveTimer.Value <= 0))
+            {
+                Follow(Engine.Player, 3, 3, StrictFollowBounds);
+            }
         }
 
         public override void LateUpdate()
@@ -164,25 +174,25 @@ namespace Fiourp
             if (Math.Abs(amount.Y) >= 1)
                 MoveY(amount.Y, new System.Collections.Generic.List<Entity>(Engine.CurrentMap.Data.CameraSolids), null);
 
-            if (HasComponent<Shaker>())
+            /*if (HasComponent<Shaker>())
             {
                 //ExactPos = previous;
                 shakerInitPos += ExactPos - previous;
+            }*/
+
+            if (!Bounds.Contains(Pos) || !Bounds.Contains(Pos + Size)) {
+                CenteredPos = FollowedPos(actor, xSmooth, ySmooth, strictFollowBounds, Bounds);
+                hasChanged = true;
             }
 
             if (amount != Vector2.Zero)
                 hasChanged = true;
-
-            Debug.LogUpdate(shakerInitPos);
-            Debug.LogUpdate(CenteredPos);
-            Debug.LogUpdate("amount " + amount);
-
         }
 
         public Vector2 FollowedPos(Entity followed, float xSmooth, float ySmooth, Rectangle strictFollowBounds, Rectangle bounds)
         {
             strictFollowBounds.Location += CenteredPos.ToPoint();
-            Vector2 inBoundsActorPos = InBoundsPos(InBoundsPos(followed.Pos, bounds) + offset, bounds);
+            Vector2 inBoundsActorPos = InBoundsPos(InBoundsPos(followed.Pos, bounds) + inBoundsOffset, bounds);
 
             return new Vector2(
                 MathHelper.Lerp(CenteredPos.X, inBoundsActorPos.X, Engine.Deltatime * xSmooth),
@@ -195,11 +205,19 @@ namespace Fiourp
             Vector2 initPos = CenteredPos;
             Vector2 newPos = CenteredPos + offset;
             moveTimer = (Timer)AddComponent(new Timer(time, true, (t) =>
+            {
+                /*Vector2 amount = Vector2.Lerp(initPos, newPos, (easingFunction ?? Ease.None).Invoke(Ease.Reverse(t.Value / t.MaxValue))) - CenteredPos;
+                Debug.LogUpdate(amount);
+                W
+                Pos += amount;*/
+                CenteredPos = Vector2.Lerp(initPos, newPos, (easingFunction ?? Ease.None).Invoke(Ease.Reverse(t.Value / t.MaxValue)));
+            },
 
-                CenteredPos = Vector2.Lerp(initPos, newPos,
-                     (easingFunction ?? Ease.None).Invoke(Ease.Reverse(t.Value / t.MaxValue))),
-
-                () => { CenteredPos = newPos; moveTimer = null; }));
+                () =>
+                {
+                    CenteredPos = newPos;
+                    moveTimer = null;
+                }));
         }
 
         public void LightShake()
@@ -211,8 +229,7 @@ namespace Fiourp
             if(shaker == null || time > shaker.Time ||  intensity > shaker.Intensity)
             {
                 RemoveComponent(shaker);
-                shakerInitPos = CenteredPos;
-                AddComponent(new Shaker(time, intensity, () => shakerInitPos));
+                AddComponent(new Shaker(time, intensity, () => CenteredPos));
             }
         }
 
@@ -333,5 +350,16 @@ namespace Fiourp
 
         public Vector2 RenderTargetToWorldPosition(Vector2 position)
             => position + Engine.Cam.WorldToScreenPosition(position) * (Engine.Cam.RenderTargetScreenSizeCoef - 1);
+
+        public override bool CollidingConditions(Collider other)
+        {
+            if (other.ParentEntity is Solid s && !Engine.CurrentMap.Data.CameraSolids.Contains(s))
+                return false;
+
+            return base.CollidingConditions(other);
+        }
+
+        public override void Squish()
+        { }
     }
 }

@@ -165,7 +165,9 @@ namespace Fiourp
         public void DestroyOnUnload(Entity entity)
         {
             EntityData.Add(entity);
-            DontDestroyOnUnloadEntities.Remove(entity);
+
+            if(DontDestroyOnUnloadEntities.Contains(entity))
+                DontDestroyOnUnloadEntities.Remove(entity);
         }
         public void DontDestroyOnUnload(Entity entity)
         {
