@@ -17,21 +17,21 @@ namespace Fiourp
         private Random random;
         public int Seed;
 
-        protected override Texture2D TopRightTile { get => GetRandomTile(TopRight); }
-        protected override Texture2D TopLeftTile { get => GetRandomTile(TopLeft); }
-        protected override Texture2D BottomRightTile { get => GetRandomTile(BottomRight); }
-        protected override Texture2D BottomLeftTile { get => GetRandomTile(BottomLeft); }
-        protected override Texture2D TopTile { get => GetRandomTile(Top); }
-        protected override Texture2D LeftTile { get => GetRandomTile(Left); }
-        protected override Texture2D RightTile { get => GetRandomTile(Right); }
-        protected override Texture2D BottomTile { get => GetRandomTile(Bottom); }
-        protected override Texture2D FillTile { get => GetRandomTile(Fill); }
+        protected override Sprite TopRightTile { get => GetRandomTile(TopRight); }
+        protected override Sprite TopLeftTile { get => GetRandomTile(TopLeft); }
+        protected override Sprite BottomRightTile { get => GetRandomTile(BottomRight); }
+        protected override Sprite BottomLeftTile { get => GetRandomTile(BottomLeft); }
+        protected override Sprite TopTile { get => GetRandomTile(Top); }
+        protected override Sprite LeftTile { get => GetRandomTile(Left); }
+        protected override Sprite RightTile { get => GetRandomTile(Right); }
+        protected override Sprite BottomTile { get => GetRandomTile(Bottom); }
+        protected override Sprite FillTile { get => GetRandomTile(Fill); }
 
-        private Texture2D GetRandomTile(List<Texture2D> list)
+        private Sprite GetRandomTile(List<Texture2D> list)
         {
             if (list.Count == 0)
                 return null;
-            return list[random.Next(0, list.Count)];
+            return new Sprite(list[random.Next(0, list.Count)]);
         }
 
         public NineSliceRandom(int seed)
@@ -43,6 +43,11 @@ namespace Fiourp
         {
             random = new Random(Seed);
             base.Draw(sprite);
+        }
+
+        public override void Update()
+        {
+            
         }
     }
 }

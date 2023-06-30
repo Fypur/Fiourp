@@ -107,6 +107,9 @@ namespace Fiourp
 
         public override void Update()
         {
+            if (NineSliceSettings != null)
+                NineSliceSettings.Update();
+
             if (!animating)
                 return;
 

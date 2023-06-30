@@ -11,8 +11,8 @@ namespace Fiourp
     {
         public Decoration(Vector2 position, int width, int height, Sprite sprite) : base(position, width, height, sprite)
         {
-            Collider = null;
             RemoveComponent(Collider);
+            Collider = null;
         }
     }
 }

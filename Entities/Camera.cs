@@ -114,7 +114,7 @@ namespace Fiourp
                 if (hasChanged)
                 {
                     hasChanged = false;
-                    return view = Matrix.CreateTranslation(new Vector3(-VectorHelper.Round(Pos + trueOffset), 0.0f)) *
+                    return view = Matrix.CreateTranslation(new Vector3(-VectorHelper.Round(WholePos + trueOffset), 0.0f)) *
                            Matrix.CreateScale(ZoomLevel) *
                            Matrix.CreateRotationZ(MathHelper.ToRadians(Rotation));
                 }
@@ -166,12 +166,11 @@ namespace Fiourp
         public void Follow(Entity actor, float xSmooth, float ySmooth, Rectangle strictFollowBounds)
         {
             Vector2 amount = FollowedPos(actor, xSmooth, ySmooth, strictFollowBounds, Bounds) - CenteredPos;
-
             Vector2 previous = ExactPos;
 
-            if(Math.Abs(amount.X) >= 1)
+            if(Math.Abs(amount.X) >= 0.1f)
                 MoveX(amount.X, new System.Collections.Generic.List<Entity>(Engine.CurrentMap.Data.CameraSolids), null);
-            if (Math.Abs(amount.Y) >= 1)
+            if (Math.Abs(amount.Y) >= 0.1f)
                 MoveY(amount.Y, new System.Collections.Generic.List<Entity>(Engine.CurrentMap.Data.CameraSolids), null);
 
             /*if (HasComponent<Shaker>())

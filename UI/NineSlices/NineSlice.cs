@@ -10,20 +10,20 @@ namespace Fiourp
 {
     public abstract class NineSlice
     {
-        protected abstract Texture2D TopLeftTile { get; }
-        protected abstract Texture2D TopRightTile { get; }
-        protected abstract Texture2D BottomRightTile { get; }
-        protected abstract Texture2D BottomLeftTile { get; }
-        protected abstract Texture2D TopTile { get; }
-        protected abstract Texture2D LeftTile { get; }
-        protected abstract Texture2D RightTile { get; }
-        protected abstract Texture2D BottomTile { get; }
-        protected abstract Texture2D FillTile { get; }
+        protected abstract Sprite TopLeftTile { get; }
+        protected abstract Sprite TopRightTile { get; }
+        protected abstract Sprite BottomRightTile { get; }
+        protected abstract Sprite BottomLeftTile { get; }
+        protected abstract Sprite TopTile { get; }
+        protected abstract Sprite LeftTile { get; }
+        protected abstract Sprite RightTile { get; }
+        protected abstract Sprite BottomTile { get; }
+        protected abstract Sprite FillTile { get; }
 
         public bool Repeat;
 
         public override string ToString()
-            => $"Corners: {TopLeftTile.Name}, {TopRightTile.Name}, {BottomLeftTile.Name}, {BottomRightTile.Name}, Sides: {TopTile.Name}, {LeftTile.Name}, {RightTile.Name}, {BottomTile.Name}, Fill: {FillTile.Name}";
+            => $"Corners: {TopLeftTile.Texture.Name}, {TopRightTile.Texture.Name}, {BottomLeftTile.Texture.Name}, {BottomRightTile.Texture.Name}, Sides: {TopTile.Texture.Name}, {LeftTile.Texture.Name}, {RightTile.Texture.Name}, {BottomTile.Texture.Name}, Fill: {FillTile.Texture.Name}";
 
         public override int GetHashCode()
         {
@@ -39,6 +39,19 @@ namespace Fiourp
             hash.Add(FillTile);
             hash.Add(Repeat);
             return hash.ToHashCode();
+        }
+
+        public virtual void Update()
+        {
+            TopLeftTile?.Update();
+            TopRightTile?.Update();
+            BottomRightTile?.Update();
+            BottomLeftTile?.Update();
+            TopTile?.Update();
+            LeftTile?.Update();
+            RightTile?.Update();
+            BottomTile?.Update();
+            FillTile?.Update();
         }
 
         public virtual void Draw(Sprite sprite)
@@ -85,12 +98,12 @@ namespace Fiourp
 
             return;
 
-            static Point Size(Texture2D texture) => texture != null ? new Point(texture.Width, texture.Height) : Point.Zero;
+            static Point Size(Sprite texture) => texture != null ? new Point(texture.Width, texture.Height) : Point.Zero;
 
-            void DrawSlice(Texture2D texture, Vector2 position, Point size)
+            void DrawSlice(Sprite texture, Vector2 position, Point size)
             {
-                if (texture != null)
-                    Drawing.Draw(texture, position + sprite.Offset, size.ToVector2() * sprite.Scale, sprite.Color, sprite.Rotation, sprite.Origin, sprite.SpriteEffect, sprite.LayerDepth);
+                if(texture != null)
+                    Drawing.Draw(texture.Texture, position + sprite.Offset, size.ToVector2() * sprite.Scale, sprite.Color, sprite.Rotation, sprite.Origin, sprite.SpriteEffect, sprite.LayerDepth);
                 /*Drawing.Draw
             }Edge(new Rectangle(position.ToPoint(), size.ToPoint()), 1, new Color(){ R = 255, G = 255, B = 255, A = 50 });*/
             }

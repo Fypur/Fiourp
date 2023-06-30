@@ -100,9 +100,6 @@ namespace Fiourp
                             Vector2 projectedEdgePos1 = (edgePos1 - lightWorldPos).Normalized() * MaxLightSize * 2f + maxL / 2;
                             Vector2 projectedEdgePos2 = (edgePos2 - lightWorldPos).Normalized() * MaxLightSize * 2f + maxL / 2;
 
-
-                            //TODO: LINEBOX INTERSECTION TO FIND POS3 AND POS4
-
                             if (!TestIntersect(ref projectedEdgePos1, Vector2.Zero, maxL.OnlyX()))
                                 if (!TestIntersect(ref projectedEdgePos1, Vector2.Zero, maxL.OnlyY()))
                                     if (!TestIntersect(ref projectedEdgePos1, maxL.OnlyX(), maxL))

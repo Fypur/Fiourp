@@ -203,6 +203,7 @@ namespace Fiourp
         public void RemoveComponent(Component component)
         {
             Components.Remove(component);
+            component?.Removed();
 
             if (component is Renderer renderer)
                 Renderers.Remove(renderer);
