@@ -65,13 +65,11 @@ namespace Fiourp
                         else
                         {
                             OnTriggerEnter(entity);
-                            enteredEntities.Add(entity);
                         }
                     }
                     else if (enteredEntities.Contains(entity))
                     {
                         OnTriggerExit(entity);
-                        enteredEntities.Remove(entity);
                     }
                 }
             }
@@ -91,16 +89,16 @@ namespace Fiourp
         public bool Contains(Entity entity)
             => enteredEntities.Contains(entity);
 
-        public virtual void OnTriggerEnter(Entity entity) { OnTriggerEnterAction?.Invoke(entity); }
+        public virtual void OnTriggerEnter(Entity entity) { enteredEntities.Add(entity); OnTriggerEnterAction?.Invoke(entity); }
 
         public virtual void OnTriggerStay(Entity entity) { OnTriggerStayAction?.Invoke(entity); }
 
-        public virtual void OnTriggerExit(Entity entity) { OnTriggerExitAction?.Invoke(entity); }
+        public virtual void OnTriggerExit(Entity entity) { enteredEntities.Remove(entity); OnTriggerExitAction?.Invoke(entity); }
 
         public override void OnDestroy()
         {
-            foreach (Entity entity in enteredEntities)
-                OnTriggerExit(entity);
+            for(int i = enteredEntities.Count - 1; i >= 0; i--)
+                OnTriggerExit(enteredEntities[i]);
 
             base.OnDestroy();
         }

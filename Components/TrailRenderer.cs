@@ -9,15 +9,16 @@ namespace Fiourp
 {
     public class TrailRenderer : Renderer
     {
-        public static ParticleType Trail;
+        public ParticleType Trail;
 
         public Vector2 LocalPosition;
         public float VelocitySizeMultiplier;
 
         public Func<bool> Condition;
 
-        public TrailRenderer(Vector2 localPosition, float velocitySizeMultiplier)
+        public TrailRenderer(ParticleType trail, Vector2 localPosition, float velocitySizeMultiplier)
         {
+            Trail = trail;
             LocalPosition = localPosition;
             VelocitySizeMultiplier = velocitySizeMultiplier;
         }

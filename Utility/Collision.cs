@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Security.AccessControl;
 using System.Text;
 
 namespace Fiourp
@@ -89,6 +90,33 @@ namespace Fiourp
             }
 
             return null; // No collision
+        }
+
+        public static List<Vector2> LineBoxIntersection(BoxCollider b, Vector2 lineBegin, Vector2 lineEnd)
+        {
+            List<Vector2> intersection = new();
+
+            Vector2? left = LineIntersection(b.AbsolutePosition, b.AbsolutePosition + new Vector2(0, b.Height), lineBegin, lineEnd);
+            if (left != null) intersection.Add(left.Value);
+
+            Vector2? top = LineIntersection(b.AbsolutePosition, b.AbsolutePosition + new Vector2(b.Width, 0), lineBegin, lineEnd);
+            if (top != null) intersection.Add(top.Value);
+
+            Vector2? right = LineIntersection(b.AbsolutePosition + new Vector2(b.Width, 0), b.AbsolutePosition + new Vector2(b.Width, b.Height), lineBegin, lineEnd);
+            if (right != null) intersection.Add(right.Value);
+
+            Vector2? bottom = LineIntersection(b.AbsolutePosition + new Vector2(0, b.Height), b.AbsolutePosition + new Vector2(b.Width, b.Height), lineBegin, lineEnd);
+            if (bottom != null) intersection.Add(bottom.Value);
+
+            return intersection;
+        }
+
+        public static bool LineBoxCollision(BoxCollider b, Vector2 lineBegin, Vector2 lineEnd)
+        {
+            if (b.Collide(lineBegin) && b.Collide(lineEnd))
+                return true;
+
+            return LineBoxIntersection(b, lineBegin, lineEnd).Count != 0;
         }
 
         public static Vector2[] LineCircleIntersection(Vector2 lineBegin, Vector2 lineEnd, Vector2 circleCenter, float circleRadius)

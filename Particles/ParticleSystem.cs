@@ -61,6 +61,15 @@ namespace Fiourp
             }
         }
 
+        public void Emit(ParticleType particle, Vector2 lineBegin, Vector2 lineEnd, int amount, float direction)
+        {
+            for (int i = 0; i < amount; i++)
+            {
+                Vector2 position = lineBegin + (lineEnd - lineBegin) * Rand.NextDouble();
+                Particles.Add(particle.Create(null, position, direction));
+            }
+        }
+
         public void Emit(ParticleType particle, int amount, Rectangle rectangle, Entity followed, float direction, Color color)
         {
             for (int i = 0; i < amount; i++)
@@ -80,6 +89,15 @@ namespace Fiourp
         {
             for (int i = 0; i < amount; i++)
                 Particles.Add(particle.Create(followed, position));
+        }
+
+        public void Emit(ParticleType particle, Rectangle rectangle, Entity followed, int amount = 1)
+        {
+            for (int i = 0; i < amount; i++)
+            {
+                Vector2 position = new Vector2(Rand.NextFloat(rectangle.X, rectangle.Right - particle.Size / 2), Rand.NextFloat(rectangle.Y, rectangle.Bottom - particle.Size / 2));
+                Particles.Add(particle.Create(followed, position));
+            }
         }
 
         public void Update()

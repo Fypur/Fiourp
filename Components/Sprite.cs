@@ -146,7 +146,6 @@ namespace Fiourp
                         else
                         {
                             Play(CurrentAnimation.GoTo);
-                            OnChange?.Invoke();
                         }
                     }
                     //Ended
@@ -167,9 +166,7 @@ namespace Fiourp
         public override void Render()
         {
             if(NineSliceSettings != null)
-            {
                 NineSliceSettings.Draw(this);
-            }
 
             if (Texture == null)
                 return;
@@ -222,6 +219,9 @@ namespace Fiourp
             if (!animations.ContainsKey(id))
                 throw new Exception("No Animation defined for Id " + id);
 #endif
+            if (CurrentAnimation != null && CurrentAnimation.Frames != animations[id].Frames)
+                OnChange?.Invoke();
+
             CurrentAnimation = animations[id];
             Texture = CurrentAnimation.Frames[0];
             CurrentFrame = 0;
@@ -323,7 +323,7 @@ namespace Fiourp
                         Array.Fill(delays, delay);
                     }
                     else
-                        delays = DataManager.GetAnimationDelays(path + animPath);
+                        delays = DataManager.GetAnimationDelays(path + '/' + animPath);
                     
 
                     if (anim.Name == "Anim")

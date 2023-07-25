@@ -35,7 +35,7 @@ namespace Fiourp
                 stateUpdate.Item2?.Invoke();
         }
 
-        public void RegisterStateFunctions(T state, Action onEnter, Action update, Action onExit)
+        public void SetStateFunctions(T state, Action onEnter, Action update, Action onExit)
         {
             if (stateFuncs.ContainsKey(state))
                 stateFuncs[state] = Tuple.Create(onEnter, update, onExit);

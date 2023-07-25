@@ -151,6 +151,9 @@ namespace Fiourp
             {
                 Follow(Engine.Player, 3, 3, StrictFollowBounds);
             }
+
+            if (Input.GetKeyDown(Microsoft.Xna.Framework.Input.Keys.F))
+                InBoundsOffset = Vector2.Zero;
         }
 
         public override void LateUpdate()

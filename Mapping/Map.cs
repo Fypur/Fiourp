@@ -119,7 +119,6 @@ namespace Fiourp
         {
             Data.Entities.Add(entity);
 
-            entity.Awake();
             if(entity is Platform p)
             {
                 Data.Platforms.Add(p);
@@ -141,6 +140,7 @@ namespace Fiourp
             else
                 Engine.CurrentMap.Data.EntitiesByType[type].Add(entity);
 
+            entity.Awake();
             return entity;
         }
 
@@ -149,8 +149,6 @@ namespace Fiourp
             for(int i = entity.Components.Count - 1; i >= 0; i--)
                 if(i < entity.Components.Count)
                     entity.Components[i].Destroy();
-
-            entity.OnDestroy();
 
             Data.Entities.Remove(entity);
 
@@ -174,6 +172,7 @@ namespace Fiourp
                 Data.Decorations.Remove(d);
 
             Engine.CurrentMap.Data.EntitiesByType[entity.GetType()].Remove(entity);
+            entity.OnDestroy();
         }
     }
 }

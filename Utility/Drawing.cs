@@ -281,6 +281,7 @@ namespace Fiourp
         {
             spriteBatch.End();
             /*spriteBatch.Begin(spriteBatch.GetSpriteSortMode(), spriteBatch.GetBlendState(), spriteBatch.GetSamplerState(), spriteBatch.GetDepthStencilState(), spriteBatch.GetRasterizerState(), pixelShader, spriteBatch.GetSpriteEffect().TransformMatrix);*/
+            effect = pixelShader;
             spriteBatch.Begin(sortMode, blendState, samplerState, depthStencilState, rasterizerState, pixelShader, transformMatrix);
         }
 
@@ -353,7 +354,7 @@ namespace Fiourp
         private static void Flush()
         {
             if (!hasStartedBatching)
-                throw new Exception("Batching has not started");
+                throw new Exception("Batching has not started");    
 
             if (shapesCount <= 0)
                 return;

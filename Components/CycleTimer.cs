@@ -21,26 +21,24 @@ namespace Fiourp
             OnUpdate = updateAction;
             OnCycle = onCycle;
 
-            timer = new Timer(time, true, (timer) => OnUpdate?.Invoke(timer), () => { onCycle?.Invoke(0); RestartTimer(); });
+            timer = new Timer(time, false, (timer) => OnUpdate?.Invoke(timer), () => { onCycle?.Invoke(0); RestartTimer(); });
             NumCycles = numberOfCycles;
         }
-
-        public override void Added()
-        {
-            base.Added();
-
-            ParentEntity.AddComponent(timer);
-        }
-
         private void RestartTimer()
         {
             if (NumCycles == null || cycle < NumCycles)
             {
                 cycle++;
-                timer = new Timer(timer.MaxValue, true, (timer) => OnUpdate?.Invoke(timer), () => { OnCycle?.Invoke(cycle); RestartTimer(); });
+                timer = new Timer(timer.MaxValue, false, (timer) => OnUpdate?.Invoke(timer), () => { OnCycle?.Invoke(cycle); RestartTimer(); });
             }
             else
                 ParentEntity.RemoveComponent(this);
+        }
+
+        public override void Update()
+        {
+            base.Update();
+            timer.Update();
         }
     }
 }

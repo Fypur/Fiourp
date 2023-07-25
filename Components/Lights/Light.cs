@@ -9,6 +9,7 @@ namespace Fiourp
 {
     public abstract class Light : Renderer
     {
+        public static List<Light> AllLights = new();
         public Vector2 LocalPosition;
         public Vector2 WorldPosition => ParentEntity.Pos + LocalPosition;
 
@@ -59,6 +60,18 @@ namespace Fiourp
         public void StopBlink()
         {
             ParentEntity.RemoveComponent(blinkTimer);
+        }
+
+        public override void Added()
+        {
+            base.Added();
+            AllLights.Add(this);
+        }
+
+        public override void Removed()
+        {
+            base.Removed();
+            AllLights.Remove(this);
         }
     }
 }

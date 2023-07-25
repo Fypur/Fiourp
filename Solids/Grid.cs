@@ -28,6 +28,9 @@ namespace Fiourp
         {
             base.Render();
 
+            if (Drawing.GetCurrentPixelShader() != null)
+                Drawing.SwitchPixelShader(null);
+
             var gridCol = Collider;
             Vector2 startPos = (Engine.Cam.Pos - Pos) / gridCol.GridSize;
 

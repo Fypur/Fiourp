@@ -157,7 +157,7 @@ namespace Fiourp
             if(Hit)
                 EndPoint = begin + Vector2.Normalize(direction) * travelledDistance;
             else
-                EndPoint = begin + Vector2.Normalize(direction) * length;
+                EndPoint = end;
 
             #endregion
         }

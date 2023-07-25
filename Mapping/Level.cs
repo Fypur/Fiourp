@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework.Graphics;
+using System.Security.Principal;
 
 namespace Fiourp
 {
@@ -15,6 +16,8 @@ namespace Fiourp
         public readonly Vector2 Pos;
 
         public readonly Vector2 Size;
+        public int Width => (int)Size.X;
+        public int Height => (int)Size.Y;
         public readonly int[,] Organisation;
         public readonly Vector2[] Corners;
         public readonly Vector2[] InsideCorners;

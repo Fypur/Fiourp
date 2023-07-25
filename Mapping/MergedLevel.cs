@@ -45,7 +45,7 @@ namespace Fiourp
                 enterAction += level.EnterAction;
             }
 
-            int[,] organisation = new int[(int)size.Y / levelsMerged[0].TileHeight, (int)size.X / levelsMerged[0].TileWidth];
+            int[,] organisation = new int[(int)Math.Ceiling(size.Y / levelsMerged[0].TileHeight), (int)Math.Ceiling(size.X / levelsMerged[0].TileWidth)];
 
             foreach (Level level in levelsMerged)
             {

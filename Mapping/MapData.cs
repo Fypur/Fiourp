@@ -29,7 +29,7 @@ namespace Fiourp
         public T GetEntity<T>() where T : Entity
         {
             EntitiesByType.TryGetValue(typeof(T), out List<Entity> entities);
-            if (entities == null)
+            if (entities == null || entities.Count == 0)
                 return null;
             return (T)entities[0];
         }
