@@ -151,29 +151,27 @@ namespace Fiourp
                 Vector2 coord1 = edge[0];
                 Vector2 coord2 = edge[1];
 
-                if (Vector2.DistanceSquared(middle, coord1) > sqrdMaxedDist && Vector2.DistanceSquared(middle, coord2) > sqrdMaxedDist)
-                    continue;
+                /*if (Vector2.DistanceSquared(middle, coord1) > sqrdMaxedDist && Vector2.DistanceSquared(middle, coord2) > sqrdMaxedDist)
+                    continue;*/ //Doesn't work cuz edge points could be out while intersection is inside
 
                 //Debug.PointUpdate(Color.Blue, coord1, coord2);
                 Vector2[] collPoints = Collision.LineCircleIntersection(coord1, coord2, middle, distance);
+
                 foreach (Vector2 p in collPoints)
                 {
-                    if (points.Contains(p))
+                    float d = Vector2.DistanceSquared(middle, p);
+
+                    if (d > distance * distance + 1 || points.Contains(p))
                         continue;
 
                     //Raycast bestRay = Raycast.FiveRays(middle, p, false, true, 0.001f);
 
-                    Raycast r = new Raycast(Raycast.RayTypes.MapTiles, middle, p, true);
-                    if (r.Hit)
-                    {
-                        r.Hit = Vector2.DistanceSquared(r.EndPoint, p) > 1.1f;
-                        //Debug.LogUpdate(r.Hit);
-                    }
-                    //Debug.PointUpdate(Color.Green, collPoints);
 
-                    if (!r.Hit)
+                    Raycast r = new Raycast(Raycast.RayTypes.MapTiles, middle, p, true);
+                    if (!r.Hit || Vector2.DistanceSquared(r.EndPoint, p) < 1.1f)
                     {
-                        distancesSquared[p] = Vector2.DistanceSquared(middle, p);
+
+                        distancesSquared[p] = d;
                         points.Add(p);
                     }
                 }
@@ -331,8 +329,8 @@ namespace Fiourp
                 polygon[i] = point;
             }
 
-            //Debug
-
+            
+#if DEBUG
             if (Debug.DebugMode)
             {
                 for (int i = 0; i < polygon.Length; i++)
@@ -346,6 +344,7 @@ namespace Fiourp
                     }
                 }
             }
+#endif
 
             return polygon;
         }

@@ -88,8 +88,9 @@ namespace Fiourp
             }
             else if (stack != null && stack.Count > 0)
                 Enumerator = stack.Pop();
-            else
+            else if (ParentEntity != null)
                 Destroy();
+            else Enumerator = null;
         }
 
         public static IEnumerator WaitFrames(float frames)

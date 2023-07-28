@@ -9,9 +9,11 @@ namespace Fiourp
 {
     public class ParticleSystem
     {
+        private static int maxParticles = 3000;
         public float LayerDepth = 0;
 
-        public List<Particle> Particles = new();
+        private int index = 0;
+        public Particle[] Particles = new Particle[maxParticles];
 
         public ParticleSystem()
         { }
@@ -38,18 +40,30 @@ namespace Fiourp
         }*/
 
         public void Emit(Particle particle)
-            => Particles.Add(particle);
+        {
+            Particles[index] = particle;
+            index++;
+
+            /*{
+                maxParticles = 3000;
+                Particles = new Particle[maxParticles];
+            }*/
+            
+
+            if (index >= maxParticles)
+                index = 0;
+        }
 
         public void Emit(Particle particle, int amount)
         {
             for (int i = 0; i < amount; i++)
-                Particles.Add(particle);
+                Emit(particle);
         }
 
         public void Emit(ParticleType particle, int amount, Vector2 position, Entity followed, float direction, Color color)
         {
             for(int i = 0; i < amount; i++)
-                Particles.Add(particle.Create(followed, position, direction, color));
+                Emit(particle.Create(followed, position, direction, color));
         }
 
         public void Emit(ParticleType particle, Rectangle rectangle, int amount)
@@ -57,7 +71,7 @@ namespace Fiourp
             for (int i = 0; i < amount; i++)
             {
                 Vector2 position = new Vector2(Rand.NextFloat(rectangle.X, rectangle.Right - particle.Size / 2), Rand.NextFloat(rectangle.Y, rectangle.Bottom - particle.Size / 2));
-                Particles.Add(particle.Create(position));
+                Emit(particle.Create(position));
             }
         }
 
@@ -66,7 +80,7 @@ namespace Fiourp
             for (int i = 0; i < amount; i++)
             {
                 Vector2 position = lineBegin + (lineEnd - lineBegin) * Rand.NextDouble();
-                Particles.Add(particle.Create(null, position, direction));
+                Emit(particle.Create(null, position, direction));
             }
         }
 
@@ -75,20 +89,20 @@ namespace Fiourp
             for (int i = 0; i < amount; i++)
             {
                 Vector2 position = new Vector2(Rand.NextFloat(rectangle.X, rectangle.Right - particle.Size / 2), Rand.NextFloat(rectangle.Y, rectangle.Bottom - particle.Size / 2));
-                Particles.Add(particle.Create(followed, position, direction, color));
+                Emit(particle.Create(followed, position, direction, color));
             }
         }
 
         public void Emit(ParticleType particle, Vector2 position, int amount = 1)
         {
             for (int i = 0; i < amount; i++)
-                Particles.Add(particle.Create(position));
+                Emit(particle.Create(position));
         }
 
         public void Emit(ParticleType particle, Vector2 position, Entity followed, int amount = 1)
         {
             for (int i = 0; i < amount; i++)
-                Particles.Add(particle.Create(followed, position));
+                Emit(particle.Create(followed, position));
         }
 
         public void Emit(ParticleType particle, Rectangle rectangle, Entity followed, int amount = 1)
@@ -96,23 +110,23 @@ namespace Fiourp
             for (int i = 0; i < amount; i++)
             {
                 Vector2 position = new Vector2(Rand.NextFloat(rectangle.X, rectangle.Right - particle.Size / 2), Rand.NextFloat(rectangle.Y, rectangle.Bottom - particle.Size / 2));
-                Particles.Add(particle.Create(followed, position));
+                Emit(particle.Create(followed, position));
             }
         }
 
         public void Update()
         {
-            for (int i = Particles.Count - 1; i >= 0; i--)
-                if (Particles[i].Active)
+            for (int i = Particles.Length - 1; i >= 0; i--)
+                if (Particles[i] != null && Particles[i].Active)
                     Particles[i].Update();
                 else
-                    Particles.RemoveAt(i);
+                    Particles[i] = null;
         }
 
         public void Render()
         {
             foreach(Particle particle in Particles)
-                if(particle.Active)
+                if(particle != null && particle.Visible)
                     particle.Render();
         }
     }

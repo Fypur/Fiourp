@@ -35,38 +35,41 @@ namespace Fiourp
                 }
             }
 
-            bool mouseIn = Bounds.Contains(Input.ScreenMousePos);
+            if (Selectable)
+            {
+                bool mouseIn = Bounds.Contains(Input.ScreenMousePos);
 
-            if (!hovered && mouseIn)
-            {
-                hovered = true;
-                OnHover();
-            }
-            else if(hovered && !mouseIn)
-            {
-                hovered = false;
-                OnLeaveHover();
-                if (pressed)
+                if (!hovered && mouseIn)
                 {
+                    hovered = true;
+                    OnHover();
+                }
+                else if (hovered && !mouseIn)
+                {
+                    hovered = false;
+                    OnLeaveHover();
+                    if (pressed)
+                    {
+                        pressed = false;
+                        OnLeaveHold();
+                    }
+                }
+
+                if (Input.GetMouseButtonDown(MouseButton.Left) && mouseIn)
+                {
+                    pressed = true;
+                    OnHold();
+                }
+                else if (pressed && Input.GetMouseButtonUp(MouseButton.Left))
+                {
+                    if (mouseIn)
+                    {
+                        OnClick();
+                    }
+
                     pressed = false;
                     OnLeaveHold();
                 }
-            }
-
-            if (Input.GetMouseButtonDown(MouseButton.Left) && mouseIn)
-            {
-                pressed = true;
-                OnHold();
-            }
-            else if (pressed && Input.GetMouseButtonUp(MouseButton.Left))
-            {
-                if (mouseIn)
-                {
-                    OnClick();
-                }
-
-                pressed = false;
-                OnLeaveHold();
             }
         }
 

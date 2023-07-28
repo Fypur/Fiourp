@@ -129,7 +129,8 @@ namespace Fiourp
 
                 while (move != 0)
                 {
-                    if (!Collider.CollideAt(new List<Entity>(Engine.CurrentMap.Data.Solids), Pos + new Vector2(finalX + sign, 0), out Entity other))
+                    //if (!Collider.CollideAt(new List<Entity>(Engine.CurrentMap.Data.Solids), Pos + new Vector2(finalX + sign, 0), out Entity other))
+                    if (!Collider.CollideAt(new List<Entity>(Engine.CurrentMap.Data.Platforms), Pos + new Vector2(finalX + sign, 0), out Entity other))
                     {
                         finalX += sign;
                         move -= sign;
@@ -160,7 +161,8 @@ namespace Fiourp
 
                 while (move != 0)
                 {
-                    if (!Collider.CollideAt(new List<Entity>(Engine.CurrentMap.Data.Solids), Pos + new Vector2(0, finalY + sign), out Entity other))
+                    //if (!Collider.CollideAt(new List<Entity>(Engine.CurrentMap.Data.Solids), Pos + new Vector2(0, finalY + sign), out Entity other))
+                    if (!Collider.CollideAt(new List<Entity>(Engine.CurrentMap.Data.Platforms), Pos + new Vector2(0, finalY + sign), out Entity other))
                     {
                         finalY += sign;
                         move -= sign;

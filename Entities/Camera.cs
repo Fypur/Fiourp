@@ -6,7 +6,7 @@ namespace Fiourp
     public class Camera : Actor
     {
         public new Rectangle Bounds = Rectangle.Empty;
-        public static Rectangle StrictFollowBounds = new Rectangle(new Vector2(-Engine.ScreenSize.X / 6, -Engine.ScreenSize.Y / 12).ToPoint(), new Vector2(Engine.ScreenSize.X / 3, Engine.ScreenSize.Y / 6).ToPoint());
+        public Rectangle StrictFollowBounds = new Rectangle(new Vector2(-Engine.ScreenSize.X / 6, -Engine.ScreenSize.Y / 12).ToPoint(), new Vector2(Engine.ScreenSize.X / 3, Engine.ScreenSize.Y / 6).ToPoint());
 
         private bool hasChanged;
         public bool FollowsPlayer;
@@ -151,9 +151,6 @@ namespace Fiourp
             {
                 Follow(Engine.Player, 3, 3, StrictFollowBounds);
             }
-
-            if (Input.GetKeyDown(Microsoft.Xna.Framework.Input.Keys.F))
-                InBoundsOffset = Vector2.Zero;
         }
 
         public override void LateUpdate()
@@ -182,7 +179,7 @@ namespace Fiourp
                 shakerInitPos += ExactPos - previous;
             }*/
 
-            if (!Bounds.Contains(Pos) || !Bounds.Contains(Pos + Size)) {
+            if (!Bounds.Contains(WholePos + Vector2.One) || !Bounds.Contains(WholePos + Size - Vector2.One)) {
                 CenteredPos = FollowedPos(actor, xSmooth, ySmooth, strictFollowBounds, Bounds);
                 hasChanged = true;
             }
