@@ -130,7 +130,7 @@ namespace Fiourp
 
             float delta = b * b - 4 * a * c;
 
-            if (delta < 0)
+            if (delta < 0.0001f)
                 return new Vector2[0];
 
             delta = (float)Math.Sqrt(delta);

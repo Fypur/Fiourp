@@ -161,16 +161,14 @@ namespace Fiourp
                 {
                     float d = Vector2.DistanceSquared(middle, p);
 
-                    if (d > distance * distance + 1 || points.Contains(p))
+                    if (d > distance * distance + 0.1f || points.Contains(p))
                         continue;
 
                     //Raycast bestRay = Raycast.FiveRays(middle, p, false, true, 0.001f);
-
-
                     Raycast r = new Raycast(Raycast.RayTypes.MapTiles, middle, p, true);
+
                     if (!r.Hit || Vector2.DistanceSquared(r.EndPoint, p) < 1.1f)
                     {
-
                         distancesSquared[p] = d;
                         points.Add(p);
                     }
