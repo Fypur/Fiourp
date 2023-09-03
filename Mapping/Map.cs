@@ -144,6 +144,38 @@ namespace Fiourp
             return entity;
         }
 
+        public void Instantiate(IList<Entity> entities)
+        {
+            foreach(Entity entity in entities)
+            {
+                Data.Entities.Add(entity);
+
+                if (entity is Platform p)
+                {
+                    Data.Platforms.Add(p);
+                    if (entity is Solid s)
+                        Data.Solids.Add(s);
+                }
+                else if (entity is Actor a)
+                    Data.Actors.Add(a);
+                else if (entity is Trigger t)
+                    Data.Triggers.Add(t);
+                else if (entity is UIElement u)
+                    Data.UIElements.Add(u);
+                else if (entity is Decoration d)
+                    Data.Decorations.Add(d);
+
+                Type type = entity.GetType();
+                if (!Engine.CurrentMap.Data.EntitiesByType.ContainsKey(type))
+                    Engine.CurrentMap.Data.EntitiesByType.Add(type, new List<Entity>() { entity });
+                else
+                    Engine.CurrentMap.Data.EntitiesByType[type].Add(entity);
+            }
+
+            for (int i = entities.Count - 1; i >= 0; i--)
+                entities[i].Awake();
+        }
+
         public void Destroy(Entity entity)
         {
             for(int i = entity.Components.Count - 1; i >= 0; i--)

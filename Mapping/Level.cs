@@ -67,10 +67,7 @@ namespace Fiourp
                 }
             }
 
-            foreach (Entity e in EntityData)
-            {
-                ParentMap.Instantiate(e);
-            }
+            ParentMap.Instantiate(EntityData);
         }
 
         /// <summary>
@@ -81,10 +78,7 @@ namespace Fiourp
             Engine.CurrentMap.CurrentLevel = this;
             EnterAction?.Invoke();
 
-            for(int i = EntityData.Count - 1; i >= 0; i--)
-            {
-                ParentMap.Instantiate(EntityData[i]);
-            }
+            ParentMap.Instantiate(EntityData);
         }
 
         public void Unload()

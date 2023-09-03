@@ -313,6 +313,9 @@ namespace Fiourp
 
                     Texture2D[] textures = DataManager.LoadAllGraphicsWithName(animPath, path);
 
+                    for(int i = 1; i < textures.Length + 1; i++)
+                        textures[i - 1].Name = id + i.ToString();
+
                     string d = anim.GetAttribute("delay");
                     
                     float[] delays = new float[textures.Length];
