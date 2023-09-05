@@ -47,6 +47,9 @@ namespace Fiourp
             if(!((Input.UIAction1.IsDown() || Input.GetKeyDown(Microsoft.Xna.Framework.Input.Keys.Enter))) && !recording)
                 base.Update();
 
+            if (Parent is SubMenu s && s.CanBack)
+                s.CanBack = !recording;
+
             List<Control> mod = new List<Control>(KbMouseControls.Controls);
             mod.AddRange(GamepadControls);
             Modified.Controls = mod;
@@ -93,6 +96,10 @@ namespace Fiourp
             {
                 recording = false;
                 Sprite.Color = Color.White;
+
+                if (Parent is SubMenu sub)
+                    sub.CanBack = true;
+
                 return;
             }
 
@@ -111,6 +118,9 @@ namespace Fiourp
                 FieldTextBox.Color = new Color(255, 255, 120);
                 valueTextBox.Color = new Color(255, 255, 120);
             }
+
+            if (Parent is SubMenu s)
+                s.CanBack = true;
 
             if (Controls.Contains(pressedControls[0]))
                 return;

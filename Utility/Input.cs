@@ -161,9 +161,9 @@ namespace Fiourp
 
     public struct Control
     {
-        public Keys? Key;
-        public MouseButton? MouseButton;
-        public Buttons? ControllerButton;
+        public Keys? Key { get; set; }
+        public MouseButton? MouseButton { get; set; }
+        public Buttons? ControllerButton { get; set; }
         public object Value 
         {
             get

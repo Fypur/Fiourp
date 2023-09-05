@@ -12,6 +12,7 @@ namespace Fiourp
     {
         public bool Vertical;
         public bool SelectElementOnOpen = true;
+        public bool CanBack = true;
 
         public SubMenu(Vector2 position, int width, int height, bool vertical) : base(position, width, height, null)
         {
@@ -26,7 +27,7 @@ namespace Fiourp
             if(!Active || !Visible)
                 return;
 
-            if (Input.UIActionBack.IsDown())
+            if (Input.UIActionBack.IsDown() && CanBack)
                 OnBack();
         }
 
