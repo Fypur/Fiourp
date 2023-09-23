@@ -15,8 +15,9 @@ namespace Fiourp
         private FMOD.ATTRIBUTES_3D attributes;
 
         private string eventName;
+        private bool autoRemove;
 
-        public Sound3D(string eventName)
+        public Sound3D(string eventName, bool autoRemove = false)
         {
             Sound = Audio.PlayEvent(eventName);
             this.eventName = eventName;
@@ -26,6 +27,8 @@ namespace Fiourp
                 forward = Vector2.UnitX.ToFMODVector(),
                 up = (-Vector2.UnitY).ToFMODVector(),
             };
+
+            this.autoRemove = autoRemove;
         }
 
         public override void Added()
@@ -42,6 +45,11 @@ namespace Fiourp
 
             attributes.position = (ParentEntity.MiddlePos - Engine.Cam.MiddlePos).ToFMODVector();
             Sound.set3DAttributes(attributes);
+
+            Sound.getPlaybackState(out var state);
+
+            if(autoRemove && state == PLAYBACK_STATE.STOPPED)
+                ParentEntity.RemoveComponent(this);
         }
 
         public override void Removed()
