@@ -199,7 +199,7 @@ namespace Fiourp
                     Engine.Deltatime * ySmooth * (strictFollowBounds.Contains(followed.Pos) ? 1 : 2.5f)));
         }
 
-        public void Move(Vector2 offset, float time, Func<float, float> easingFunction = null)
+        public void Move(Vector2 offset, float time, Func<float, float> easingFunction = null, Func<bool> stop = null)
         {
             Vector2 initPos = CenteredPos;
             Vector2 newPos = CenteredPos + offset;
@@ -209,7 +209,13 @@ namespace Fiourp
                 Debug.LogUpdate(amount);
                 W
                 Pos += amount;*/
+                if (stop != null && stop.Invoke())
+                {
+                    RemoveComponent(t);
+                    return;
+                }
                 CenteredPos = Vector2.Lerp(initPos, newPos, (easingFunction ?? Ease.None).Invoke(Ease.Reverse(t.Value / t.MaxValue)));
+
             },
 
                 () =>
