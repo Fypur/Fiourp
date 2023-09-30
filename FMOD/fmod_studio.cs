@@ -15,7 +15,12 @@ namespace FMOD.Studio
 {
     public partial class STUDIO_VERSION
     {
-        public const string dll     = "FMOD/64/fmodstudio";
+#if X64
+        public const string dll = "FMOD/64/fmodstudio";
+#endif
+#if X32
+        public const string dll    = "FMOD/32/fmodstudio";
+#endif
     }
 
     public enum STOP_MODE : int
