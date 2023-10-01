@@ -98,6 +98,15 @@ namespace Fiourp
             return volume;
         }
 
+        public static Bus GetBus(string groupID)
+        {
+            RESULT result = system.getBus("bus:/" + groupID, out Bus bus);
+            if (result != RESULT.OK)
+                throw new Exception("help + " + result);
+
+            return bus;
+        }
+
         public static void SetMasterVolume(float volume)
         {
             RESULT result = system.getBus("bus:/", out Bus bus);
