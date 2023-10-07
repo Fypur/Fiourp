@@ -172,7 +172,9 @@ namespace Fiourp
 
         public virtual void OnDestroy()
         {
-            for(int i = Children.Count - 1; i >= 0; i--)
+            for (int i = Components.Count - 1; i >= 0; i--)
+                Components[i].Removed();
+            for (int i = Children.Count - 1; i >= 0; i--)
                 Children[i].OnDestroy();
         }
 

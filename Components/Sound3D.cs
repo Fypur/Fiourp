@@ -55,7 +55,6 @@ namespace Fiourp
         public override void Removed()
         {
             base.Removed();
-
             Audio.StopEvent(Sound);
         }
 

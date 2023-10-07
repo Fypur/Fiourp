@@ -58,9 +58,9 @@ namespace Fiourp
 
         public static void UpdateOldState()
         {
-            kbPreviousState = Keyboard.GetState();
-            previousMouseState = Mouse.GetState();
-            previousGamePadState = GamePad.GetState(0);
+            kbPreviousState = kbState;
+            previousMouseState = mouseState;
+            previousGamePadState = gamePadState;
         }
 
         public static List<Control> GetPressedControls()
