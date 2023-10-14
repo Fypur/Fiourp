@@ -29,7 +29,7 @@ namespace Fiourp
 
         public static ControlList LeftControls = new ControlList(Keys.Left, Keys.A, Keys.Q, Buttons.LeftThumbstickLeft);
         public static ControlList RightControls = new ControlList(Keys.Right, Keys.D, Buttons.LeftThumbstickRight);
-        public static ControlList UpControls = new ControlList(Keys.Up, Keys.Z, Buttons.LeftThumbstickUp);
+        public static ControlList UpControls = new ControlList(Keys.Up, Keys.W, Buttons.LeftThumbstickUp);
         public static ControlList DownControls = new ControlList(Keys.Down, Keys.S, Buttons.LeftThumbstickDown);
 
         public static ControlList UIAction1 = new ControlList(Keys.Enter, Buttons.A, Keys.C, Keys.Space, Keys.I);
