@@ -27,10 +27,10 @@ namespace Fiourp
         public static Vector2 MousePos { get => Engine.Cam.ScreenToWorldPosition(Engine.Cam.ScreenToRenderTargetPosition(mouseState.Position.ToVector2())); }
         public static Vector2 MousePosNoRenderTarget { get => MousePos * Engine.Cam.RenderTargetScreenSizeCoef; }
 
-        public static ControlList LeftControls = new ControlList(Keys.Left, Keys.A, Keys.Q, Buttons.LeftThumbstickLeft);
-        public static ControlList RightControls = new ControlList(Keys.Right, Keys.D, Buttons.LeftThumbstickRight);
-        public static ControlList UpControls = new ControlList(Keys.Up, Keys.W, Buttons.LeftThumbstickUp);
-        public static ControlList DownControls = new ControlList(Keys.Down, Keys.S, Buttons.LeftThumbstickDown);
+        public static ControlList LeftControls = new ControlList(Keys.Left, Keys.A, Keys.Q, Buttons.LeftThumbstickLeft, Buttons.DPadLeft);
+        public static ControlList RightControls = new ControlList(Keys.Right, Keys.D, Buttons.LeftThumbstickRight, Buttons.DPadRight);
+        public static ControlList UpControls = new ControlList(Keys.Up, Keys.W, Buttons.LeftThumbstickUp, Buttons.DPadUp);
+        public static ControlList DownControls = new ControlList(Keys.Down, Keys.S, Buttons.LeftThumbstickDown, Buttons.DPadDown);
 
         public static ControlList UIAction1 = new ControlList(Keys.Enter, Buttons.A, Keys.C, Keys.Space, Keys.I);
         public static ControlList UIActionBack = new ControlList(Keys.Escape, Buttons.B, Keys.X, Keys.O);

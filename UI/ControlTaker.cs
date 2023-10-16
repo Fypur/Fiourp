@@ -27,8 +27,9 @@ namespace Fiourp
         {
             TextColor = textColor;
 
-            FieldTextBox = (TextBox)AddChild(new TextBox(fieldName, fontID, Pos, width / 2, height, fontSize, TextColor, false, TextBox.Alignement.Left));
-            valueTextBox = (TextBox)AddChild(new TextBox(modified.GetAllControlNames(), fontID, Pos + HalfSize.OnlyX(), width / 2, height, fontSize, TextColor, false, TextBox.Alignement.Right));
+            FieldTextBox = (TextBox)AddChild(new TextBox(fieldName, fontID, Pos, width / 4, height, fontSize, TextColor, false, TextBox.Alignement.Left));
+            int w = 3 * width / 4;
+            valueTextBox = (TextBox)AddChild(new TextBox(modified.GetAllControlNames(), fontID, Pos + new Vector2(width - w, 0), w, height, fontSize, TextColor, false, TextBox.Alignement.Right));
 
             Modified = modified;
             foreach(Control control in modified)
