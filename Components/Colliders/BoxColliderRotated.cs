@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Transactions;
 using Microsoft.Xna.Framework;
@@ -96,14 +97,30 @@ public class BoxColliderRotated : Collider
         => Collision.SeparatingAxisTheorem(Rect, other.Bounds.ToPoints());
 
     public override bool Collide(CircleCollider other)
-        => Collision.RectCircle(Bounds, other.Pos, other.Radius);
+        => Collision.RectCircle(Bounds, other.AbsolutePosition, other.Radius);
 
     public override bool Collide(GridCollider other)
         => other.Collide(this);
 
-    public void Rotate(float radians)
+    public void Rotate(float radians, float minRot, List<Entity> checkedCollision)
     {
-        throw new NotImplementedException("Here make Collider rotate while checking Collisions");
+        int sign = Math.Sign(radians);
+        radians = Math.Abs(radians);
+
+        while(radians > 0)
+        {
+            float oldRot = rotation;
+            rotation += minRot * sign;
+
+            foreach(Entity e in checkedCollision){
+                if(e != ParentEntity && Collide(e)){
+                    rotation = oldRot;
+                    return;
+                }
+            }
+
+            radians -= minRot;
+        }
     }
 
     protected override void DebugRender()

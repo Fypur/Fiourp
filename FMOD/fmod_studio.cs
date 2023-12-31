@@ -17,9 +17,10 @@ namespace FMOD.Studio
     {
 #if X64
         public const string dll = "FMOD/64/fmodstudio";
-#endif
-#if X32
+#elif X32
         public const string dll    = "FMOD/32/fmodstudio";
+#else
+        public const string dll    = "FMOD/64/fmodstudio";
 #endif
     }
 

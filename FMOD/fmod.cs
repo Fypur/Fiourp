@@ -22,9 +22,10 @@ namespace FMOD
         public const int    number = 0x00020205;
 #if X64
         public const string dll    = "FMOD/64/fmod";
-#endif
-#if X32
+#elif X32
         public const string dll    = "FMOD/32/fmod";
+#else
+        public const string dll    = "FMOD/64/fmod";
 #endif
     }
 
