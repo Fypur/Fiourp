@@ -81,6 +81,7 @@ namespace Fiourp
         {
             Vector2 oldPos = ParentEntity.Pos;
             ParentEntity.Pos = position;
+            Update();
             collidedEntity = null;
 
             foreach (Entity e in checkedEntities)
@@ -92,6 +93,7 @@ namespace Fiourp
                 }
 
             ParentEntity.Pos = oldPos;
+            Update();
             return false;
         }
 

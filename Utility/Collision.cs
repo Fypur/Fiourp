@@ -68,7 +68,7 @@ namespace Fiourp
                     max2 = Math.Max(max2, axisPos);
                 }
 
-                if (!(min2 <= max1 && max2 >= min1))
+                if (!(min2 < max1 && max2 > min1))
                     return false;
             }
 
