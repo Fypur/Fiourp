@@ -56,6 +56,9 @@ public class BoxColliderRotated : Collider
     {
         base.Update();
 
+        while(rotation >= Math.PI) rotation -= (float)Math.PI * 2;
+        while(rotation <= -Math.PI) rotation += (float)Math.PI * 2;
+        
         Rect = GetVertices();
     }
 
