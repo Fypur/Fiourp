@@ -29,7 +29,7 @@ namespace Fiourp
         /// <param name="tileWidth"></param>
         /// <param name="tileHeight"></param>
         /// <param name="mapOrganisation">0 for nothing placed, a 1 for a tile placed, lenght of the array must be equal to mapWidth * mapHeight</param>
-        public Map(Vector2 position)
+        public Map()
         {
             Data = new MapData();
         }

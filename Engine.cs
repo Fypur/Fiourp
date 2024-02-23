@@ -34,6 +34,8 @@ namespace Fiourp
 
             ScreenSize = new Vector2(graphicsDevice.PreferredBackBufferWidth, graphicsDevice.PreferredBackBufferHeight);
 
+            if (renderTarget == null) renderTarget = new(graphicsDevice.GraphicsDevice, windowsWidth, windowHeight);
+
             RenderTarget = renderTarget;
             PrimitivesRenderTarget = new RenderTarget2D(renderTarget.GraphicsDevice, renderTarget.Width, renderTarget.Height, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
             LightsRenderTarget = new RenderTarget2D(renderTarget.GraphicsDevice, Lighting.LightsTargetSize, Lighting.LightsTargetSize, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
@@ -55,7 +57,7 @@ namespace Fiourp
         {
             Input.UpdateState();
             Deltatime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            CurrentMap.Update();
+            CurrentMap?.Update();
         }
 
         public static void LateUpdate() 
