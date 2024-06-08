@@ -119,6 +119,7 @@ public class BoxColliderRotated : Collider
             foreach(Entity e in checkedCollision){
                 if(e != ParentEntity && Collide(e)){
                     rotation = oldRot;
+                    Update();
                     return;
                 }
             }
