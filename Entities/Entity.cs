@@ -193,7 +193,7 @@ namespace Fiourp
             return component;
         }
 
-        public void RemoveComponent<T>() where T : Component
+        public void RemoveComponents<T>() where T : Component
         {
             for (int i = Components.Count - 1; i >= 0; i--)
                 if (Components[i] is T)
