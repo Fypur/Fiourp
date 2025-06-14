@@ -73,23 +73,8 @@ namespace Fiourp
                             edgePos1 += maxL / 2 - lightWorldPos;
                             edgePos2 += maxL / 2 - lightWorldPos;
 
-                            if (edgePos1.X < 0)
-                                edgePos1.X = 0;
-                            if (edgePos1.Y < 0)
-                                edgePos1.Y = 0;
-                            if (edgePos1.X > MaxLightSize)
-                                edgePos1.X = MaxLightSize;
-                            if (edgePos1.Y > MaxLightSize)
-                                edgePos1.Y = MaxLightSize;
-
-                            if (edgePos2.X < 0)
-                                edgePos2.X = 0;
-                            if (edgePos2.Y < 0)
-                                edgePos2.Y = 0;
-                            if (edgePos2.X > MaxLightSize)
-                                edgePos2.X = MaxLightSize;
-                            if (edgePos2.Y > MaxLightSize)
-                                edgePos2.Y = MaxLightSize;
+                            Vector2.Clamp(edgePos1, Vector2.Zero, Vector2.One * MaxLightSize);
+                            Vector2.Clamp(edgePos2, Vector2.Zero, Vector2.One * MaxLightSize);
 
                             edgePos1 -= maxL / 2 - lightWorldPos;
                             edgePos2 -= maxL / 2 - lightWorldPos;
@@ -168,23 +153,8 @@ namespace Fiourp
                             edgePos1 += maxL / 2 - lightWorldPos;
                             edgePos2 += maxL / 2 - lightWorldPos;
 
-                            if (edgePos1.X < 0)
-                                edgePos1.X = 0;
-                            if (edgePos1.Y < 0)
-                                edgePos1.Y = 0;
-                            if (edgePos1.X > MaxLightSize)
-                                edgePos1.X = MaxLightSize;
-                            if (edgePos1.Y > MaxLightSize)
-                                edgePos1.Y = MaxLightSize;
-
-                            if (edgePos2.X < 0)
-                                edgePos2.X = 0;
-                            if (edgePos2.Y < 0)
-                                edgePos2.Y = 0;
-                            if (edgePos2.X > MaxLightSize)
-                                edgePos2.X = MaxLightSize;
-                            if (edgePos2.Y > MaxLightSize)
-                                edgePos2.Y = MaxLightSize;
+                            Vector2.Clamp(edgePos1, Vector2.Zero, Vector2.One * MaxLightSize);
+                            Vector2.Clamp(edgePos2, Vector2.Zero, Vector2.One * MaxLightSize);
 
                             edgePos1 += lights[i].RenderTargetPosition;
                             edgePos2 += lights[i].RenderTargetPosition;

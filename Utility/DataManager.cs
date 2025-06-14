@@ -163,7 +163,7 @@ namespace Fiourp
                 foreach(FileInfo file in directory.GetFiles())
                 {
                     string fileName = Path.GetFileNameWithoutExtension(file.Name);
-                    d[key][fileName] = Content.Load<SpriteFont>(directory.FullName.Replace('\\', '/') + "/" + fileName);
+                    d[key][fileName] = Content.Load<SpriteFont>("./Fonts/" + directory.Name + "/" + fileName);
                 }
             }
             
