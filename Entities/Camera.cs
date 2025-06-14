@@ -128,7 +128,7 @@ namespace Fiourp
             get => Matrix.Invert(ViewMatrix);
         }
 
-        public float RenderTargetScreenSizeCoef { get => Engine.ScreenSize.X / Engine.RenderTarget.Width; }
+        public float ScreenSizeCoef { get => Engine.ScreenSize.X / Width; }
 
         public Camera(Vector2 position, float rotation, float zoomLevel, Rectangle? bounds = null)
             : base(position, (int)Engine.ScreenSize.X, (int)Engine.ScreenSize.Y, 0, null)
@@ -348,13 +348,13 @@ namespace Fiourp
             => Vector2.Transform(position, InverseViewMatrix);
 
         public Vector2 RenderTargetToScreenPosition(Vector2 position)
-            => position * RenderTargetScreenSizeCoef;
+            => position * ScreenSizeCoef;
 
         public Vector2 ScreenToCamPosition(Vector2 position)
             => position * (float)Engine.Cam.Width / Engine.RenderTarget.Width / RenderTargetScreenSizeCoef;
 
         public Vector2 RenderTargetToWorldPosition(Vector2 position)
-            => position + Engine.Cam.WorldToScreenPosition(position) * (Engine.Cam.RenderTargetScreenSizeCoef - 1);
+            => position + Engine.Cam.WorldToScreenPosition(position) * (Engine.Cam.ScreenSizeCoef - 1);
 
         public override bool CollidingConditions(Collider other)
         {

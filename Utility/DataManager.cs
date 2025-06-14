@@ -5,8 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using MonoGame.Aseprite;
-using MonoGame.Aseprite.Documents;
-using MonoGame.Aseprite.Graphics;
+using AsepriteDotNet.Aseprite;
+using AsepriteDotNet.Aseprite.Types;
+using MonoGame.Aseprite.Utils;
 
 namespace Fiourp
 {
@@ -51,14 +52,14 @@ namespace Fiourp
             {
                 string fileName = file.FullName.Replace('\\', '/');
                 string name = fileName.Substring(fileName.LastIndexOf("Graphics/") + 9);
-                string key = name.Substring(0, name.Length - 4);
+                string key = name.Substring(0, name.LastIndexOf('.'));
 
                 object loaded = Content.Load<Object>("Graphics/" + key);
                 bool isObject = fileName.Contains("Graphics/Objects");
 
                 if (loaded is Texture2D texture)
                     AddTexture(key, texture);
-                else if (loaded is AsepriteDocument asepriteDoc)
+                else if (loaded is AsepriteFile asepriteDoc)
                 {
                     Texture2D[] textures = asepriteDoc.Load();
                     if(textures.Length == 1)
@@ -123,7 +124,7 @@ namespace Fiourp
 
                 if (loaded is Texture2D texture)
                     textures.Add(texture);
-                else if (loaded is AsepriteDocument asepriteDoc)
+                else if (loaded is AsepriteFile asepriteDoc)
                     textures.AddRange(asepriteDoc.Load());
             }
 
@@ -135,12 +136,12 @@ namespace Fiourp
 
         public static float[] GetAnimationDelays(string asepritePath)
         {
-            AsepriteDocument ase = Content.Load<AsepriteDocument>("Graphics/" + asepritePath);
+            AsepriteFile ase = Content.Load<AsepriteFile>("Graphics/" + asepritePath);
 
-            float[] delays = new float[ase.Frames.Count];
+            float[] delays = new float[ase.Frames.Length];
 
-            for(int i = 0; i < ase.Frames.Count; i++)
-                delays[i] = ase.Frames[i].Duration;
+            for(int i = 0; i < ase.Frames.Length; i++)
+                delays[i] = (float)ase.Frames[i].Duration.TotalSeconds;
 
             return delays;
         }
@@ -162,7 +163,7 @@ namespace Fiourp
                 foreach(FileInfo file in directory.GetFiles())
                 {
                     string fileName = Path.GetFileNameWithoutExtension(file.Name);
-                    d[key][fileName] = Content.Load<SpriteFont>(directory.FullName + "/" + fileName);
+                    d[key][fileName] = Content.Load<SpriteFont>(directory.FullName.Replace('\\', '/') + "/" + fileName);
                 }
             }
             
@@ -184,7 +185,7 @@ namespace Fiourp
                 Texture2D texture;
                 if (loaded is Texture2D txt)
                     texture = txt;
-                else if (loaded is AsepriteDocument asepriteDoc)
+                else if (loaded is AsepriteFile asepriteDoc)
                     texture = asepriteDoc.Load()[0];
                 else
                     throw new Exception("Tileset was not found under the right format");
@@ -301,7 +302,7 @@ namespace Fiourp
                 Textures[path] = tex;
                 return tex;
             }
-            else if (loaded is AsepriteDocument asepriteDoc)
+            else if (loaded is AsepriteFile asepriteDoc)
             {
                 Textures[path] = asepriteDoc.Load()[0];
                 return Textures[path];
@@ -310,25 +311,25 @@ namespace Fiourp
                 throw new Exception("File was not found under the right format");
         }
 
-        public static Texture2D[] Load(this AsepriteDocument doc) 
+        public static Texture2D[] Load(this AsepriteFile doc) 
         {
-            Texture2D[] result = new Texture2D[doc.Frames.Count];
-            for (int i = 0; i < doc.Frames.Count; i++)
+            Texture2D[] result = new Texture2D[doc.Frames.Length];
+            for (int i = 0; i < doc.Frames.Length; i++)
             {
-                result[i] = doc.Texture.CropTo(new Vector2(doc.Frames[i].X, doc.Frames[i].Y), new Vector2(doc.Frames[i].Width, doc.Frames[i].Height));
+                result[i] = doc.CreateSprite(Engine.Graphics.GraphicsDevice, i, true, false, false).TextureRegion.Texture;//  .Texture.CropTo(new Vector2(doc.Frames[i].X, doc.Frames[i].Y), new Vector2(doc.Frames[i].Width, doc.Frames[i].Height));
             }
 
             result[0].Tag = new object[2];
             List<Sprite.Animation.Slice> slices = new();
 
-            foreach(AsepriteSlice slice in doc.Slices.Values)
+            foreach(AsepriteSlice slice in doc.Slices)
             {
-                slices.Add(new Sprite.Animation.Slice(slice.Name, new Rectangle(slice.SliceKeys[0].X, slice.SliceKeys[0].Y, slice.SliceKeys[0].Width, slice.SliceKeys[0].Height), slice.Color));
+                slices.Add(new Sprite.Animation.Slice(slice.Name, new Rectangle(slice.Keys[0].Bounds.X, slice.Keys[0].Bounds.Y, slice.Keys[0].Bounds.Width, slice.Keys[0].Bounds.Height), slice.UserData.Color.Value.ToXnaColor()));
             }
 
             ((object[])result[0].Tag)[1] = slices;
 
-            foreach(AsepriteTag tag in doc.Tags.Values)
+            foreach(AsepriteTag tag in doc.Tags)
             {
                 for (int i = tag.From; i <= tag.To; i++)
                 {

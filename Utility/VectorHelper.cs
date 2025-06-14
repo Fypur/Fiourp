@@ -102,7 +102,7 @@ namespace Fiourp
         public static Vector2 RotateDeg(Vector2 vector, float angleDeg)
             => Rotate(vector, MathHelper.ToRadians(angleDeg));
 
-        public static Vector2 RotateAround(this Vector2 vector, Vector2 pivotPoint, float angleRad)
+        public static Vector2 RotateAround(Vector2 vector, Vector2 pivotPoint, float angleRad)
             => Rotate(vector - pivotPoint, angleRad) + pivotPoint;
 
         public static Vector2 Normal(Vector2 v)

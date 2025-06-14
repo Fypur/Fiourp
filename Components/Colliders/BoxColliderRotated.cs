@@ -66,10 +66,10 @@ public class BoxColliderRotated : Collider
     {
         return new Vector2[4]
         {
-            AbsolutePosition.RotateAround(AbsolutePivotPoint, rotation),
-            (AbsolutePosition + new Vector2(TrueWidth, 0)).RotateAround(AbsolutePivotPoint, rotation),
-            (AbsolutePosition + new Vector2(TrueWidth, TrueHeight)).RotateAround(AbsolutePivotPoint, rotation),
-            (AbsolutePosition + new Vector2(0, TrueHeight)).RotateAround(AbsolutePivotPoint, rotation),
+            VectorHelper.RotateAround(AbsolutePosition, AbsolutePivotPoint, rotation),
+            (AbsolutePosition + VectorHelper.RotateAround(new Vector2(TrueWidth, 0), AbsolutePivotPoint, rotation)),
+            (AbsolutePosition + VectorHelper.RotateAround(new Vector2(TrueWidth, TrueHeight), AbsolutePivotPoint, rotation)),
+            (AbsolutePosition + VectorHelper.RotateAround(new Vector2(0, TrueHeight), AbsolutePivotPoint, rotation)),
         };
     }
 
@@ -105,7 +105,7 @@ public class BoxColliderRotated : Collider
     public override bool Collide(GridCollider other)
         => other.Collide(this);
 
-    public void Rotate(float radians, float minRot, List<Entity> checkedCollision)
+    public void Rotate(float radians, float minRot, List<Entity> checkedCollision, Action onCollision)
     {
         int sign = Math.Sign(radians);
         radians = Math.Abs(radians);
@@ -120,6 +120,7 @@ public class BoxColliderRotated : Collider
                 if(e != ParentEntity && Collide(e)){
                     rotation = oldRot;
                     Update();
+                    onCollision();
                     return;
                 }
             }

@@ -85,8 +85,8 @@ namespace Fiourp
             if (Parent != null && Parent is not UIElement)
             {
                 Pos = Engine.Cam.RenderTargetToWorldPosition(Pos);
-                Width *= (int)Engine.Cam.RenderTargetScreenSizeCoef;
-                Height *= (int)Engine.Cam.RenderTargetScreenSizeCoef;
+                Width *= (int)Engine.Cam.ScreenSizeCoef;
+                Height *= (int)Engine.Cam.ScreenSizeCoef;
             }
 
             if (Text != null)
@@ -131,8 +131,8 @@ namespace Fiourp
             Pos = p;
             if(Parent != null && Parent is not UIElement)
             {
-                Width /= (int)Engine.Cam.RenderTargetScreenSizeCoef;
-                Height /= (int)Engine.Cam.RenderTargetScreenSizeCoef;
+                Width /= (int)Engine.Cam.ScreenSizeCoef;
+                Height /= (int)Engine.Cam.ScreenSizeCoef;
             }
         }
 
