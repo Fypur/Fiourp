@@ -10,13 +10,12 @@ namespace Fiourp
 {
     public static class Options
     {
-        public static Vector2 CurrentResolution;
+        private static int lowestResolutionX = 320;
         public static int DefaultUISizeMultiplier = 4;
-        public static Vector2 DefaultScreenSize => RenderTargetSize * DefaultUISizeMultiplier;
+        public static Vector2 DefaultScreenSize => new Vector2(lowestResolutionX, lowestResolutionX / 16 * 9) * DefaultUISizeMultiplier;
 
         public static int CurrentScreenSizeMultiplier { get; private set; }
-        private static Vector2 RenderTargetSize => Engine.RenderTarget.Bounds.Size.ToVector2();
-        private static Vector2 resolutionBeforeFullScreen;
+        private static int resolutionMultiplierBeforeFullScreen;
 
         static Options()
         {
@@ -29,29 +28,27 @@ namespace Fiourp
             
             if (!Engine.Graphics.IsFullScreen)
             {
-                resolutionBeforeFullScreen = CurrentResolution;
-                SetSize((int)(graphics.GraphicsDevice.Adapter.CurrentDisplayMode.Width / RenderTargetSize.X));
+                resolutionMultiplierBeforeFullScreen = CurrentScreenSizeMultiplier;
+                SetSize((int)(graphics.GraphicsDevice.Adapter.CurrentDisplayMode.Width / lowestResolutionX));
                 graphics.ToggleFullScreen();
             }
 
             else
             {
                 graphics.ToggleFullScreen();
-                SetSize((int)(resolutionBeforeFullScreen.X / RenderTargetSize.X));
+                SetSize(resolutionMultiplierBeforeFullScreen);
             }
         }
 
         public static void SetSize(int multiplier)
         {
+            int oldMult = CurrentScreenSizeMultiplier;
             CurrentScreenSizeMultiplier = multiplier;
-
-            int oldMult = (int)(CurrentResolution.X / RenderTargetSize.X);
 
             foreach (UIElement element in Engine.CurrentMap.Data.UIElements)
                 SetUIStatsForSize(element, oldMult, multiplier);
 
-            SetScreenSize(RenderTargetSize * multiplier);
-            CurrentResolution = Engine.ScreenSize;
+            SetScreenSize(new Vector2(lowestResolutionX, lowestResolutionX / 16 * 9) * multiplier);
         }
 
         private static void SetUIStatsForSize(UIElement element, int oldMult, int newMult)

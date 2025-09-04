@@ -34,12 +34,12 @@ namespace Fiourp
             var gridCol = Collider;
             Vector2 startPos = (Engine.Cam.Pos - Pos) / gridCol.GridSize;
 
-            if (startPos.X > Width || startPos.Y > Height || startPos.X + Engine.RenderTarget.Width < 0 || startPos.Y + Engine.RenderTarget.Height < 0)
+            if (startPos.X > Width || startPos.Y > Height || startPos.X + Engine.Cam.Width < 0 || startPos.Y + Engine.Cam.Height < 0)
                 return;
 
             
 
-            Vector2 size = new Vector2((float)Engine.RenderTarget.Width / gridCol.GridWidth, (float)Engine.RenderTarget.Height / gridCol.GridHeight);
+            Vector2 size = new Vector2((float)Engine.Cam.Width / gridCol.GridWidth, (float)Engine.Cam.Height / gridCol.GridHeight);
 
             for(int x = Math.Max((int)startPos.X, 0); x < Math.Min(startPos.X + size.X, Tiles.GetLength(1)); x++)
             {
