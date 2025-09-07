@@ -67,9 +67,9 @@ public class BoxColliderRotated : Collider
         return new Vector2[4]
         {
             VectorHelper.RotateAround(AbsolutePosition, AbsolutePivotPoint, rotation),
-            (AbsolutePosition + VectorHelper.RotateAround(new Vector2(TrueWidth, 0), AbsolutePivotPoint, rotation)),
-            (AbsolutePosition + VectorHelper.RotateAround(new Vector2(TrueWidth, TrueHeight), AbsolutePivotPoint, rotation)),
-            (AbsolutePosition + VectorHelper.RotateAround(new Vector2(0, TrueHeight), AbsolutePivotPoint, rotation)),
+            (VectorHelper.RotateAround(AbsolutePosition + new Vector2(TrueWidth, 0), AbsolutePivotPoint, rotation)),
+            (VectorHelper.RotateAround(AbsolutePosition + new Vector2(TrueWidth, TrueHeight), AbsolutePivotPoint, rotation)),
+            (VectorHelper.RotateAround(AbsolutePosition + new Vector2(0, TrueHeight), AbsolutePivotPoint, rotation)),
         };
     }
 
