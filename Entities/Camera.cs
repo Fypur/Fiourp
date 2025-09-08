@@ -149,7 +149,7 @@ namespace Fiourp
 
             if (Engine.Player != null && FollowsPlayer && !Locked && (moveTimer == null || moveTimer.Value <= 0))
             {
-                Follow(Engine.Player, 3, 3, StrictFollowBounds);
+                Follow(Engine.Player, 4, 4, StrictFollowBounds);
             }
         }
 
@@ -168,9 +168,10 @@ namespace Fiourp
             Vector2 amount = FollowedPos(actor, xSmooth, ySmooth, strictFollowBounds, Bounds) - CenteredPos;
             Vector2 previous = ExactPos;
 
-            if(Math.Abs(amount.X) >= 0.1f)
+            //Debug.LogUpdate(FollowedPos(actor, xSmooth, ySmooth, strictFollowBounds, Bounds));
+            //if(Math.Abs(amount.X) >= 0.1f)
                 MoveX(amount.X, new System.Collections.Generic.List<Entity>(Engine.CurrentMap.Data.CameraSolids), null);
-            if (Math.Abs(amount.Y) >= 0.1f)
+            //if (Math.Abs(amount.Y) >= 0.1f)
                 MoveY(amount.Y, new System.Collections.Generic.List<Entity>(Engine.CurrentMap.Data.CameraSolids), null);
 
             /*if (HasComponent<Shaker>())
