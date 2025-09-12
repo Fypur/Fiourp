@@ -31,48 +31,106 @@ namespace Fiourp
 
             return false;
         }
-
-        public static bool SeparatingAxisTheorem(Vector2[] box, Vector2[] other)
+        
+        public class SATOutput
         {
-            if (box.Length != 4 || other.Length != 4)
-                throw new Exception("Rect vertices are not set properly, Rectangle has more or less than 4 vertices");
-            
-            //Indexes: UL = 0, UR = 1, LR = 2, LL = 3
+            public bool IsCollision;
+            public Vector2 MinPenetrationAxis;
+            public float Penetration;
+        }
 
-            Vector2[] Axies = new Vector2[4]
-            {
-                box[1] - box[0], //UR - UL
-                box[1] - box[2], //UR - LR
-                other[0] - other[3], //UL - LL
-                other[0] - other[1] //UL - UR
-            };
+        public static SATOutput SAT(Vector2[] polygon1, Vector2[] polygon2, Vector2[] axies)
+        {
+            for (int i = 0; i < axies.Length; i++)
+                axies[i].Normalize();
+            SATOutput result = new SATOutput();
+            result.IsCollision = true;
+            result.Penetration = float.PositiveInfinity;
 
-            foreach (Vector2 axis in Axies)
+            foreach (Vector2 axis in axies)
             {
                 float min1 = float.PositiveInfinity;
                 float max1 = float.NegativeInfinity;
                 float min2 = float.PositiveInfinity;
                 float max2 = float.NegativeInfinity;
 
-                foreach (Vector2 point in box)
+                foreach (Vector2 point in polygon1)
                 {
                     float axisPos = Vector2.Dot(VectorHelper.Projection(point, axis), axis);
                     min1 = Math.Min(min1, axisPos);
                     max1 = Math.Max(max1, axisPos);
                 }
 
-                foreach (Vector2 point in other)
+                foreach (Vector2 point in polygon2)
                 {
                     float axisPos = Vector2.Dot(VectorHelper.Projection(point, axis), axis);
                     min2 = Math.Min(min2, axisPos);
                     max2 = Math.Max(max2, axisPos);
                 }
 
-                if (!(min2 < max1 && max2 > min1))
-                    return false;
+                if (min2 >= max1 || max2 <= min1)
+                {
+                    result.IsCollision = false;
+                    result.MinPenetrationAxis = Vector2.Zero;
+                    result.Penetration = 0;
+                    return result;
+                }
+                else
+                {
+                    
+                    if (max1 >= min2 && max1 - min2 <= max2 - min1 && max1 - min2 < result.Penetration)
+                    {
+                        result.Penetration = max1 - min2;
+                        result.MinPenetrationAxis = axis;
+                    }
+                    else if(max2 - min1 < result.Penetration)
+                    {
+                        result.Penetration = max2 - min1;
+                        result.MinPenetrationAxis = axis;
+                    }
+                }
             }
 
-            return true;
+            result.IsCollision = true;
+            return result;
+        }
+
+        public class ContactPoint
+        {
+            public SATOutput Sat;
+            public Vector2 Point;
+            public Vector2 Axis;
+            public float NormalImpulse;
+            public float FrictionImpulse;
+        }
+
+        public static ContactPoint BoxBoxClipping(BoxColliderRotated box1, BoxColliderRotated box2)
+        {
+            //SATOutput sat = BoxBoxSAT(box1.Rect, box2.Rect);
+
+            //SAT -> Axis of least penetration + Min penetration
+            //Identify reference and incident planes
+            //Box-box clipping
+            //Calc impulse
+            //Bias impulse
+            //Sequential (loop) and accumulated (memory) impulses
+        }
+
+        public static SATOutput BoxBoxSAT(Vector2[] box, Vector2[] box2)
+        {
+            if (box.Length != 4 || box2.Length != 4)
+                throw new Exception("Rect vertices are not set properly, Rectangle has more or less than 4 vertices");
+            
+            //Indexes: UL = 0, UR = 1, LR = 2, LL = 3
+            Vector2[] axies = new Vector2[4]
+            {
+                box[1] - box[0], //UR - UL
+                box[1] - box[2], //UR - LR
+                box2[0] - box2[3], //UL - LL
+                box2[0] - box2[1] //UL - UR
+            };
+
+            return SAT(box, box2, axies);
         }
 
         public static Vector2? LineIntersection(Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3)

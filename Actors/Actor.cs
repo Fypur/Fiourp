@@ -11,7 +11,6 @@ namespace Fiourp
     {
         public Vector2 Velocity;
 
-        public float gravityScale;
         public static readonly Vector2 gravityVector = new Vector2(0, 9.81f);
         private Vector2 currentLiftSpeed;
         private Timer liftSpeedTimer;
@@ -28,10 +27,9 @@ namespace Fiourp
         private float xRemainder;
         private float yRemainder;
 
-        public Actor(Vector2 position, int width, int height, float gravityScale, Sprite sprite)
+        public Actor(Vector2 position, int width, int height, Sprite sprite)
             : base(position, width, height, sprite)
         {
-            this.gravityScale = gravityScale;
             liftSpeedTimer = (Timer)AddComponent(new Timer(liftSpeedGrace, false, null, () => LiftSpeed = Vector2.Zero));
             liftSpeedTimer.Paused = true;
         }
@@ -133,11 +131,6 @@ namespace Fiourp
         {
             MoveX(pos.X - ExactPos.X, CallbackOnCollisionX);
             MoveY(pos.Y - ExactPos.Y, CallbackOnCollisionY);
-        }
-
-        public void Gravity()
-        {
-            Velocity += gravityVector * gravityScale;
         }
     }
 }

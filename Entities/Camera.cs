@@ -131,7 +131,7 @@ namespace Fiourp
         public float ScreenSizeCoef { get => Engine.ScreenSize.X / Width; }
 
         public Camera(Vector2 position, float rotation, float zoomLevel, Rectangle? bounds = null)
-            : base(position, (int)Engine.ScreenSize.X, (int)Engine.ScreenSize.Y, 0, null)
+            : base(position, (int)Engine.ScreenSize.X, (int)Engine.ScreenSize.Y, null)
         {
             Engine.Cam = this;
 

@@ -23,7 +23,7 @@ public class BoxColliderRotated : Collider
     private float widthPercentage;
     private float heightPercentage;
 
-    public Vector2[] Rect;
+    public Vector2[] Rect { get; private set; }
     
     /// <summary>
     /// 
@@ -94,10 +94,10 @@ public class BoxColliderRotated : Collider
     }
 
     public override bool Collide(BoxColliderRotated other)
-        => Collision.SeparatingAxisTheorem(Rect, other.Rect);
+        => Collision.BoxBoxSAT(Rect, other.Rect).IsCollision;
 
     public override bool Collide(BoxCollider other)
-        => Collision.SeparatingAxisTheorem(Rect, other.Bounds.ToPoints());
+        => Collision.BoxBoxSAT(Rect, other.Bounds.ToPoints()).IsCollision;
 
     public override bool Collide(CircleCollider other)
         => Collision.RectCircle(Bounds, other.AbsolutePosition, other.Radius);

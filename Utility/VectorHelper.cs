@@ -42,7 +42,7 @@ namespace Fiourp
         /// <param name="b"></param>
         /// <returns></returns>
         public static Vector2 Projection(Vector2 a, Vector2 b)
-            => (float)(Vector2.Dot(a, b) / Math.Pow(b.Length(), 2)) * b;
+            => (float)(Vector2.Dot(a, b) / b.LengthSquared()) * b;
 
         public static Vector2 ClosestOnSegment(Vector2 point, Vector2 segmentPoint, Vector2 segmentPoint2)
         {
