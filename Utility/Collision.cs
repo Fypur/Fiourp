@@ -100,25 +100,11 @@ namespace Fiourp
             return result;
         }
 
-        public class BoxContact
-        {
-            public bool Colliding;
-
-            public BoxColliderRotated Reference;
-            public BoxColliderRotated Incident;
-            public Vector2 Normal;
-
-            public Vector2 ReferenceFace1;
-            public Vector2 ReferenceFace2;
-            public Vector2 ClippedIncidentFace1;
-            public Vector2 ClippedIncidentFace2;
-        }
-
-        public static BoxContact BoxBoxClipping(BoxColliderRotated b1, BoxColliderRotated b2)
+        public static Physics.BoxContact BoxBoxClipping(BoxColliderRotated b1, BoxColliderRotated b2)
         {
             SATOutput sat = BoxBoxSAT(b1.Rect, b2.Rect);
 
-            BoxContact contact = new BoxContact();
+            Physics.BoxContact contact = new Physics.BoxContact();
             contact.Colliding = true;
             bool xSatAxis;
 

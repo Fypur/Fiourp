@@ -11,6 +11,7 @@ namespace Fiourp
         public Vector2 Pos;
         public int Width;
         public int Height;
+        public float Rotation;
 
         public bool Active = true;
         public bool Visible = true;
@@ -53,9 +54,6 @@ namespace Fiourp
                 Decoration => Tags.Decoration,
                 _ => Tags.Unknown
             };
-
-            Collider = new BoxCollider(Vector2.Zero, width, height);
-            AddComponent(Collider);
 
             if(sprite != null)
             {

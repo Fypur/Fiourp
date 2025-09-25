@@ -29,6 +29,9 @@ namespace Fiourp
         public Actor(Vector2 position, int width, int height, Sprite sprite)
             : base(position, width, height, sprite)
         {
+            Collider = new BoxCollider(Vector2.Zero, width, height);
+            AddComponent(Collider);
+
             liftSpeedTimer = (Timer)AddComponent(new Timer(liftSpeedGrace, false, null, () => LiftSpeed = Vector2.Zero));
             liftSpeedTimer.Paused = true;
         }
