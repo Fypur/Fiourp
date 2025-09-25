@@ -11,7 +11,6 @@ namespace Fiourp
     {
         public Vector2 Velocity;
 
-        public static readonly Vector2 gravityVector = new Vector2(0, 9.81f);
         private Vector2 currentLiftSpeed;
         private Timer liftSpeedTimer;
         private const float liftSpeedGrace = 0.16f;

@@ -52,6 +52,19 @@ namespace Fiourp
         public static void Line(Vector2 begin, Vector2 end, Color color, int thickness = 1)
             => Drawing.DebugEvent += () => Drawing.DrawLine(begin, end, color, thickness);
 
+        public static void Vector(Vector2 debugged, Vector2 position, float scale, float arrowScale)
+            => Vector(debugged, position, Color.Red, scale, arrowScale);
+
+        public static void Vector(Vector2 debugged, Vector2 position, Color color, float scale, float arrowScale)
+        {
+            Drawing.DebugEvent += () =>
+            {
+                Vector2 dir = debugged.Normalized();
+                Drawing.DrawLine(position, position + debugged * scale, Color.Red, 1);
+                Drawing.DrawLine(position + debugged * scale, position + debugged * scale + VectorHelper.Rotate(dir, 2 * (float)Math.PI / 3) * arrowScale, color, 1);
+                Drawing.DrawLine(position + debugged * scale, position + debugged * scale + VectorHelper.Rotate(dir, -2 * (float)Math.PI / 3) * arrowScale, color, 1);
+            };
+        }
         public static void Event(params Action[] actions)
         {
             foreach (Action action in actions)

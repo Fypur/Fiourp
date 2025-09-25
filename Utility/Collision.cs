@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using FMOD.Studio;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Security.AccessControl;
@@ -37,17 +38,19 @@ namespace Fiourp
             public bool IsCollision;
             public Vector2 MinPenetrationAxis;
             public float Penetration;
+            public int AxisIndex;
         }
 
         public static SATOutput SAT(Vector2[] polygon1, Vector2[] polygon2, Vector2[] axies)
         {
             for (int i = 0; i < axies.Length; i++)
                 axies[i].Normalize();
+
             SATOutput result = new SATOutput();
             result.IsCollision = true;
             result.Penetration = float.PositiveInfinity;
 
-            foreach (Vector2 axis in axies)
+            for (int i = 0; i < axies.Length; i++)
             {
                 float min1 = float.PositiveInfinity;
                 float max1 = float.NegativeInfinity;
@@ -56,14 +59,14 @@ namespace Fiourp
 
                 foreach (Vector2 point in polygon1)
                 {
-                    float axisPos = Vector2.Dot(VectorHelper.Projection(point, axis), axis);
+                    float axisPos = Vector2.Dot(VectorHelper.Projection(point, axies[i]), axies[i]);
                     min1 = Math.Min(min1, axisPos);
                     max1 = Math.Max(max1, axisPos);
                 }
 
                 foreach (Vector2 point in polygon2)
                 {
-                    float axisPos = Vector2.Dot(VectorHelper.Projection(point, axis), axis);
+                    float axisPos = Vector2.Dot(VectorHelper.Projection(point, axies[i]), axies[i]);
                     min2 = Math.Min(min2, axisPos);
                     max2 = Math.Max(max2, axisPos);
                 }
@@ -73,20 +76,22 @@ namespace Fiourp
                     result.IsCollision = false;
                     result.MinPenetrationAxis = Vector2.Zero;
                     result.Penetration = 0;
+                    result.AxisIndex = -1;
                     return result;
                 }
                 else
                 {
-                    
                     if (max1 >= min2 && max1 - min2 <= max2 - min1 && max1 - min2 < result.Penetration)
                     {
                         result.Penetration = max1 - min2;
-                        result.MinPenetrationAxis = axis;
+                        result.MinPenetrationAxis = axies[i];
+                        result.AxisIndex = i;
                     }
                     else if(max2 - min1 < result.Penetration)
                     {
                         result.Penetration = max2 - min1;
-                        result.MinPenetrationAxis = axis;
+                        result.MinPenetrationAxis = axies[i];
+                        result.AxisIndex = i;
                     }
                 }
             }
@@ -95,25 +100,129 @@ namespace Fiourp
             return result;
         }
 
-        public class ContactPoint
+        public class BoxContact
         {
-            public SATOutput Sat;
-            public Vector2 Point;
-            public Vector2 Axis;
-            public float NormalImpulse;
-            public float FrictionImpulse;
+            public bool Colliding;
+
+            public BoxColliderRotated Reference;
+            public BoxColliderRotated Incident;
+            public Vector2 Normal;
+
+            public Vector2 ReferenceFace1;
+            public Vector2 ReferenceFace2;
+            public Vector2 ClippedIncidentFace1;
+            public Vector2 ClippedIncidentFace2;
         }
 
-        public static ContactPoint BoxBoxClipping(BoxColliderRotated box1, BoxColliderRotated box2)
+        public static BoxContact BoxBoxClipping(BoxColliderRotated b1, BoxColliderRotated b2)
         {
-            //SATOutput sat = BoxBoxSAT(box1.Rect, box2.Rect);
+            SATOutput sat = BoxBoxSAT(b1.Rect, b2.Rect);
 
-            //SAT -> Axis of least penetration + Min penetration
-            //Identify reference and incident planes
-            //Box-box clipping
-            //Calc impulse
-            //Bias impulse
-            //Sequential (loop) and accumulated (memory) impulses
+            BoxContact contact = new BoxContact();
+            contact.Colliding = true;
+            bool xSatAxis;
+
+            switch (sat.AxisIndex)
+            {
+                case 0:
+                    contact.Reference = b1;
+                    contact.Incident = b2;
+                    xSatAxis = true;
+                    break;
+                case 1:
+                    contact.Reference = b1;
+                    contact.Incident = b2;
+                    xSatAxis = false;
+                    break;
+                case 2:
+                    contact.Reference = b2;
+                    contact.Incident = b1;
+                    xSatAxis = true;
+                    break;
+                case 3:
+                    contact.Reference = b2;
+                    contact.Incident = b1;
+                    xSatAxis = false;
+                    break;
+                case -1:
+                    contact.Colliding = false;
+                    return contact;
+                    throw new Exception("Clipping called even though there is no collision");
+                default:
+                    throw new Exception("sat axis index is not within expected bounds");
+            }
+
+            Vector2 refToInc = contact.Incident.Rect[0] + (contact.Incident.Rect[2] - contact.Incident.Rect[0]) * 0.5f - contact.Reference.Rect[0] - (contact.Reference.Rect[2] - contact.Reference.Rect[0]) * 0.5f;
+
+            if (Vector2.Dot(refToInc, sat.MinPenetrationAxis) >= 0)
+                contact.Normal = sat.MinPenetrationAxis;
+            else
+                contact.Normal = -sat.MinPenetrationAxis;
+
+            if (xSatAxis)
+            {
+                if (Vector2.Dot(contact.Reference.Rect[1] - contact.Reference.Rect[0], contact.Normal) >= 0)
+                {
+                    contact.ReferenceFace1 = contact.Reference.Rect[1];
+                    contact.ReferenceFace2 = contact.Reference.Rect[2];
+                }
+                else
+                {
+                    contact.ReferenceFace1 = contact.Reference.Rect[3];
+                    contact.ReferenceFace2 = contact.Reference.Rect[0];
+                }
+
+            }
+            else
+            {
+                if (Vector2.Dot(contact.Reference.Rect[0] - contact.Reference.Rect[3], contact.Normal) >= 0)
+                {
+                    contact.ReferenceFace1 = contact.Reference.Rect[0];
+                    contact.ReferenceFace2 = contact.Reference.Rect[1];
+                }
+                else
+                {
+                    contact.ReferenceFace1 = contact.Reference.Rect[2];
+                    contact.ReferenceFace2 = contact.Reference.Rect[3];
+                }
+            }
+
+            Vector2 inc1, inc2; //incident face
+            if (Math.Abs(Vector2.Dot(contact.Normal, (contact.Incident.Rect[1] - contact.Incident.Rect[0]).Normalized())) >= Math.Abs(Vector2.Dot(contact.Normal, (contact.Incident.Rect[2] - contact.Incident.Rect[1]).Normalized())))
+            {
+                //incident face is along y axis
+                if (Vector2.Dot(contact.Normal, contact.Incident.Rect[1] - contact.Incident.Rect[0]) <= 0)
+                {
+                    inc1 = contact.Incident.Rect[1];
+                    inc2 = contact.Incident.Rect[2];
+                }
+                else
+                {
+                    inc1 = contact.Incident.Rect[0];
+                    inc2 = contact.Incident.Rect[3];
+                }
+            }
+            else
+            {
+                //incident face is along x axis
+                if (Vector2.Dot(contact.Normal, contact.Incident.Rect[1] - contact.Incident.Rect[2]) <= 0)
+                {
+                    inc1 = contact.Incident.Rect[0];
+                    inc2 = contact.Incident.Rect[1];
+                }
+                else
+                {
+                    inc1 = contact.Incident.Rect[2];
+                    inc2 = contact.Incident.Rect[3];
+                }
+            }
+
+            contact.ClippedIncidentFace1 = VectorHelper.ClipBetween(contact.ReferenceFace1, contact.ReferenceFace2, inc1);
+            contact.ClippedIncidentFace2 = VectorHelper.ClipBetween(contact.ReferenceFace1, contact.ReferenceFace2, inc2);
+
+            Debug.PointUpdate(contact.ReferenceFace1, contact.ReferenceFace2, contact.ClippedIncidentFace1, contact.ClippedIncidentFace2);
+
+            return contact;
         }
 
         public static SATOutput BoxBoxSAT(Vector2[] box, Vector2[] box2)
@@ -126,8 +235,8 @@ namespace Fiourp
             {
                 box[1] - box[0], //UR - UL
                 box[1] - box[2], //UR - LR
-                box2[0] - box2[3], //UL - LL
-                box2[0] - box2[1] //UL - UR
+                box2[1] - box2[0], //UL - UR
+                box2[1] - box2[2], //UL - LL
             };
 
             return SAT(box, box2, axies);

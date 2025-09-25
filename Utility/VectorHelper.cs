@@ -42,12 +42,23 @@ namespace Fiourp
         /// <param name="b"></param>
         /// <returns></returns>
         public static Vector2 Projection(Vector2 a, Vector2 b)
-            => (float)(Vector2.Dot(a, b) / b.LengthSquared()) * b;
+            => Vector2.Dot(a, b) * b / b.LengthSquared();
 
         public static Vector2 ClosestOnSegment(Vector2 point, Vector2 segmentPoint, Vector2 segmentPoint2)
         {
             Vector2 v = segmentPoint2 - segmentPoint;
             return segmentPoint + v * MathHelper.Clamp(Vector2.Dot(point - segmentPoint, v) / v.LengthSquared(), 0f, 1f);
+        }
+
+        public static Vector2 ClipBetween(Vector2 bound1, Vector2 bound2, Vector2 bounded)
+        {
+            float scal = Vector2.Dot(bound2 - bound1, bounded - bound1) / (bound2 - bound1).LengthSquared();
+            Vector2 projn = VectorHelper.Projection(bounded - bound1, VectorHelper.Normal(bound2 - bound1));
+            if (scal <= 0)
+                return projn + bound1;
+            else if (scal >= 1)
+                return projn + bound2;
+            return bounded;
         }
 
         public static Vector2 AngleToVector(float angleDeg)

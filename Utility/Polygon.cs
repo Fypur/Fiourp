@@ -333,7 +333,7 @@ namespace Fiourp
             {
                 for (int i = 0; i < polygon.Length; i++)
                 {
-                    Debug.PointUpdate(polygon[i].Position);
+                    //Debug.PointUpdate(polygon[i].Position);
                     if (Vector2.DistanceSquared(Input.MousePos, polygon[i].Position) < 1f)
                     {
                         Debug.LogUpdate(i, polygon[i].ArchedLeft, polygon[i].ArchedRight, polygon[i].Position);
