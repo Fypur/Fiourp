@@ -11,6 +11,8 @@ namespace Fiourp
     {
         private static List<Contact> contacts;
 
+        public static float BiasImpulseBeta = 0.2f;
+
         public class Contact
         {
             public Rigidbody Reference;
@@ -93,11 +95,24 @@ namespace Fiourp
         public static Vector2 ComputeImpulse(Contact contact)
         {
             //Give Contact IDs to every contact and create arbiters
+
             
+            Vector2 center1 = 0.5f * ((BoxColliderRotated)contact.Reference.Collider).Rect[2] + 0.5f * ((BoxColliderRotated)contact.Reference.Collider).Rect[0]; //TODO: Replace this with something more general, like rigidBody pivot center
+            Vector2 center2 = 0.5f * ((BoxColliderRotated)contact.Incident.Collider).Rect[2] + 0.5f * ((BoxColliderRotated)contact.Incident.Collider).Rect[0];
 
+            Vector2 r1 = contact.Position - center1;
+            Vector2 r2 = contact.Position - center2;
 
-            Vector2 deltaV = contact.Reference.Velocity + contact.Reference.AngularVelocity * VectorHelper.Normal(contact.Position - /*Middle of Box1*/) - contact.Incident.Velocity;
+            Vector2 deltaV = contact.Reference.Velocity + contact.Reference.AngularVelocity * VectorHelper.Normal(r1) - (contact.Incident.Velocity + contact.Incident.AngularVelocity * VectorHelper.Normal(r2));
 
+            Vector2 DoubleVectProd(Vector2 r, Vector2 n)
+                => new Vector2(-r.Y * (r.X * n.Y - r.Y * n.X), r.X * (r.X * n.Y - r.Y * n.X));
+
+            float effectiveMass = 1 / (contact.Reference.InvMass + contact.Incident.InvMass + Vector2.Dot(contact.Reference.InvI * DoubleVectProd(r1, contact.Normal) + contact.Incident.InvI * DoubleVectProd(r2, contact.Normal), contact.Normal));
+
+            Vector2 Pn = -deltaV * effectiveMass;
+
+            //Add bias impulse and tangential Impulse
             return Vector2.Zero;
         }
 
