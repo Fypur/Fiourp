@@ -150,7 +150,7 @@ namespace Fiourp
                 case -1:
                     contact.Colliding = false;
                     return contact;
-                    throw new Exception("Clipping called even though there is no collision");
+                    //throw new Exception("Clipping called even though there is no collision");
                 default:
                     throw new Exception("sat axis index is not within expected bounds");
             }
@@ -226,7 +226,9 @@ namespace Fiourp
             contact.ClippedIncidentFace1 = VectorHelper.ClipBetween(contact.ReferenceFace1, contact.ReferenceFace2, inc1);
             contact.ClippedIncidentFace2 = VectorHelper.ClipBetween(contact.ReferenceFace1, contact.ReferenceFace2, inc2);
 
-            Debug.PointUpdate(contact.ReferenceFace1, contact.ReferenceFace2, contact.ClippedIncidentFace1, contact.ClippedIncidentFace2);
+            Debug.LogUpdate("Collision");
+            Debug.PointUpdate(Color.Green, contact.ClippedIncidentFace1, contact.ClippedIncidentFace2);
+            Debug.PointUpdate(Color.Blue, contact.ReferenceFace1, contact.ReferenceFace2);
 
             return contact;
         }

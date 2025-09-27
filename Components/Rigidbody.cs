@@ -20,10 +20,11 @@ namespace Fiourp
 
         public Collider Collider => ParentEntity.Collider;
 
-        public Rigidbody(float invMass, float invI)
+        public Rigidbody(float invMass, float invI, float friction)
         {
             InvMass = invMass;
             InvI = invI;
+            Friction = friction;
         }
 
         public override void Added()

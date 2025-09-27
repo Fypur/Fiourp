@@ -56,8 +56,9 @@ public class BoxColliderRotated : Collider
     {
         base.Update();
 
-        while(rotation >= Math.PI) rotation -= (float)Math.PI * 2;
-        while(rotation <= -Math.PI) rotation += (float)Math.PI * 2;
+        //put rotation between -pi and +pi
+        rotation = rotation - (float)Math.Floor(rotation / (2 * float.Pi)) * 2f * float.Pi;
+        if (rotation > Math.PI) rotation -= 2 * float.Pi;
         
         Rect = GetVertices();
     }
@@ -80,6 +81,7 @@ public class BoxColliderRotated : Collider
 
     public override bool Collide(Vector2 point)
     {
+        /* Idk Why I did this complicated bullshit when scalar products exist, this is only useful for convex polygons
         //Rectangle ABCD and point P
         //Calculate sum of Areas APD, DPC, CPB and PBA
         //If sum is greater than area of rectangle then point is outside the rectangle
@@ -89,6 +91,14 @@ public class BoxColliderRotated : Collider
             => Math.Abs((b.X * a.Y - a.X * b.Y) + (c.X * b.Y - b.X * c.Y) + (a.X * c.Y - c.X * a.Y)) / 2;
         
         if(TriangleArea(point, Rect[0], Rect[3]) + TriangleArea(point, Rect[3], Rect[2]) + TriangleArea(point, Rect[2], Rect[1]) + TriangleArea(point, Rect[0], Rect[1]) > TriangleArea(Rect[0], Rect[1], Rect[2]) + TriangleArea(Rect[3], Rect[1], Rect[2]))
+            return false;
+        return true;*/
+
+        //project along rectangle and compare scalar products
+        Vector2 r = point - Rect[0];
+        float sc1 = Vector2.Dot(r, Rect[1] - Rect[0]);
+        float sc2 = Vector2.Dot(r, Rect[3] - Rect[0]);
+        if(sc1 < 0 || sc1 > (Rect[1] - Rect[0]).LengthSquared() || sc2 < 0 || sc2 > (Rect[3] - Rect[0]).LengthSquared())
             return false;
         return true;
     }
