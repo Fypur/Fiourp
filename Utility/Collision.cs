@@ -9,6 +9,22 @@ namespace Fiourp
 {
     public static class Collision
     {
+        public static bool RotatedRectCircle(Vector2[] boxCoords, Vector2 cPosition, float cRadius)
+        {
+            if (boxCoords.Length != 4)
+                throw new Exception("Rect vertices are not set properly, Rectangle has more or less than 4 vertices");
+
+            //Calculate the circle coordinates in the boxes relative coordinate system, then simply use Rect Circle with the box at position (0, 0)
+            //We basically rotate the circle instead of the rectangle
+            Vector2 p1 = boxCoords[1] - boxCoords[0]; //right
+            Vector2 p2 = boxCoords[3] - boxCoords[0]; //down
+
+            Vector2 relativeCircPos = cPosition - boxCoords[0];
+            Vector2 rectCoordSysCirclePos = new Vector2(p1.X * relativeCircPos.X + p2.X * relativeCircPos.Y, p1.Y * relativeCircPos.X + p2.Y * relativeCircPos.Y);
+
+            return RectCircle(new Rectangle(0, 0, 1, 1), rectCoordSysCirclePos, cRadius);
+        }
+
         public static bool RectCircle(Rectangle rect, Vector2 cPosition, float cRadius)
         {
             Vector2 halfSize = new Vector2(rect.Width / 2, rect.Height / 2);
@@ -108,26 +124,27 @@ namespace Fiourp
             contact.Colliding = true;
             bool xSatAxis;
 
+            BoxColliderRotated reference, incident;
             switch (sat.AxisIndex)
             {
                 case 0:
-                    contact.Reference = b1;
-                    contact.Incident = b2;
+                    reference = b1;
+                    incident = b2;
                     xSatAxis = true;
                     break;
                 case 1:
-                    contact.Reference = b1;
-                    contact.Incident = b2;
+                    reference = b1;
+                    incident = b2;
                     xSatAxis = false;
                     break;
                 case 2:
-                    contact.Reference = b2;
-                    contact.Incident = b1;
+                    reference = b2;
+                    incident = b1;
                     xSatAxis = true;
                     break;
                 case 3:
-                    contact.Reference = b2;
-                    contact.Incident = b1;
+                    reference = b2;
+                    incident = b1;
                     xSatAxis = false;
                     break;
                 case -1:
@@ -138,7 +155,10 @@ namespace Fiourp
                     throw new Exception("sat axis index is not within expected bounds");
             }
 
-            Vector2 refToInc = contact.Incident.Rect[0] + (contact.Incident.Rect[2] - contact.Incident.Rect[0]) * 0.5f - contact.Reference.Rect[0] - (contact.Reference.Rect[2] - contact.Reference.Rect[0]) * 0.5f;
+            contact.Reference = reference.ParentEntity.GetComponent<Rigidbody>();
+            contact.Incident = incident.ParentEntity.GetComponent<Rigidbody>();
+
+            Vector2 refToInc = incident.Rect[0] + (incident.Rect[2] - incident.Rect[0]) * 0.5f - reference.Rect[0] - (reference.Rect[2] - reference.Rect[0]) * 0.5f;
 
             if (Vector2.Dot(refToInc, sat.MinPenetrationAxis) >= 0)
                 contact.Normal = sat.MinPenetrationAxis;
@@ -147,59 +167,59 @@ namespace Fiourp
 
             if (xSatAxis)
             {
-                if (Vector2.Dot(contact.Reference.Rect[1] - contact.Reference.Rect[0], contact.Normal) >= 0)
+                if (Vector2.Dot(reference.Rect[1] - reference.Rect[0], contact.Normal) >= 0)
                 {
-                    contact.ReferenceFace1 = contact.Reference.Rect[1];
-                    contact.ReferenceFace2 = contact.Reference.Rect[2];
+                    contact.ReferenceFace1 = reference.Rect[1];
+                    contact.ReferenceFace2 = reference.Rect[2];
                 }
                 else
                 {
-                    contact.ReferenceFace1 = contact.Reference.Rect[3];
-                    contact.ReferenceFace2 = contact.Reference.Rect[0];
+                    contact.ReferenceFace1 = reference.Rect[3];
+                    contact.ReferenceFace2 = reference.Rect[0];
                 }
 
             }
             else
             {
-                if (Vector2.Dot(contact.Reference.Rect[0] - contact.Reference.Rect[3], contact.Normal) >= 0)
+                if (Vector2.Dot(reference.Rect[0] - reference.Rect[3], contact.Normal) >= 0)
                 {
-                    contact.ReferenceFace1 = contact.Reference.Rect[0];
-                    contact.ReferenceFace2 = contact.Reference.Rect[1];
+                    contact.ReferenceFace1 = reference.Rect[0];
+                    contact.ReferenceFace2 = reference.Rect[1];
                 }
                 else
                 {
-                    contact.ReferenceFace1 = contact.Reference.Rect[2];
-                    contact.ReferenceFace2 = contact.Reference.Rect[3];
+                    contact.ReferenceFace1 = reference.Rect[2];
+                    contact.ReferenceFace2 = reference.Rect[3];
                 }
             }
 
             Vector2 inc1, inc2; //incident face
-            if (Math.Abs(Vector2.Dot(contact.Normal, (contact.Incident.Rect[1] - contact.Incident.Rect[0]).Normalized())) >= Math.Abs(Vector2.Dot(contact.Normal, (contact.Incident.Rect[2] - contact.Incident.Rect[1]).Normalized())))
+            if (Math.Abs(Vector2.Dot(contact.Normal, (incident.Rect[1] - incident.Rect[0]).Normalized())) >= Math.Abs(Vector2.Dot(contact.Normal, (incident.Rect[2] - incident.Rect[1]).Normalized())))
             {
                 //incident face is along y axis
-                if (Vector2.Dot(contact.Normal, contact.Incident.Rect[1] - contact.Incident.Rect[0]) <= 0)
+                if (Vector2.Dot(contact.Normal, incident.Rect[1] - incident.Rect[0]) <= 0)
                 {
-                    inc1 = contact.Incident.Rect[1];
-                    inc2 = contact.Incident.Rect[2];
+                    inc1 = incident.Rect[1];
+                    inc2 = incident.Rect[2];
                 }
                 else
                 {
-                    inc1 = contact.Incident.Rect[0];
-                    inc2 = contact.Incident.Rect[3];
+                    inc1 = incident.Rect[0];
+                    inc2 = incident.Rect[3];
                 }
             }
             else
             {
                 //incident face is along x axis
-                if (Vector2.Dot(contact.Normal, contact.Incident.Rect[1] - contact.Incident.Rect[2]) <= 0)
+                if (Vector2.Dot(contact.Normal, incident.Rect[1] - incident.Rect[2]) <= 0)
                 {
-                    inc1 = contact.Incident.Rect[0];
-                    inc2 = contact.Incident.Rect[1];
+                    inc1 = incident.Rect[0];
+                    inc2 = incident.Rect[1];
                 }
                 else
                 {
-                    inc1 = contact.Incident.Rect[2];
-                    inc2 = contact.Incident.Rect[3];
+                    inc1 = incident.Rect[2];
+                    inc2 = incident.Rect[3];
                 }
             }
 

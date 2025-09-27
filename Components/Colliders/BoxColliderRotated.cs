@@ -100,7 +100,7 @@ public class BoxColliderRotated : Collider
         => Collision.BoxBoxSAT(Rect, other.Bounds.ToPoints()).IsCollision;
 
     public override bool Collide(CircleCollider other)
-        => Collision.RectCircle(Bounds, other.AbsolutePosition, other.Radius);
+        => Collision.RotatedRectCircle(Rect, other.AbsolutePosition, other.Radius);
 
     public override bool Collide(GridCollider other)
         => other.Collide(this);
