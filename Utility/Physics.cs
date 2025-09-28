@@ -12,30 +12,33 @@ namespace Fiourp
         private static List<Contact> contacts = new();
 
         public static int Iterations = 10;
-        public static float BiasImpulseBeta = 0.2f;
+        public static float KBias = 0.2f;
+        public static float SlopPenetration = 0.1f;
 
         public class Contact
         {
             public Rigidbody Reference;
             public Rigidbody Incident;
 
-            public Vector2 Position;
-            public Vector2 Normal;
+            private Vector2 position;
+            private Vector2 normal;
+            private float penetration;
 
-            public float Pn;
-            public float Pt;
+            private float pn;
+            private float pt;
 
-            public float NormalMass;
-            public float TangentialMass;
-
+            private float normalMass;
+            private float tangentialMass;
             private float friction;
 
-            public Contact(Rigidbody reference, Rigidbody incident, Vector2 position, Vector2 normal)
+
+            public Contact(Rigidbody reference, Rigidbody incident, Vector2 position, Vector2 normal, float penetration)
             {
                 Reference = reference;
                 Incident = incident;
-                Position = position;
-                Normal = normal;
+                this.position = position;
+                this.normal = normal;
+                this.penetration = penetration;
                 friction = (float)Math.Sqrt(reference.Friction * incident.Friction);
 
                 Debug.PointUpdate(position);
@@ -48,17 +51,17 @@ namespace Fiourp
             {
                 Vector2 center1 = 0.5f * ((BoxColliderRotated)Reference.Collider).Rect[2] + 0.5f * ((BoxColliderRotated)Reference.Collider).Rect[0];
                 Vector2 center2 = 0.5f * ((BoxColliderRotated)Incident.Collider).Rect[2] + 0.5f * ((BoxColliderRotated)Incident.Collider).Rect[0];
-                Vector2 r1 = Position - center1;
-                Vector2 r2 = Position - center2;
+                Vector2 r1 = position - center1;
+                Vector2 r2 = position - center2;
 
                 Vector2 DoubleVectProd(Vector2 r, Vector2 n)
                     => new Vector2(-r.Y * (r.X * n.Y - r.Y * n.X), r.X * (r.X * n.Y - r.Y * n.X));
 
-                Vector2 v = Reference.InvI * DoubleVectProd(r1, Normal) + Incident.InvI * DoubleVectProd(r2, Normal);
-                NormalMass = 1 / (Reference.InvMass + Incident.InvMass + Vector2.Dot(v, Normal));
+                Vector2 v = Reference.InvI * DoubleVectProd(r1, normal) + Incident.InvI * DoubleVectProd(r2, normal);
+                normalMass = 1 / (Reference.InvMass + Incident.InvMass + Vector2.Dot(v, normal));
 
-                Vector2 tangent = VectorHelper.Normal(Normal);
-                TangentialMass = 1 / (Reference.InvMass + Incident.InvMass + Vector2.Dot(v, tangent));
+                Vector2 tangent = VectorHelper.Normal(normal);
+                tangentialMass = 1 / (Reference.InvMass + Incident.InvMass + Vector2.Dot(v, tangent));
             }
 
             public void ApplyImpulse()
@@ -67,22 +70,23 @@ namespace Fiourp
                 //TODO: Replace this with something more general, like rigidBody pivot center
                 Vector2 center1 = 0.5f * ((BoxColliderRotated)Reference.Collider).Rect[2] + 0.5f * ((BoxColliderRotated)Reference.Collider).Rect[0];
                 Vector2 center2 = 0.5f * ((BoxColliderRotated)Incident.Collider).Rect[2] + 0.5f * ((BoxColliderRotated)Incident.Collider).Rect[0];
-                Vector2 r1 = Position - center1;
-                Vector2 r2 = Position - center2;
+                Vector2 r1 = position - center1;
+                Vector2 r2 = position - center2;
 
 
                 Vector2 dV = Incident.Velocity + Incident.AngularVelocity * new Vector2(-r2.Y, r2.X) - (Reference.Velocity + Reference.AngularVelocity * new Vector2(-r1.Y, r1.X)); //Vector Product translated in coords because not 3D lol
 
-                float vn = Vector2.Dot(dV, Normal);
-                Pn = Math.Max(-vn * NormalMass, 0);
+                float vn = Vector2.Dot(dV, normal);
+                float vbias = KBias * (Engine.Deltatime == 0 ? 0 : 1 / Engine.Deltatime) * Math.Max(0, penetration - SlopPenetration);
+                pn = Math.Max((-vn + vbias) * normalMass, 0);
 
 
-                Vector2 tangent = VectorHelper.Normal(Normal);
+                Vector2 tangent = VectorHelper.Normal(normal);
                 float vt = Vector2.Dot(dV, tangent);
 
-                Pt = Math.Clamp(-vt * TangentialMass, -friction * Pn, friction * Pn);
+                pt = Math.Clamp(-vt * tangentialMass, -friction * pn, friction * pn);
 
-                Vector2 P = Pn * Normal + Pt * tangent;
+                Vector2 P = pn * normal + pt * tangent;
                 Reference.Velocity -= P * Reference.InvMass;
                 Reference.AngularVelocity -= Reference.InvI * (r1.X * P.Y - r1.Y * P.X);
                 Incident.Velocity += P * Incident.InvMass;
@@ -100,6 +104,7 @@ namespace Fiourp
             public Rigidbody Reference;
             public Rigidbody Incident;
             public Vector2 Normal;
+            public float Penetration;
 
             public Vector2 ReferenceFace1;
             public Vector2 ReferenceFace2;
@@ -109,12 +114,11 @@ namespace Fiourp
 
         public static List<Contact> SeparateBoxContacts(BoxContact boxContact)
         {
-            bool found = false;
             List<Contact> contacts = new();
             if (boxContact.Reference.Collider.Collide(boxContact.ClippedIncidentFace1))
-                contacts.Add(new Contact(boxContact.Reference.ParentEntity.GetComponent<Rigidbody>(), boxContact.Incident, boxContact.ClippedIncidentFace1, boxContact.Normal));
+                contacts.Add(new Contact(boxContact.Reference.ParentEntity.GetComponent<Rigidbody>(), boxContact.Incident, boxContact.ClippedIncidentFace1, boxContact.Normal, boxContact.Penetration));
             if (boxContact.Reference.Collider.Collide(boxContact.ClippedIncidentFace2))
-                contacts.Add(new Contact(boxContact.Reference.ParentEntity.GetComponent<Rigidbody>(), boxContact.Incident, boxContact.ClippedIncidentFace2, boxContact.Normal));
+                contacts.Add(new Contact(boxContact.Reference.ParentEntity.GetComponent<Rigidbody>(), boxContact.Incident, boxContact.ClippedIncidentFace2, boxContact.Normal, boxContact.Penetration));
             return contacts;
         }
 

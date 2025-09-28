@@ -157,6 +157,7 @@ namespace Fiourp
 
             contact.Reference = reference.ParentEntity.GetComponent<Rigidbody>();
             contact.Incident = incident.ParentEntity.GetComponent<Rigidbody>();
+            contact.Penetration = sat.Penetration;
 
             Vector2 refToInc = incident.Rect[0] + (incident.Rect[2] - incident.Rect[0]) * 0.5f - reference.Rect[0] - (reference.Rect[2] - reference.Rect[0]) * 0.5f;
 
