@@ -24,8 +24,8 @@ namespace Fiourp
             private Vector2 normal;
             private float penetration;
 
-            private float pn;
-            private float pt;
+            public float Pn; //accumulated impulses
+            public float Pt;
 
             private float normalMass;
             private float tangentialMass;
@@ -40,8 +40,6 @@ namespace Fiourp
                 this.normal = normal;
                 this.penetration = penetration;
                 friction = (float)Math.Sqrt(reference.Friction * incident.Friction);
-
-                Debug.PointUpdate(position);
             }
 
             /// <summary>
@@ -78,15 +76,25 @@ namespace Fiourp
 
                 float vn = Vector2.Dot(dV, normal);
                 float vbias = KBias * (Engine.Deltatime == 0 ? 0 : 1 / Engine.Deltatime) * Math.Max(0, penetration - SlopPenetration);
-                pn = Math.Max((-vn + vbias) * normalMass, 0);
+                float pnt = Math.Max((-vn + vbias) * normalMass, 0);
+                float tpp = pnt;
 
+                float temp = Pn; //Accumulated impulse
+                Pn = Math.Max(Pn + pnt, 0);
+                pnt = Pn - temp;
+
+                if (Math.Abs(tpp - pnt) >= 0.01f)
+                    Debug.Log(pnt - tpp);
 
                 Vector2 tangent = VectorHelper.Normal(normal);
                 float vt = Vector2.Dot(dV, tangent);
 
-                pt = Math.Clamp(-vt * tangentialMass, -friction * pn, friction * pn);
+                float ptt = Math.Clamp(-vt * tangentialMass, -friction * Pn, friction * Pn);
+                temp = Pt;
+                Pt = Math.Clamp(Pt + ptt, -friction * Pn, friction * Pn);
+                ptt = Pt - temp;
 
-                Vector2 P = pn * normal + pt * tangent;
+                Vector2 P = pnt * normal + ptt * tangent;
                 Reference.Velocity -= P * Reference.InvMass;
                 Reference.AngularVelocity -= Reference.InvI * (r1.X * P.Y - r1.Y * P.X);
                 Incident.Velocity += P * Incident.InvMass;
@@ -124,11 +132,10 @@ namespace Fiourp
 
         public static void BroadPhase()
         {
+            //TODO: Use a dictionnary or sum, this is horribly slow
             //TODO: Make this faster and possible for circle collders etc
-            //TODO: Add arbiters for warm start (???)
 
-            contacts.Clear(); //REMOVE THIS once arbiters are implemented
-
+            List<Contact> newContacts = new();
             for(int i = 0; i < Engine.CurrentMap.Data.Bodies.Count; i++)
             {
                 for (int j = i + 1; j < Engine.CurrentMap.Data.Bodies.Count; j++)
@@ -139,15 +146,26 @@ namespace Fiourp
                     if (rb1.InvMass == 0 && rb2.InvMass == 0)
                         continue;
 
-                    //TODO: Use arbiters from past frame to check if contact already existed before (face <-> face for example). If so, initialize impulse as the one from the last frame
 
                     BoxContact boxContact = Collision.BoxBoxClipping((BoxColliderRotated)rb1.Collider, (BoxColliderRotated)rb2.Collider);
                     if (boxContact.Colliding)
-                        contacts.AddRange(SeparateBoxContacts(boxContact));
+                    {
+                        List<Contact> separate = SeparateBoxContacts(boxContact);
+
+                        //TODO: check for edge ID
+                        Contact c = contacts.Find((c2) => (c2.Reference == rb1 && c2.Incident == rb2) || (c2.Reference == rb1 && c2.Incident == rb2));
+                        if(c != null)
+                        {
+                            separate[0].Pn = c.Pn; //Super ghetto
+                            separate[0].Pt = c.Pt;
+                        }
+
+                        newContacts.AddRange(separate);
+                    }
                 }
             }
 
-            Debug.LogUpdate(contacts.Count);
+            contacts = newContacts;
         }
 
         public static void SolveConstraints()
