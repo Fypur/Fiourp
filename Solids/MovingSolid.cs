@@ -19,9 +19,6 @@ namespace Fiourp
         private float xRemainder;
         private float yRemainder;
 
-        public float GravityScale = 0;
-        protected static readonly Vector2 gravityVector = new Vector2(0, 9.81f);
-
         public MovingSolid(Vector2 position, int width, int height, Sprite sprite) : base(position, width, height, sprite) { }
         public MovingSolid(Vector2 position, int width, int height, Color color) : base(position, width, height, color) { }
 
@@ -188,9 +185,6 @@ namespace Fiourp
         {
             Move(pos.X - ExactPos.X, pos.Y - ExactPos.Y);
         }
-
-        protected void Gravity()
-            => Velocity += gravityVector * GravityScale;
 
         private List<Actor> GetAllRidingActors()
         {
