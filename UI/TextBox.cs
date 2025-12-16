@@ -39,7 +39,7 @@ namespace Fiourp
         public override void Awake()
         {
             base.Awake();
-            Collider.DebugDraw = false;
+            //Collider.DebugDraw = false;
             selectableField = false;
         }
 

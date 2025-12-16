@@ -23,6 +23,10 @@ namespace Fiourp
             Size = size;
             Triggerers = triggerers;
             name = GetType().Name;
+
+            Collider = new BoxCollider(Vector2.Zero, (int)size.X, (int)size.Y);
+            AddComponent(Collider);
+
             Collider.DebugColor = Color.White;
         }
 
