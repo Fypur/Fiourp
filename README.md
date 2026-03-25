@@ -3,7 +3,7 @@ This is a C# game engine built on top of Monogame made in 2 years alongside my g
 
 ## Features
 The engine includes
-- An entity component system, with entities that can Update and Render, have components, have children
+- An Entity-Component framework, with entities that can Update and Render, have components and have other entity as children
 - Platformer physics system with structures like solids and actors inspired by [this article](https://maddythorson.medium.com/celeste-and-towerfall-physics-d24bd2ae0fc5)
 - A small basic physics engine based on [Erin Catto's](https://box2d.org/about/) work
 - Various premade components such as timers, different renderers like sprites, Sound utility, state machines...
