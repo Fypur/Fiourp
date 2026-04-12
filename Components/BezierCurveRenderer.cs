@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Fiourp
 {
-    public class BezierCurveRenderer : Renderer
+    public class BezierCurveRenderer : Component
     {
         public List<Vector2> ControlPoints;
         public int Thickness;

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Fiourp
 {
-    public abstract class Light : Renderer
+    public abstract class Light : Component
     {
         public static List<Light> AllLights = new();
         public Vector2 LocalPosition;

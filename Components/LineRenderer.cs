@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Fiourp
 {
-    public class LineRenderer : Renderer
+    public class LineRenderer : Component
     {
         public List<Vector2> Positions = new List<Vector2>();
         public int Thickness;

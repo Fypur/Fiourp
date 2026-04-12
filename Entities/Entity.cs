@@ -31,7 +31,6 @@ namespace Fiourp
         public Sprite Sprite;
 
         public List<Component> Components = new List<Component>();
-        public List<Renderer> Renderers = new List<Renderer>();
 
         public List<Entity> Children = new List<Entity>();
         public Entity Parent;
@@ -146,9 +145,9 @@ namespace Fiourp
 
         public virtual void Render()
         {
-            for (int i = Renderers.Count - 1; i >= 0; i--)
-                if(Renderers[i].Visible)
-                    Renderers[i].Render();
+            for (int i = Components.Count - 1; i >= 0; i--)
+                if(Components[i].Visible)
+                    Components[i].Render();
 
             for (int i = Children.Count - 1; i >= 0; i--)
                 if(Children[i].Visible && Children[i].Tag != Tags.UI)
@@ -185,9 +184,6 @@ namespace Fiourp
             component.Added();
             Components.Add(component);
 
-            if (component is Renderer renderer)
-                Renderers.Add(renderer);
-
             return component;
         }
 
@@ -204,9 +200,6 @@ namespace Fiourp
         {
             Components.Remove(component);
             component?.Removed();
-
-            if (component is Renderer renderer)
-                Renderers.Remove(renderer);
         }
 
         public bool HasComponent<T>() where T : Component

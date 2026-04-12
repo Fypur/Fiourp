@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Fiourp
 {
-    public class TrailRenderer : Renderer
+    public class TrailRenderer : Component
     {
         public ParticleType Trail;
 

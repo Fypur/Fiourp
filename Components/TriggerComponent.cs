@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Fiourp
 {
-    public class TriggerComponent : Renderer
+    public class TriggerComponent : Component
     {
         public Vector2 LocalPosition;
         

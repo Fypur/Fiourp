@@ -8,7 +8,7 @@ using System.IO;
 
 namespace Fiourp
 {
-    public class Sprite : Renderer
+    public class Sprite : Component
     {
         public static readonly Dictionary<string, AnimData> AllAnimData = new();
 
