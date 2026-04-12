@@ -14,12 +14,12 @@ namespace Fiourp
         public int GridHeight;
         public int[,] Organisation;
 
-        private AABBCollider box;
+        private int Width { get => GridWidth * Organisation.GetLength(1); }
+        private int Height { get => GridHeight * Organisation.GetLength(0); }
+        public override Rectangle Bounds => new Rectangle((int)WorldPos.X, (int)WorldPos.Y, Width, Height);
 
-        public override float Left { get => LocalPos.X; set => LocalPos.X = value; }
-        public override float Right { get => LocalPos.X + Width; set => LocalPos.X = value - Width; }
-        public override float Top { get => LocalPos.Y; set => LocalPos.Y = value; }
-        public override float Bottom { get => LocalPos.Y + Height; set => LocalPos.Y = value - Height; }
+
+        private AABBCollider box;
 
         public GridCollider(Vector2 localPosition, int gridWidth, int gridHeight, int[,] organisation)
         {
@@ -37,7 +37,17 @@ namespace Fiourp
             box.Collidable = false;
         }
 
-        public override bool Collide(Vector2 point)
+        protected override bool CollideRaw(Collider other)
+        {
+            if(other is AABBCollider aabb)
+                return CollideRaw(aabb);
+            else if(other is BoxCollider box)
+                return CollideRaw(box);
+            else
+                throw new NotImplementedException($"GridCollider - {other.GetType()} collision has not been implemented yet");
+        }
+
+        public override bool Contains(Vector2 point)
         {
             point = point - WorldPos;
             if(point.X < 0 || point.Y < 0 || point.X >= Width || point.Y >= Height)
@@ -47,7 +57,7 @@ namespace Fiourp
             return Organisation[gridPoint.Y, gridPoint.X] == 1;
         }
 
-        public override bool Collide(AABBCollider other)
+        private bool CollideRaw(AABBCollider other)
         {
             Vector2 relativePos = other.WorldPos - WorldPos;
             if (relativePos.X + other.Width < 0 || relativePos.Y + other.Height < 0 || relativePos.X >= Width || relativePos.Y >= Height)
@@ -72,9 +82,9 @@ namespace Fiourp
             return false;
         }
 
-        public override bool Collide(BoxCollider other)
+        private bool CollideRaw(BoxCollider other)
         {
-            Vector2 relativePos = new Vector2(other.AbsoluteLeft, other.AbsoluteTop) - WorldPos;
+            Vector2 relativePos = new Vector2(other.LocalLeft, other.LocalTop) + other.ParentEntity.Pos - WorldPos;
             if (relativePos.X + other.Width < 0 || relativePos.Y + other.Height < 0 || relativePos.X >= Width || relativePos.Y >= Height)
                 return false;
 
@@ -100,17 +110,6 @@ namespace Fiourp
             }
 
             return false;
-        }
-
-        public override bool Collide(CircleCollider other)
-        {
-            return false;
-            throw new NotImplementedException();
-        }
-
-        public override bool Collide(GridCollider other)
-        {
-            throw new NotImplementedException();
         }
     }
 }

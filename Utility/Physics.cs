@@ -47,8 +47,8 @@ namespace Fiourp
             /// </summary>
             public void PreStep()
             {
-                Vector2 center1 = 0.5f * ((BoxCollider)Reference.Collider).Rect[2] + 0.5f * ((BoxCollider)Reference.Collider).Rect[0];
-                Vector2 center2 = 0.5f * ((BoxCollider)Incident.Collider).Rect[2] + 0.5f * ((BoxCollider)Incident.Collider).Rect[0];
+                Vector2 center1 = 0.5f * ((BoxCollider)Reference.Collider).Coords[2] + 0.5f * ((BoxCollider)Reference.Collider).Coords[0];
+                Vector2 center2 = 0.5f * ((BoxCollider)Incident.Collider).Coords[2] + 0.5f * ((BoxCollider)Incident.Collider).Coords[0];
                 Vector2 r1 = position - center1;
                 Vector2 r2 = position - center2;
 
@@ -66,8 +66,8 @@ namespace Fiourp
             {
                 //Give Contact IDs to every contact and create arbiters
                 //TODO: Replace this with something more general, like rigidBody pivot center
-                Vector2 center1 = 0.5f * ((BoxCollider)Reference.Collider).Rect[2] + 0.5f * ((BoxCollider)Reference.Collider).Rect[0];
-                Vector2 center2 = 0.5f * ((BoxCollider)Incident.Collider).Rect[2] + 0.5f * ((BoxCollider)Incident.Collider).Rect[0];
+                Vector2 center1 = 0.5f * ((BoxCollider)Reference.Collider).Coords[2] + 0.5f * ((BoxCollider)Reference.Collider).Coords[0];
+                Vector2 center2 = 0.5f * ((BoxCollider)Incident.Collider).Coords[2] + 0.5f * ((BoxCollider)Incident.Collider).Coords[0];
                 Vector2 r1 = position - center1;
                 Vector2 r2 = position - center2;
 

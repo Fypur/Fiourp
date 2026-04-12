@@ -8,37 +8,22 @@ namespace Fiourp;
 
 public class BoxCollider : Collider
 {
-    private float rotation;
-    public float Rotation
-    {
-        get => rotation;
-        set
-        {
-            rotation = value;
-            Rect = GetVertices();
-        }
-    }
-    public Vector2 PivotPoint;
-    
-    private float widthPercentage;
-    private float heightPercentage;
+    public int Width;
+    public int Height;
 
-    public Vector2[] Rect { get; private set; }
+    public float Rotation;
+    public Vector2 PivotPoint;
+
+    public Vector2[] Coords { get; private set; }
+
+    public override Rectangle Bounds => new Rectangle((ParentEntity.Pos + new Vector2(LocalLeft, LocalTop)).ToPoint(), new Vector2(LocalRight - LocalLeft, LocalBottom - LocalTop).ToPoint());
     
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="localPosition"></param>
-    /// <param name="width">Width of the collider when facing right</param>
-    /// <param name="height">Height of the collider when facing right</param>
-    /// <param name="rotationDeg"></param>
-    /// <param name="pivotPoint">Point around which the collider rotates</param>
     public BoxCollider(Vector2 localPosition, int width, int height, float rotationDeg, Vector2 pivotPoint) : base()
     {
         LocalPos = localPosition;
-        widthPercentage = width;
-        heightPercentage = height;
-        this.rotation = MathHelper.ToRadians(rotationDeg);
+        Width = width;
+        Height = height;
+        Rotation = MathHelper.ToRadians(rotationDeg);
         PivotPoint = pivotPoint;
     }
 
@@ -46,10 +31,7 @@ public class BoxCollider : Collider
     {
         base.Added();
         
-        widthPercentage = widthPercentage / ParentEntity.Width;
-        heightPercentage = heightPercentage / ParentEntity.Height;
-        
-        Rect = GetVertices();
+        RefreshVertices();
     }
 
     public override void Update()
@@ -57,20 +39,20 @@ public class BoxCollider : Collider
         base.Update();
 
         //put rotation between -pi and +pi
-        rotation = rotation - (float)Math.Floor(rotation / (2 * float.Pi)) * 2f * float.Pi;
-        if (rotation > Math.PI) rotation -= 2 * float.Pi;
+        Rotation = Rotation - (float)Math.Floor(Rotation / (2 * float.Pi)) * 2f * float.Pi;
+        if (Rotation > Math.PI) Rotation -= 2 * float.Pi;
         
-        Rect = GetVertices();
+        RefreshVertices();
     }
 
-    public Vector2[] GetVertices()
+    public void RefreshVertices()
     {
-        return new Vector2[4]
+        Coords = new Vector2[4]
         {
-            VectorHelper.RotateAround(WorldPos, AbsolutePivotPoint, rotation),
-            (VectorHelper.RotateAround(WorldPos + new Vector2(TrueWidth, 0), AbsolutePivotPoint, rotation)),
-            (VectorHelper.RotateAround(WorldPos + new Vector2(TrueWidth, TrueHeight), AbsolutePivotPoint, rotation)),
-            (VectorHelper.RotateAround(WorldPos + new Vector2(0, TrueHeight), AbsolutePivotPoint, rotation)),
+            VectorHelper.RotateAround(WorldPos, AbsolutePivotPoint, Rotation),
+            (VectorHelper.RotateAround(WorldPos + new Vector2(Width, 0), AbsolutePivotPoint, Rotation)),
+            (VectorHelper.RotateAround(WorldPos + new Vector2(Width, Height), AbsolutePivotPoint, Rotation)),
+            (VectorHelper.RotateAround(WorldPos + new Vector2(0, Height), AbsolutePivotPoint, Rotation)),
         };
     }
 
@@ -79,7 +61,21 @@ public class BoxCollider : Collider
         get => ParentEntity.Pos + PivotPoint;
     }
 
-    public override bool Collide(Vector2 point)
+    protected override bool CollideRaw(Collider other)
+    {
+        if(other is BoxCollider box)
+            return Collision.BoxBoxSAT(Coords, box.Coords).IsCollision;
+        else if(other is AABBCollider aabb)
+            return Collision.BoxBoxSAT(Coords, other.Bounds.ToPoints()).IsCollision;
+        else if(other is CircleCollider circle)
+            return Collision.RotatedRectCircle(Coords, other.WorldPos, circle.Radius);
+        else if(other is GridCollider grid)
+            return grid.Collide(this);
+        else
+            throw new NotImplementedException($"Collision from BoxCollider with {other.GetType().Name} is not yet implemented.");
+    }
+
+    public override bool Contains(Vector2 point)
     {
         /* Idk Why I did this complicated bullshit when scalar products exist, this is only useful for convex polygons
         //Rectangle ABCD and point P
@@ -95,26 +91,15 @@ public class BoxCollider : Collider
         return true;*/
 
         //project along rectangle and compare scalar products
-        Vector2 r = point - Rect[0];
-        float sc1 = Vector2.Dot(r, Rect[1] - Rect[0]);
-        float sc2 = Vector2.Dot(r, Rect[3] - Rect[0]);
-        if(sc1 < 0 || sc1 > (Rect[1] - Rect[0]).LengthSquared() || sc2 < 0 || sc2 > (Rect[3] - Rect[0]).LengthSquared())
+        Vector2 r = point - Coords[0];
+        float sc1 = Vector2.Dot(r, Coords[1] - Coords[0]);
+        float sc2 = Vector2.Dot(r, Coords[3] - Coords[0]);
+        if(sc1 < 0 || sc1 > (Coords[1] - Coords[0]).LengthSquared() || sc2 < 0 || sc2 > (Coords[3] - Coords[0]).LengthSquared())
             return false;
         return true;
     }
 
-    public override bool Collide(BoxCollider other)
-        => Collision.BoxBoxSAT(Rect, other.Rect).IsCollision;
-
-    public override bool Collide(AABBCollider other)
-        => Collision.BoxBoxSAT(Rect, other.Bounds.ToPoints()).IsCollision;
-
-    public override bool Collide(CircleCollider other)
-        => Collision.RotatedRectCircle(Rect, other.WorldPos, other.Radius);
-
-    public override bool Collide(GridCollider other)
-        => other.Collide(this);
-
+    //Should replace this to be handled by the physics engine
     public void Rotate(float radians, float minRot, List<Entity> checkedCollision, Action onCollision)
     {
         int sign = Math.Sign(radians);
@@ -122,13 +107,13 @@ public class BoxCollider : Collider
 
         while(radians > 0)
         {
-            float oldRot = rotation;
-            rotation += minRot * sign;
+            float oldRotation = Rotation;
+            Rotation += minRot * sign;
             Update();
 
             foreach(Entity e in checkedCollision){
                 if(e != ParentEntity && Collide(e)){
-                    rotation = oldRot;
+                    Rotation = oldRotation;
                     Update();
                     onCollision();
                     return;
@@ -141,33 +126,18 @@ public class BoxCollider : Collider
 
     protected override void DebugRender()
     {
-        Drawing.DrawLine(Rect[0], Rect[1], DebugColor, 1);
-        Drawing.DrawLine(Rect[1], Rect[2], DebugColor, 1);
-        Drawing.DrawLine(Rect[2], Rect[3], DebugColor, 1);
-        Drawing.DrawLine(Rect[3], Rect[0], DebugColor, 1);
+        Drawing.DrawLine(Coords[0], Coords[1], DebugColor, 1);
+        Drawing.DrawLine(Coords[1], Coords[2], DebugColor, 1);
+        Drawing.DrawLine(Coords[2], Coords[3], DebugColor, 1);
+        Drawing.DrawLine(Coords[3], Coords[0], DebugColor, 1);
     }
 
-    public float TrueWidth { get => widthPercentage * ParentEntity.Width; set => widthPercentage = value / ParentEntity.Width; }
-    public float TrueHeight { get => heightPercentage * ParentEntity.Height; set => heightPercentage = value / ParentEntity.Height; }
-
-    public override float Width
-    {
-        get => Right - Left;
-        set => throw new Exception("Can't set width of BoxRotatedCollider, use TrueWidth instead");
-    }
-    
-    public override float Height
-    {
-        get => Bottom - Top;
-        set => throw new Exception("Can't set height of BoxRotatedCollider, use TrueHeight instead");
-    }
-
-    public override float Left
+    public float LocalLeft
     {
         get
         {
             float minX = float.PositiveInfinity;
-            foreach (Vector2 point in Rect)
+            foreach (Vector2 point in Coords)
             {
                 if (point.X < minX)
                     minX = point.X;
@@ -175,20 +145,14 @@ public class BoxCollider : Collider
 
             return minX - ParentEntity.Pos.X;
         }
-        
-        set
-        {
-            LocalPos.X += value - Left;
-            Rect = GetVertices();
-        }
     }
 
-    public override float Right
+    public float LocalRight
     {
         get
         {
             float maxX = float.NegativeInfinity;
-            foreach (Vector2 point in Rect)
+            foreach (Vector2 point in Coords)
             {
                 if (point.X > maxX)
                     maxX = point.X;
@@ -196,20 +160,14 @@ public class BoxCollider : Collider
 
             return maxX - ParentEntity.Pos.X;
         }
-        
-        set
-        {
-            LocalPos.X += value - Right;
-            Rect = GetVertices();
-        }
     }
 
-    public override float Top
+    public float LocalTop
     {
         get
         {
             float minY = float.PositiveInfinity;
-            foreach (Vector2 point in Rect)
+            foreach (Vector2 point in Coords)
             {
                 if (point.Y < minY)
                     minY = point.Y;
@@ -217,32 +175,20 @@ public class BoxCollider : Collider
 
             return minY - ParentEntity.Pos.Y;
         }
-        
-        set
-        {
-            LocalPos.Y += value - Top;
-            Rect = GetVertices();
-        }
     }
 
-    public override float Bottom
+    public float LocalBottom
     {
         get
         {
             float maxY = float.NegativeInfinity;
-            foreach (Vector2 point in Rect)
+            foreach (Vector2 point in Coords)
             {
                 if (point.Y > maxY)
                     maxY = point.Y;
             }
 
             return maxY - ParentEntity.Pos.Y;
-        }
-
-        set
-        {
-            LocalPos.Y += value - Bottom;
-            Rect = GetVertices();
         }
     }
 }

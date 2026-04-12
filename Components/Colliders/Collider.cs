@@ -17,6 +17,7 @@ namespace Fiourp
         public abstract Rectangle Bounds { get; }
 
         protected abstract bool CollideRaw(Collider other);
+        public abstract bool Contains(Vector2 point);
 
         public bool Collide(Collider other)
         {

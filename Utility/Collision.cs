@@ -118,7 +118,7 @@ namespace Fiourp
 
         public static Physics.BoxContact BoxBoxClipping(BoxCollider b1, BoxCollider b2)
         {
-            SATOutput sat = BoxBoxSAT(b1.Rect, b2.Rect);
+            SATOutput sat = BoxBoxSAT(b1.Coords, b2.Coords);
 
             Physics.BoxContact contact = new Physics.BoxContact();
             contact.Colliding = true;
@@ -159,7 +159,7 @@ namespace Fiourp
             contact.Incident = incident.ParentEntity.GetComponent<Rigidbody>();
             contact.Penetration = sat.Penetration;
 
-            Vector2 refToInc = incident.Rect[0] + (incident.Rect[2] - incident.Rect[0]) * 0.5f - reference.Rect[0] - (reference.Rect[2] - reference.Rect[0]) * 0.5f;
+            Vector2 refToInc = incident.Coords[0] + (incident.Coords[2] - incident.Coords[0]) * 0.5f - reference.Coords[0] - (reference.Coords[2] - reference.Coords[0]) * 0.5f;
 
             if (Vector2.Dot(refToInc, sat.MinPenetrationAxis) >= 0)
                 contact.Normal = sat.MinPenetrationAxis;
@@ -168,59 +168,59 @@ namespace Fiourp
 
             if (xSatAxis)
             {
-                if (Vector2.Dot(reference.Rect[1] - reference.Rect[0], contact.Normal) >= 0)
+                if (Vector2.Dot(reference.Coords[1] - reference.Coords[0], contact.Normal) >= 0)
                 {
-                    contact.ReferenceFace1 = reference.Rect[1];
-                    contact.ReferenceFace2 = reference.Rect[2];
+                    contact.ReferenceFace1 = reference.Coords[1];
+                    contact.ReferenceFace2 = reference.Coords[2];
                 }
                 else
                 {
-                    contact.ReferenceFace1 = reference.Rect[3];
-                    contact.ReferenceFace2 = reference.Rect[0];
+                    contact.ReferenceFace1 = reference.Coords[3];
+                    contact.ReferenceFace2 = reference.Coords[0];
                 }
 
             }
             else
             {
-                if (Vector2.Dot(reference.Rect[0] - reference.Rect[3], contact.Normal) >= 0)
+                if (Vector2.Dot(reference.Coords[0] - reference.Coords[3], contact.Normal) >= 0)
                 {
-                    contact.ReferenceFace1 = reference.Rect[0];
-                    contact.ReferenceFace2 = reference.Rect[1];
+                    contact.ReferenceFace1 = reference.Coords[0];
+                    contact.ReferenceFace2 = reference.Coords[1];
                 }
                 else
                 {
-                    contact.ReferenceFace1 = reference.Rect[2];
-                    contact.ReferenceFace2 = reference.Rect[3];
+                    contact.ReferenceFace1 = reference.Coords[2];
+                    contact.ReferenceFace2 = reference.Coords[3];
                 }
             }
 
             Vector2 inc1, inc2; //incident face
-            if (Math.Abs(Vector2.Dot(contact.Normal, (incident.Rect[1] - incident.Rect[0]).Normalized())) >= Math.Abs(Vector2.Dot(contact.Normal, (incident.Rect[2] - incident.Rect[1]).Normalized())))
+            if (Math.Abs(Vector2.Dot(contact.Normal, (incident.Coords[1] - incident.Coords[0]).Normalized())) >= Math.Abs(Vector2.Dot(contact.Normal, (incident.Coords[2] - incident.Coords[1]).Normalized())))
             {
                 //incident face is along y axis
-                if (Vector2.Dot(contact.Normal, incident.Rect[1] - incident.Rect[0]) <= 0)
+                if (Vector2.Dot(contact.Normal, incident.Coords[1] - incident.Coords[0]) <= 0)
                 {
-                    inc1 = incident.Rect[1];
-                    inc2 = incident.Rect[2];
+                    inc1 = incident.Coords[1];
+                    inc2 = incident.Coords[2];
                 }
                 else
                 {
-                    inc1 = incident.Rect[0];
-                    inc2 = incident.Rect[3];
+                    inc1 = incident.Coords[0];
+                    inc2 = incident.Coords[3];
                 }
             }
             else
             {
                 //incident face is along x axis
-                if (Vector2.Dot(contact.Normal, incident.Rect[1] - incident.Rect[2]) <= 0)
+                if (Vector2.Dot(contact.Normal, incident.Coords[1] - incident.Coords[2]) <= 0)
                 {
-                    inc1 = incident.Rect[0];
-                    inc2 = incident.Rect[1];
+                    inc1 = incident.Coords[0];
+                    inc2 = incident.Coords[1];
                 }
                 else
                 {
-                    inc1 = incident.Rect[2];
-                    inc2 = incident.Rect[3];
+                    inc1 = incident.Coords[2];
+                    inc2 = incident.Coords[3];
                 }
             }
 

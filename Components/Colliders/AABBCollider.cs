@@ -7,49 +7,33 @@ namespace Fiourp
 {
     public class AABBCollider : Collider
     {
-        private float widthPercentage;
-        private float heightPercentage;
+        public int Width;
+        public int Height;
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="localPosition">Position in LOCAL space</param>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
+        public override Rectangle Bounds => new Rectangle((int)WorldPos.X, (int)WorldPos.Y, Width, Height);
+
         public AABBCollider(Vector2 localPosition, int width, int height)
         {
             LocalPos = localPosition;
-            widthPercentage = width;
-            heightPercentage = height;
+            Width = width;
+            Height = height;
         }
 
-        public override void Added()
+        protected override bool CollideRaw(Collider other)
         {
-            widthPercentage = widthPercentage / ParentEntity.Width;
-            heightPercentage = heightPercentage / ParentEntity.Height;
+            if(other is AABBCollider aabb)
+                return Bounds.Intersects(other.Bounds);
+            else if(other is BoxCollider box)
+                return box.Collide(this);
+            else if(other is CircleCollider circle)
+                return Collision.RectCircle(Bounds, circle.WorldPos, circle.Radius);
+            else if(other is GridCollider grid)
+                return grid.Collide(this);
+            else
+                throw new NotImplementedException($"Collision from AABBCollider with {other.GetType().Name} is not yet implemented.");
         }
 
-        public override bool Collide(AABBCollider other)
-            => Bounds.Intersects(other.Bounds);
-
-        public override bool Collide(CircleCollider other)
-            => Collision.RectCircle(Bounds, other.WorldPos, other.Radius);
-        
-
-        public override bool Collide(Vector2 point)
+        public override bool Contains(Vector2 point)
             => Bounds.Contains(point);
-        
-        public override bool Collide(GridCollider other)
-            => other.Collide(this);
-        
-        public override bool Collide(BoxCollider other)
-            => other.Collide(this);
-
-        public override float Width { get => widthPercentage * ParentEntity.Width; set => widthPercentage = value / ParentEntity.Width; }
-        public override float Height { get => heightPercentage * ParentEntity.Height; set => heightPercentage = value / ParentEntity.Height; }
-        public override float Left { get => LocalPos.X; set => LocalPos.X = value; }
-        public override float Right { get => LocalPos.X + Width; set => LocalPos.X = value - Width; }
-        public override float Top { get => LocalPos.Y; set => LocalPos.Y = value; }
-        public override float Bottom { get => LocalPos.Y + Height; set => LocalPos.Y = value - Height; }
     }
 }
