@@ -26,7 +26,8 @@ namespace Fiourp
         /// <param name="enumerators">The Enumerators in order of execution</param>
         public Coroutine(params IEnumerator[] enumerators)
         {
-            stack = new Stack<IEnumerator>(enumerators.Reverse());
+            enumerators.Reverse();
+            stack = new Stack<IEnumerator>(enumerators);
             Enumerator = stack.Pop();
         }
 
