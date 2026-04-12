@@ -48,6 +48,7 @@ namespace Fiourp
                     Vector2 pos = new Vector2(x * gridCol.GridWidth, y * gridCol.GridHeight) + Collider.WorldPos;
                     if(Tiles[y, x] != Sprite.None && Tiles[y, x] != null)
                         Tiles[y, x].Draw(pos);
+
                     if(Debug.DebugMode && Organisation[y, x] != 0)
                         Drawing.DrawEdge(new Rectangle(pos.ToPoint(), new Point(gridCol.GridWidth, gridCol.GridHeight)), 1, Color.Blue);
                     /*if (Organisation[y, x] != 0 && (Tiles[y, x] == null || Tiles[y, x] == Sprite.None))

@@ -61,8 +61,11 @@ namespace Fiourp
 
         public override void Render()
         {
-            if (Collidable && DebugDraw)
+#if DEBUG
+
+            if (Collidable && Debug.DebugMode)
                 DebugRender();
+#endif
         }
 
         protected virtual void DebugRender()

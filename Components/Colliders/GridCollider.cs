@@ -12,7 +12,7 @@ namespace Fiourp
         public Vector2 GridSize { get => new Vector2(GridWidth, GridHeight); set { GridWidth = (int)value.X; GridHeight = (int)value.Y; } }
         public int GridWidth;
         public int GridHeight;
-        public int[,] Organisation;
+        public int[,] Organisation; //make this into a bool
 
         private int Width { get => GridWidth * Organisation.GetLength(1); }
         private int Height { get => GridHeight * Organisation.GetLength(0); }
@@ -63,12 +63,11 @@ namespace Fiourp
             if (relativePos.X + other.Width < 0 || relativePos.Y + other.Height < 0 || relativePos.X >= Width || relativePos.Y >= Height)
                 return false;
 
-            //Debug.PointUpdate(relativePos);
             Vector2 gridPos = relativePos / new Vector2(GridWidth, GridHeight);
 
-            for(int x = (int)gridPos.X; x < gridPos.X + other.Width / GridWidth; x++)
+            for (int x = (int)gridPos.X; x < gridPos.X + (float)other.Width / GridWidth; x++)
             {
-                for(int y = (int)gridPos.Y; y < gridPos.Y + other.Height / GridHeight; y++)
+                for(int y = (int)gridPos.Y; y < gridPos.Y + (float)other.Height / GridHeight; y++)
                 {
                     //Debug.LogUpdate(new Vector2(x, y));
                     if (x < 0 || y < 0 || x >= Organisation.GetLength(1) || y >= Organisation.GetLength(0))
@@ -91,9 +90,9 @@ namespace Fiourp
             //Debug.PointUpdate(relativePos);
             Vector2 gridPos = relativePos / new Vector2(GridWidth, GridHeight);
 
-            for (int x = (int)gridPos.X; x < gridPos.X + other.Width / GridWidth; x++)
+            for (int x = (int)gridPos.X; x < gridPos.X + (float)other.Width / GridWidth; x++)
             {
-                for (int y = (int)gridPos.Y; y < gridPos.Y + other.Height / GridHeight; y++)
+                for (int y = (int)gridPos.Y; y < gridPos.Y + (float)other.Height / GridHeight; y++)
                 {
                     //Debug.LogUpdate(new Vector2(x, y));
                     if (x < 0 || y < 0 || x >= Organisation.GetLength(1) || y >= Organisation.GetLength(0))
