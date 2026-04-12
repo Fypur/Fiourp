@@ -123,9 +123,9 @@ namespace Fiourp
         public static List<Contact> SeparateBoxContacts(BoxContact boxContact)
         {
             List<Contact> contacts = new();
-            if (boxContact.Reference.Collider.Collide(boxContact.ClippedIncidentFace1))
+            if (boxContact.Reference.Collider.Contains(boxContact.ClippedIncidentFace1))
                 contacts.Add(new Contact(boxContact.Reference.ParentEntity.GetComponent<Rigidbody>(), boxContact.Incident, boxContact.ClippedIncidentFace1, boxContact.Normal, boxContact.Penetration));
-            if (boxContact.Reference.Collider.Collide(boxContact.ClippedIncidentFace2))
+            if (boxContact.Reference.Collider.Contains(boxContact.ClippedIncidentFace2))
                 contacts.Add(new Contact(boxContact.Reference.ParentEntity.GetComponent<Rigidbody>(), boxContact.Incident, boxContact.ClippedIncidentFace2, boxContact.Normal, boxContact.Penetration));
             return contacts;
         }

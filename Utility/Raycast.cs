@@ -143,7 +143,7 @@ namespace Fiourp
                 if (!UseOnlyLevelOrganisation)
                 {
                     if (grid.Collider.Bounds.Contains(mapPoint) && travelledDistance < length)
-                        if (((GridCollider)grid.Collider).Organisation[(int)(mapPoint.Y - grid.Collider.AbsoluteTop) / grid.TileHeight, (int)(mapPoint.X - grid.Collider.AbsoluteLeft) / grid.TileWidth] > 0)
+                        if (((GridCollider)grid.Collider).Organisation[(int)(mapPoint.Y - grid.Collider.WorldPos.Y) / grid.TileHeight, (int)(mapPoint.X - grid.Collider.WorldPos.X) / grid.TileWidth] > 0)
                             Hit = true;
                 }
                 else
@@ -171,7 +171,7 @@ namespace Fiourp
                 Vector2 end = begin + i * direction;
                 foreach (Entity entity in checkedEntities)
                 {
-                    if (entity.Collider.Collide(end))
+                    if (entity.Collider.Contains(end))
                     {
                         Hit = true;
                         EndPoint = end;

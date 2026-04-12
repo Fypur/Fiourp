@@ -27,7 +27,7 @@ namespace Fiourp
             Trigger.Collider = (Collider)Trigger.AddComponent(new CircleCollider(Vector2.Zero, radius));
         }
 
-        public TriggerComponent(Vector2 localPosition, Collider collider, List<Type> triggerers)
+        public TriggerComponent(Vector2 localPosition, AABBCollider collider, List<Type> triggerers)
         {
             LocalPosition = localPosition;
             Trigger = new Trigger(localPosition, collider, triggerers, Sprite.None);

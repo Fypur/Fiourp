@@ -289,7 +289,7 @@ namespace Fiourp
 
         public static bool LineBoxCollision(AABBCollider b, Vector2 lineBegin, Vector2 lineEnd)
         {
-            if (b.Collide(lineBegin) && b.Collide(lineEnd))
+            if (b.Contains(lineBegin) || b.Contains(lineEnd))
                 return true;
 
             return LineBoxIntersection(b, lineBegin, lineEnd).Count != 0;
