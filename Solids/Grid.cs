@@ -45,7 +45,7 @@ namespace Fiourp
             {
                 for(int y = Math.Max((int)startPos.Y, 0); y < Math.Min(startPos.Y + size.Y, Tiles.GetLength(0)); y++)
                 {
-                    Vector2 pos = new Vector2(x * gridCol.GridWidth, y * gridCol.GridHeight) + Collider.AbsolutePosition;
+                    Vector2 pos = new Vector2(x * gridCol.GridWidth, y * gridCol.GridHeight) + Collider.WorldPos;
                     if(Tiles[y, x] != Sprite.None && Tiles[y, x] != null)
                         Tiles[y, x].Draw(pos);
                     if(Debug.DebugMode && Organisation[y, x] != 0)

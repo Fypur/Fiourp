@@ -16,7 +16,7 @@ namespace Fiourp
         /// <param name="radius"></param>
         public CircleCollider(Vector2 localPosition, float radius)
         {
-            Pos = localPosition;
+            LocalPos = localPosition;
             radiusPercentage = radius;
         }
 
@@ -27,20 +27,20 @@ namespace Fiourp
 
         public override void Render()
         {
-            Drawing.DrawCircleEdge(AbsolutePosition, Radius, 0.1f, DebugColor, 1);
+            Drawing.DrawCircleEdge(WorldPos, Radius, 0.1f, DebugColor, 1);
         }
 
         public override bool Collide(AABBCollider other)
-            => Collision.RectCircle(other.Bounds, AbsolutePosition, Radius);
+            => Collision.RectCircle(other.Bounds, WorldPos, Radius);
 
         public override bool Collide(BoxCollider other)
             => other.Collide(this);
 
         public override bool Collide(CircleCollider other)
-            => Vector2.Distance(AbsolutePosition, other.AbsolutePosition) < Radius + other.Radius;
+            => Vector2.Distance(WorldPos, other.WorldPos) < Radius + other.Radius;
 
         public override bool Collide(Vector2 point)
-            => Vector2.Distance(AbsolutePosition, point) < Radius;
+            => Vector2.Distance(WorldPos, point) < Radius;
 
         public override bool Collide(GridCollider other)
         {
@@ -49,9 +49,9 @@ namespace Fiourp
 
         public override float Width { get => Radius * 2; set => Radius = value * 0.5f; }
         public override float Height { get => Radius * 2; set => Radius = value * 0.5f; }
-        public override float Left { get => Pos.X - Radius; set => Pos.X = value + Radius; }
-        public override float Right { get => Pos.X + Radius; set => Pos.X = value - Radius; }
-        public override float Top { get => Pos.Y - Radius; set => Pos.X = value + Radius; }
-        public override float Bottom { get => Pos.Y + Radius; set => Pos.X = value - Radius; }
+        public override float Left { get => LocalPos.X - Radius; set => LocalPos.X = value + Radius; }
+        public override float Right { get => LocalPos.X + Radius; set => LocalPos.X = value - Radius; }
+        public override float Top { get => LocalPos.Y - Radius; set => LocalPos.X = value + Radius; }
+        public override float Bottom { get => LocalPos.Y + Radius; set => LocalPos.X = value - Radius; }
     }
 }

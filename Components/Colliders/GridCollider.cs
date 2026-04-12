@@ -16,16 +16,14 @@ namespace Fiourp
 
         private AABBCollider box;
 
-        public override float Width { get => GridWidth * Organisation.GetLength(1); set => GridWidth = (int)(value / Organisation.GetLength(1)); }
-        public override float Height { get => GridHeight * Organisation.GetLength(0); set => GridHeight = (int)(value / Organisation.GetLength(0)); }
-        public override float Left { get => Pos.X; set => Pos.X = value; }
-        public override float Right { get => Pos.X + Width; set => Pos.X = value - Width; }
-        public override float Top { get => Pos.Y; set => Pos.Y = value; }
-        public override float Bottom { get => Pos.Y + Height; set => Pos.Y = value - Height; }
+        public override float Left { get => LocalPos.X; set => LocalPos.X = value; }
+        public override float Right { get => LocalPos.X + Width; set => LocalPos.X = value - Width; }
+        public override float Top { get => LocalPos.Y; set => LocalPos.Y = value; }
+        public override float Bottom { get => LocalPos.Y + Height; set => LocalPos.Y = value - Height; }
 
         public GridCollider(Vector2 localPosition, int gridWidth, int gridHeight, int[,] organisation)
         {
-            Pos = localPosition;
+            LocalPos = localPosition;
             GridWidth = gridWidth;
             GridHeight = gridHeight;
             Organisation = organisation;
@@ -35,13 +33,13 @@ namespace Fiourp
         {
             base.Added();
 
-            box = (AABBCollider)ParentEntity.AddComponent(new AABBCollider(Pos, GridWidth, GridHeight));
+            box = (AABBCollider)ParentEntity.AddComponent(new AABBCollider(LocalPos, GridWidth, GridHeight));
             box.Collidable = false;
         }
 
         public override bool Collide(Vector2 point)
         {
-            point = point - AbsolutePosition;
+            point = point - WorldPos;
             if(point.X < 0 || point.Y < 0 || point.X >= Width || point.Y >= Height)
                 return false;
 
@@ -51,7 +49,7 @@ namespace Fiourp
 
         public override bool Collide(AABBCollider other)
         {
-            Vector2 relativePos = other.AbsolutePosition - AbsolutePosition;
+            Vector2 relativePos = other.WorldPos - WorldPos;
             if (relativePos.X + other.Width < 0 || relativePos.Y + other.Height < 0 || relativePos.X >= Width || relativePos.Y >= Height)
                 return false;
 
@@ -76,7 +74,7 @@ namespace Fiourp
 
         public override bool Collide(BoxCollider other)
         {
-            Vector2 relativePos = new Vector2(other.AbsoluteLeft, other.AbsoluteTop) - AbsolutePosition;
+            Vector2 relativePos = new Vector2(other.AbsoluteLeft, other.AbsoluteTop) - WorldPos;
             if (relativePos.X + other.Width < 0 || relativePos.Y + other.Height < 0 || relativePos.X >= Width || relativePos.Y >= Height)
                 return false;
 
@@ -94,7 +92,7 @@ namespace Fiourp
 
                     if (Organisation[y, x] == 1)
                     {
-                        box.Pos = Pos + new Vector2(x * GridWidth, y * GridHeight);
+                        box.LocalPos = LocalPos + new Vector2(x * GridWidth, y * GridHeight);
                         if(other.Collide(box))
                             return true;
                     }

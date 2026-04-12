@@ -35,7 +35,7 @@ public class BoxCollider : Collider
     /// <param name="pivotPoint">Point around which the collider rotates</param>
     public BoxCollider(Vector2 localPosition, int width, int height, float rotationDeg, Vector2 pivotPoint) : base()
     {
-        Pos = localPosition;
+        LocalPos = localPosition;
         widthPercentage = width;
         heightPercentage = height;
         this.rotation = MathHelper.ToRadians(rotationDeg);
@@ -67,10 +67,10 @@ public class BoxCollider : Collider
     {
         return new Vector2[4]
         {
-            VectorHelper.RotateAround(AbsolutePosition, AbsolutePivotPoint, rotation),
-            (VectorHelper.RotateAround(AbsolutePosition + new Vector2(TrueWidth, 0), AbsolutePivotPoint, rotation)),
-            (VectorHelper.RotateAround(AbsolutePosition + new Vector2(TrueWidth, TrueHeight), AbsolutePivotPoint, rotation)),
-            (VectorHelper.RotateAround(AbsolutePosition + new Vector2(0, TrueHeight), AbsolutePivotPoint, rotation)),
+            VectorHelper.RotateAround(WorldPos, AbsolutePivotPoint, rotation),
+            (VectorHelper.RotateAround(WorldPos + new Vector2(TrueWidth, 0), AbsolutePivotPoint, rotation)),
+            (VectorHelper.RotateAround(WorldPos + new Vector2(TrueWidth, TrueHeight), AbsolutePivotPoint, rotation)),
+            (VectorHelper.RotateAround(WorldPos + new Vector2(0, TrueHeight), AbsolutePivotPoint, rotation)),
         };
     }
 
@@ -110,7 +110,7 @@ public class BoxCollider : Collider
         => Collision.BoxBoxSAT(Rect, other.Bounds.ToPoints()).IsCollision;
 
     public override bool Collide(CircleCollider other)
-        => Collision.RotatedRectCircle(Rect, other.AbsolutePosition, other.Radius);
+        => Collision.RotatedRectCircle(Rect, other.WorldPos, other.Radius);
 
     public override bool Collide(GridCollider other)
         => other.Collide(this);
@@ -178,7 +178,7 @@ public class BoxCollider : Collider
         
         set
         {
-            Pos.X += value - Left;
+            LocalPos.X += value - Left;
             Rect = GetVertices();
         }
     }
@@ -199,7 +199,7 @@ public class BoxCollider : Collider
         
         set
         {
-            Pos.X += value - Right;
+            LocalPos.X += value - Right;
             Rect = GetVertices();
         }
     }
@@ -220,7 +220,7 @@ public class BoxCollider : Collider
         
         set
         {
-            Pos.Y += value - Top;
+            LocalPos.Y += value - Top;
             Rect = GetVertices();
         }
     }
@@ -241,7 +241,7 @@ public class BoxCollider : Collider
 
         set
         {
-            Pos.Y += value - Bottom;
+            LocalPos.Y += value - Bottom;
             Rect = GetVertices();
         }
     }

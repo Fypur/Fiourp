@@ -272,16 +272,16 @@ namespace Fiourp
         {
             List<Vector2> intersection = new();
 
-            Vector2? left = LineIntersection(b.AbsolutePosition, b.AbsolutePosition + new Vector2(0, b.Height), lineBegin, lineEnd);
+            Vector2? left = LineIntersection(b.WorldPos, b.WorldPos + new Vector2(0, b.Height), lineBegin, lineEnd);
             if (left != null) intersection.Add(left.Value);
 
-            Vector2? top = LineIntersection(b.AbsolutePosition, b.AbsolutePosition + new Vector2(b.Width, 0), lineBegin, lineEnd);
+            Vector2? top = LineIntersection(b.WorldPos, b.WorldPos + new Vector2(b.Width, 0), lineBegin, lineEnd);
             if (top != null) intersection.Add(top.Value);
 
-            Vector2? right = LineIntersection(b.AbsolutePosition + new Vector2(b.Width, 0), b.AbsolutePosition + new Vector2(b.Width, b.Height), lineBegin, lineEnd);
+            Vector2? right = LineIntersection(b.WorldPos + new Vector2(b.Width, 0), b.WorldPos + new Vector2(b.Width, b.Height), lineBegin, lineEnd);
             if (right != null) intersection.Add(right.Value);
 
-            Vector2? bottom = LineIntersection(b.AbsolutePosition + new Vector2(0, b.Height), b.AbsolutePosition + new Vector2(b.Width, b.Height), lineBegin, lineEnd);
+            Vector2? bottom = LineIntersection(b.WorldPos + new Vector2(0, b.Height), b.WorldPos + new Vector2(b.Width, b.Height), lineBegin, lineEnd);
             if (bottom != null) intersection.Add(bottom.Value);
 
             return intersection;

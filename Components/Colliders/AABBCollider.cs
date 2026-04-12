@@ -18,7 +18,7 @@ namespace Fiourp
         /// <param name="height"></param>
         public AABBCollider(Vector2 localPosition, int width, int height)
         {
-            Pos = localPosition;
+            LocalPos = localPosition;
             widthPercentage = width;
             heightPercentage = height;
         }
@@ -33,7 +33,7 @@ namespace Fiourp
             => Bounds.Intersects(other.Bounds);
 
         public override bool Collide(CircleCollider other)
-            => Collision.RectCircle(Bounds, other.AbsolutePosition, other.Radius);
+            => Collision.RectCircle(Bounds, other.WorldPos, other.Radius);
         
 
         public override bool Collide(Vector2 point)
@@ -47,9 +47,9 @@ namespace Fiourp
 
         public override float Width { get => widthPercentage * ParentEntity.Width; set => widthPercentage = value / ParentEntity.Width; }
         public override float Height { get => heightPercentage * ParentEntity.Height; set => heightPercentage = value / ParentEntity.Height; }
-        public override float Left { get => Pos.X; set => Pos.X = value; }
-        public override float Right { get => Pos.X + Width; set => Pos.X = value - Width; }
-        public override float Top { get => Pos.Y; set => Pos.Y = value; }
-        public override float Bottom { get => Pos.Y + Height; set => Pos.Y = value - Height; }
+        public override float Left { get => LocalPos.X; set => LocalPos.X = value; }
+        public override float Right { get => LocalPos.X + Width; set => LocalPos.X = value - Width; }
+        public override float Top { get => LocalPos.Y; set => LocalPos.Y = value; }
+        public override float Bottom { get => LocalPos.Y + Height; set => LocalPos.Y = value - Height; }
     }
 }
