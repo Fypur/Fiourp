@@ -13,8 +13,8 @@ namespace Fiourp
         public bool DebugDraw = true;
 
         public abstract bool Collide(Vector2 point);
+        public abstract bool Collide(AABBCollider other);
         public abstract bool Collide(BoxCollider other);
-        public abstract bool Collide(BoxColliderRotated other);
         public abstract bool Collide(CircleCollider other);
         public abstract bool Collide(GridCollider other);
         
@@ -37,9 +37,9 @@ namespace Fiourp
             if (!other.Collidable || !ParentEntity.CollidingConditions(other) || !other.ParentEntity.CollidingConditions(this))
                 return false;
 
-            if (other is BoxCollider box)
+            if (other is AABBCollider box)
                 return Collide(box);
-            if (other is BoxColliderRotated boxRot)
+            if (other is BoxCollider boxRot)
                 return Collide(boxRot);
             if (other is CircleCollider circle)
                 return Collide(circle);

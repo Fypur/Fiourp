@@ -14,7 +14,7 @@ namespace Fiourp
         public int GridHeight;
         public int[,] Organisation;
 
-        private BoxCollider box;
+        private AABBCollider box;
 
         public override float Width { get => GridWidth * Organisation.GetLength(1); set => GridWidth = (int)(value / Organisation.GetLength(1)); }
         public override float Height { get => GridHeight * Organisation.GetLength(0); set => GridHeight = (int)(value / Organisation.GetLength(0)); }
@@ -35,7 +35,7 @@ namespace Fiourp
         {
             base.Added();
 
-            box = (BoxCollider)ParentEntity.AddComponent(new BoxCollider(Pos, GridWidth, GridHeight));
+            box = (AABBCollider)ParentEntity.AddComponent(new AABBCollider(Pos, GridWidth, GridHeight));
             box.Collidable = false;
         }
 
@@ -49,7 +49,7 @@ namespace Fiourp
             return Organisation[gridPoint.Y, gridPoint.X] == 1;
         }
 
-        public override bool Collide(BoxCollider other)
+        public override bool Collide(AABBCollider other)
         {
             Vector2 relativePos = other.AbsolutePosition - AbsolutePosition;
             if (relativePos.X + other.Width < 0 || relativePos.Y + other.Height < 0 || relativePos.X >= Width || relativePos.Y >= Height)
@@ -74,7 +74,7 @@ namespace Fiourp
             return false;
         }
 
-        public override bool Collide(BoxColliderRotated other)
+        public override bool Collide(BoxCollider other)
         {
             Vector2 relativePos = new Vector2(other.AbsoluteLeft, other.AbsoluteTop) - AbsolutePosition;
             if (relativePos.X + other.Width < 0 || relativePos.Y + other.Height < 0 || relativePos.X >= Width || relativePos.Y >= Height)

@@ -139,7 +139,7 @@ namespace Fiourp
             Rotation = rotation;
             ZoomLevel = zoomLevel;
 
-            Collider = new BoxCollider(Vector2.Zero, (int)Engine.ScreenSize.X, (int)Engine.ScreenSize.Y);
+            Collider = new AABBCollider(Vector2.Zero, (int)Engine.ScreenSize.X, (int)Engine.ScreenSize.Y);
             AddComponent(Collider);
 
             if (bounds != null)

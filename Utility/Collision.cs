@@ -116,7 +116,7 @@ namespace Fiourp
             return result;
         }
 
-        public static Physics.BoxContact BoxBoxClipping(BoxColliderRotated b1, BoxColliderRotated b2)
+        public static Physics.BoxContact BoxBoxClipping(BoxCollider b1, BoxCollider b2)
         {
             SATOutput sat = BoxBoxSAT(b1.Rect, b2.Rect);
 
@@ -124,7 +124,7 @@ namespace Fiourp
             contact.Colliding = true;
             bool xSatAxis;
 
-            BoxColliderRotated reference, incident;
+            BoxCollider reference, incident;
             switch (sat.AxisIndex)
             {
                 case 0:
@@ -268,7 +268,7 @@ namespace Fiourp
             return null; // No collision
         }
 
-        public static List<Vector2> LineBoxIntersection(BoxCollider b, Vector2 lineBegin, Vector2 lineEnd)
+        public static List<Vector2> LineBoxIntersection(AABBCollider b, Vector2 lineBegin, Vector2 lineEnd)
         {
             List<Vector2> intersection = new();
 
@@ -287,7 +287,7 @@ namespace Fiourp
             return intersection;
         }
 
-        public static bool LineBoxCollision(BoxCollider b, Vector2 lineBegin, Vector2 lineEnd)
+        public static bool LineBoxCollision(AABBCollider b, Vector2 lineBegin, Vector2 lineEnd)
         {
             if (b.Collide(lineBegin) && b.Collide(lineEnd))
                 return true;

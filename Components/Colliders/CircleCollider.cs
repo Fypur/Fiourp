@@ -30,10 +30,10 @@ namespace Fiourp
             Drawing.DrawCircleEdge(AbsolutePosition, Radius, 0.1f, DebugColor, 1);
         }
 
-        public override bool Collide(BoxCollider other)
+        public override bool Collide(AABBCollider other)
             => Collision.RectCircle(other.Bounds, AbsolutePosition, Radius);
 
-        public override bool Collide(BoxColliderRotated other)
+        public override bool Collide(BoxCollider other)
             => other.Collide(this);
 
         public override bool Collide(CircleCollider other)
