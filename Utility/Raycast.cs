@@ -143,7 +143,7 @@ namespace Fiourp
                 if (!UseOnlyLevelOrganisation)
                 {
                     if (grid.Collider.Bounds.Contains(mapPoint) && travelledDistance < length)
-                        if (((GridCollider)grid.Collider).Organisation[(int)(mapPoint.Y - grid.Collider.WorldPos.Y) / grid.TileHeight, (int)(mapPoint.X - grid.Collider.WorldPos.X) / grid.TileWidth] > 0)
+                        if (((GridCollider)grid.Collider).Grid[(int)(mapPoint.Y - grid.Collider.WorldPos.Y) / grid.TileHeight, (int)(mapPoint.X - grid.Collider.WorldPos.X) / grid.TileWidth] > 0)
                             Hit = true;
                 }
                 else

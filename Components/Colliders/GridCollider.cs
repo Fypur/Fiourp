@@ -12,21 +12,21 @@ namespace Fiourp
         public Vector2 GridSize { get => new Vector2(GridWidth, GridHeight); set { GridWidth = (int)value.X; GridHeight = (int)value.Y; } }
         public int GridWidth;
         public int GridHeight;
-        public int[,] Organisation; //make this into a bool
+        public bool[,] Grid;
 
-        private int Width { get => GridWidth * Organisation.GetLength(1); }
-        private int Height { get => GridHeight * Organisation.GetLength(0); }
+        private int Width { get => GridWidth * Grid.GetLength(1); }
+        private int Height { get => GridHeight * Grid.GetLength(0); }
         public override Rectangle Bounds => new Rectangle((int)WorldPos.X, (int)WorldPos.Y, Width, Height);
 
 
         private AABBCollider box;
 
-        public GridCollider(Vector2 localPosition, int gridWidth, int gridHeight, int[,] organisation)
+        public GridCollider(Vector2 localPosition, int gridWidth, int gridHeight, bool[,] organisation)
         {
             LocalPos = localPosition;
             GridWidth = gridWidth;
             GridHeight = gridHeight;
-            Organisation = organisation;
+            Grid = organisation;
         }
 
         public override void Added()
@@ -54,7 +54,7 @@ namespace Fiourp
                 return false;
 
             Point gridPoint = (point / new Vector2(GridWidth, GridHeight)).ToPoint();
-            return Organisation[gridPoint.Y, gridPoint.X] == 1;
+            return Grid[gridPoint.Y, gridPoint.X];
         }
 
         private bool CollideRaw(AABBCollider other)
@@ -70,10 +70,10 @@ namespace Fiourp
                 for(int y = (int)gridPos.Y; y < gridPos.Y + (float)other.Height / GridHeight; y++)
                 {
                     //Debug.LogUpdate(new Vector2(x, y));
-                    if (x < 0 || y < 0 || x >= Organisation.GetLength(1) || y >= Organisation.GetLength(0))
+                    if (x < 0 || y < 0 || x >= Grid.GetLength(1) || y >= Grid.GetLength(0))
                         continue;
 
-                    if (Organisation[y, x] == 1)
+                    if (Grid[y, x])
                         return true;
                 }
             }
@@ -95,11 +95,11 @@ namespace Fiourp
                 for (int y = (int)gridPos.Y; y < gridPos.Y + (float)other.Height / GridHeight; y++)
                 {
                     //Debug.LogUpdate(new Vector2(x, y));
-                    if (x < 0 || y < 0 || x >= Organisation.GetLength(1) || y >= Organisation.GetLength(0))
+                    if (x < 0 || y < 0 || x >= Grid.GetLength(1) || y >= Grid.GetLength(0))
                         continue;
 
 
-                    if (Organisation[y, x] == 1)
+                    if (Grid[y, x])
                     {
                         box.LocalPos = LocalPos + new Vector2(x * GridWidth, y * GridHeight);
                         if(other.Collide(box))
