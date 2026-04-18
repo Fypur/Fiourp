@@ -17,12 +17,12 @@ namespace Fiourp
             Radius = radius;
         }
 
-        protected override bool CollideRaw(Collider other)
+        public override bool CollideRaw(Collider other)
         {
             if(other is AABBCollider aabb)
                 return Collision.RectCircle(other.Bounds, WorldPos, Radius);
             else if(other is BoxCollider box)
-                return other.Collide(this);
+                return other.CollideRaw(this);
             else if(other is CircleCollider circle)
                 return Vector2.Distance(WorldPos, other.WorldPos) < Radius + circle.Radius;
             else

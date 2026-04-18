@@ -19,16 +19,16 @@ namespace Fiourp
             Height = height;
         }
 
-        protected override bool CollideRaw(Collider other)
+        public override bool CollideRaw(Collider other)
         {
             if(other is AABBCollider aabb)
                 return Bounds.Intersects(other.Bounds);
             else if(other is BoxCollider box)
-                return box.Collide(this);
+                return box.CollideRaw(this);
             else if(other is CircleCollider circle)
                 return Collision.RectCircle(Bounds, circle.WorldPos, circle.Radius);
             else if(other is GridCollider grid)
-                return grid.Collide(this);
+                return grid.CollideRaw(this);
             else
                 throw new NotImplementedException($"Collision from AABBCollider with {other.GetType().Name} is not yet implemented.");
         }

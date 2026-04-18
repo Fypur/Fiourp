@@ -61,7 +61,7 @@ public class BoxCollider : Collider
         get => ParentEntity.Pos + PivotPoint;
     }
 
-    protected override bool CollideRaw(Collider other)
+    public override bool CollideRaw(Collider other)
     {
         if(other is BoxCollider box)
             return Collision.BoxBoxSAT(Coords, box.Coords).IsCollision;
@@ -70,7 +70,7 @@ public class BoxCollider : Collider
         else if(other is CircleCollider circle)
             return Collision.RotatedRectCircle(Coords, other.WorldPos, circle.Radius);
         else if(other is GridCollider grid)
-            return grid.Collide(this);
+            return grid.CollideRaw(this);
         else
             throw new NotImplementedException($"Collision from BoxCollider with {other.GetType().Name} is not yet implemented.");
     }

@@ -37,7 +37,31 @@ namespace Fiourp
             box.Collidable = false;
         }
 
-        protected override bool CollideRaw(Collider other)
+        private bool GeneralCollidingFunction(Rectangle bounds, Func<int, int, bool> checkingFunction)
+        {
+            Vector2 relativePos = bounds.Location.ToVector2() - WorldPos;
+
+            if (relativePos.X < 0 || relativePos.Y < 0 || relativePos.X >= Width || relativePos.Y >= Height)
+                return true;
+
+            Vector2 gridPos = relativePos / new Vector2(GridWidth, GridHeight);
+
+            for (int x = (int)gridPos.X; x < gridPos.X + (float)bounds.Width / GridWidth; x++)
+            {
+                for (int y = (int)gridPos.Y; y < gridPos.Y + (float)bounds.Height / GridHeight; y++)
+                {
+                    if (x < 0 || y < 0 || x >= Grid.GetLength(1) || y >= Grid.GetLength(0))
+                        continue;
+
+                    if (Grid[y, x] && checkingFunction(x, y))
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
+        public override bool CollideRaw(Collider other)
         {
             if(other is AABBCollider aabb)
                 return CollideRaw(aabb);
@@ -58,57 +82,21 @@ namespace Fiourp
         }
 
         private bool CollideRaw(AABBCollider other)
+            => GeneralCollidingFunction(other.Bounds, (x, y) => true);
+
+        private bool AABBBoxGridCollision(Collider collider)
         {
-            Vector2 relativePos = other.WorldPos - WorldPos;
-            if (relativePos.X + other.Width < 0 || relativePos.Y + other.Height < 0 || relativePos.X >= Width || relativePos.Y >= Height)
-                return false;
-
-            Vector2 gridPos = relativePos / new Vector2(GridWidth, GridHeight);
-
-            for (int x = (int)gridPos.X; x < gridPos.X + (float)other.Width / GridWidth; x++)
+            return GeneralCollidingFunction(collider.Bounds, (x, y) =>
             {
-                for(int y = (int)gridPos.Y; y < gridPos.Y + (float)other.Height / GridHeight; y++)
-                {
-                    //Debug.LogUpdate(new Vector2(x, y));
-                    if (x < 0 || y < 0 || x >= Grid.GetLength(1) || y >= Grid.GetLength(0))
-                        continue;
-
-                    if (Grid[y, x])
-                        return true;
-                }
-            }
-
-            return false;
+                box.LocalPos = LocalPos + new Vector2(x * GridWidth, y * GridHeight);
+                return collider.CollideRaw(box);
+            });
         }
 
         private bool CollideRaw(BoxCollider other)
-        {
-            Vector2 relativePos = new Vector2(other.LocalLeft, other.LocalTop) + other.ParentEntity.Pos - WorldPos;
-            if (relativePos.X + other.Width < 0 || relativePos.Y + other.Height < 0 || relativePos.X >= Width || relativePos.Y >= Height)
-                return false;
+            => AABBBoxGridCollision(other);
 
-            //Debug.PointUpdate(relativePos);
-            Vector2 gridPos = relativePos / new Vector2(GridWidth, GridHeight);
-
-            for (int x = (int)gridPos.X; x < gridPos.X + (float)other.Width / GridWidth; x++)
-            {
-                for (int y = (int)gridPos.Y; y < gridPos.Y + (float)other.Height / GridHeight; y++)
-                {
-                    //Debug.LogUpdate(new Vector2(x, y));
-                    if (x < 0 || y < 0 || x >= Grid.GetLength(1) || y >= Grid.GetLength(0))
-                        continue;
-
-
-                    if (Grid[y, x])
-                    {
-                        box.LocalPos = LocalPos + new Vector2(x * GridWidth, y * GridHeight);
-                        if(other.Collide(box))
-                            return true;
-                    }
-                }
-            }
-
-            return false;
-        }
+        private bool CollideRaw(CircleCollider other)
+            => AABBBoxGridCollision(other);
     }
 }
