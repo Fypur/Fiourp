@@ -5,8 +5,8 @@ namespace Fiourp
 {
     public class Entity
     {
-        public Vector2 Pos;
-        public float Rotation;
+        public virtual Vector2 Pos { get; set; }
+        public virtual float Rotation { get; set; }
 
         public bool Active = true;
         public bool Visible = true;
