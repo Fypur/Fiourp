@@ -47,8 +47,8 @@ namespace Fiourp
             /// </summary>
             public void PreStep()
             {
-                Vector2 center1 = 0.5f * ((BoxColliderRotated)Reference.Collider).Rect[2] + 0.5f * ((BoxColliderRotated)Reference.Collider).Rect[0];
-                Vector2 center2 = 0.5f * ((BoxColliderRotated)Incident.Collider).Rect[2] + 0.5f * ((BoxColliderRotated)Incident.Collider).Rect[0];
+                Vector2 center1 = 0.5f * ((BoxCollider)Reference.Collider).WorldVertices[2] + 0.5f * ((BoxCollider)Reference.Collider).WorldVertices[0];
+                Vector2 center2 = 0.5f * ((BoxCollider)Incident.Collider).WorldVertices[2] + 0.5f * ((BoxCollider)Incident.Collider).WorldVertices[0];
                 Vector2 r1 = position - center1;
                 Vector2 r2 = position - center2;
 
@@ -66,8 +66,8 @@ namespace Fiourp
             {
                 //Give Contact IDs to every contact and create arbiters
                 //TODO: Replace this with something more general, like rigidBody pivot center
-                Vector2 center1 = 0.5f * ((BoxColliderRotated)Reference.Collider).Rect[2] + 0.5f * ((BoxColliderRotated)Reference.Collider).Rect[0];
-                Vector2 center2 = 0.5f * ((BoxColliderRotated)Incident.Collider).Rect[2] + 0.5f * ((BoxColliderRotated)Incident.Collider).Rect[0];
+                Vector2 center1 = 0.5f * ((BoxCollider)Reference.Collider).WorldVertices[2] + 0.5f * ((BoxCollider)Reference.Collider).WorldVertices[0];
+                Vector2 center2 = 0.5f * ((BoxCollider)Incident.Collider).WorldVertices[2] + 0.5f * ((BoxCollider)Incident.Collider).WorldVertices[0];
                 Vector2 r1 = position - center1;
                 Vector2 r2 = position - center2;
 
@@ -123,9 +123,9 @@ namespace Fiourp
         public static List<Contact> SeparateBoxContacts(BoxContact boxContact)
         {
             List<Contact> contacts = new();
-            if (boxContact.Reference.Collider.Collide(boxContact.ClippedIncidentFace1))
+            if (boxContact.Reference.Collider.Contains(boxContact.ClippedIncidentFace1))
                 contacts.Add(new Contact(boxContact.Reference.ParentEntity.GetComponent<Rigidbody>(), boxContact.Incident, boxContact.ClippedIncidentFace1, boxContact.Normal, boxContact.Penetration));
-            if (boxContact.Reference.Collider.Collide(boxContact.ClippedIncidentFace2))
+            if (boxContact.Reference.Collider.Contains(boxContact.ClippedIncidentFace2))
                 contacts.Add(new Contact(boxContact.Reference.ParentEntity.GetComponent<Rigidbody>(), boxContact.Incident, boxContact.ClippedIncidentFace2, boxContact.Normal, boxContact.Penetration));
             return contacts;
         }
@@ -147,7 +147,7 @@ namespace Fiourp
                         continue;
 
 
-                    BoxContact boxContact = Collision.BoxBoxClipping((BoxColliderRotated)rb1.Collider, (BoxColliderRotated)rb2.Collider);
+                    BoxContact boxContact = Collision.BoxBoxClipping((BoxCollider)rb1.Collider, (BoxCollider)rb2.Collider);
                     if (boxContact.Colliding)
                     {
                         List<Contact> separate = SeparateBoxContacts(boxContact);
@@ -203,7 +203,7 @@ namespace Fiourp
                 rb.ParentEntity.Rotation = rb.ParentEntity.Rotation - (float)Math.Floor(rb.ParentEntity.Rotation / (2 * float.Pi)) * 2f * float.Pi;
                 if (rb.ParentEntity.Rotation > Math.PI) rb.ParentEntity.Rotation -= 2 * float.Pi;
 
-                ((BoxColliderRotated)rb.ParentEntity.Collider).Rotation = rb.ParentEntity.Rotation; //TODO: Generalize
+                ((BoxCollider)rb.ParentEntity.Collider).Rotation = rb.ParentEntity.Rotation; //TODO: Generalize
 
                 rb.Forces = Vector2.Zero;
                 rb.Torque = 0;

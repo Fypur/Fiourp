@@ -1,9 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Fiourp
 {
@@ -12,61 +8,48 @@ namespace Fiourp
         public Vector2 GridSize { get => new Vector2(GridWidth, GridHeight); set { GridWidth = (int)value.X; GridHeight = (int)value.Y; } }
         public int GridWidth;
         public int GridHeight;
-        public int[,] Organisation;
+        public bool[,] Grid;
 
-        private BoxCollider box;
+        private int Width => GridWidth * Grid.GetLength(1);
+        private int Height => GridHeight * Grid.GetLength(0);
+        public override Rectangle Bounds => new Rectangle((int)WorldPos.X, (int)WorldPos.Y, Width, Height);
 
-        public override float Width { get => GridWidth * Organisation.GetLength(1); set => GridWidth = (int)(value / Organisation.GetLength(1)); }
-        public override float Height { get => GridHeight * Organisation.GetLength(0); set => GridHeight = (int)(value / Organisation.GetLength(0)); }
-        public override float Left { get => Pos.X; set => Pos.X = value; }
-        public override float Right { get => Pos.X + Width; set => Pos.X = value - Width; }
-        public override float Top { get => Pos.Y; set => Pos.Y = value; }
-        public override float Bottom { get => Pos.Y + Height; set => Pos.Y = value - Height; }
 
-        public GridCollider(Vector2 localPosition, int gridWidth, int gridHeight, int[,] organisation)
+        private AABBCollider box;
+
+        public GridCollider(Vector2 localPosition, int gridWidth, int gridHeight, bool[,] organisation)
         {
-            Pos = localPosition;
+            LocalPos = localPosition;
             GridWidth = gridWidth;
             GridHeight = gridHeight;
-            Organisation = organisation;
+            Grid = organisation;
         }
 
         public override void Added()
         {
             base.Added();
 
-            box = (BoxCollider)ParentEntity.AddComponent(new BoxCollider(Pos, GridWidth, GridHeight));
+            box = (AABBCollider)ParentEntity.AddComponent(new AABBCollider(LocalPos, GridWidth, GridHeight));
             box.Collidable = false;
         }
 
-        public override bool Collide(Vector2 point)
+        private bool GeneralCollidingFunction(Rectangle bounds, Func<int, int, bool> checkingFunction)
         {
-            point = point - AbsolutePosition;
-            if(point.X < 0 || point.Y < 0 || point.X >= Width || point.Y >= Height)
-                return false;
+            Vector2 relativePos = bounds.Location.ToVector2() - WorldPos;
 
-            Point gridPoint = (point / new Vector2(GridWidth, GridHeight)).ToPoint();
-            return Organisation[gridPoint.Y, gridPoint.X] == 1;
-        }
+            if (relativePos.X < 0 || relativePos.Y < 0 || relativePos.X >= Width || relativePos.Y >= Height)
+                return true;
 
-        public override bool Collide(BoxCollider other)
-        {
-            Vector2 relativePos = other.AbsolutePosition - AbsolutePosition;
-            if (relativePos.X + other.Width < 0 || relativePos.Y + other.Height < 0 || relativePos.X >= Width || relativePos.Y >= Height)
-                return false;
-
-            //Debug.PointUpdate(relativePos);
             Vector2 gridPos = relativePos / new Vector2(GridWidth, GridHeight);
 
-            for(int x = (int)gridPos.X; x < gridPos.X + other.Width / GridWidth; x++)
+            for (int x = (int)gridPos.X; x < gridPos.X + (float)bounds.Width / GridWidth; x++)
             {
-                for(int y = (int)gridPos.Y; y < gridPos.Y + other.Height / GridHeight; y++)
+                for (int y = (int)gridPos.Y; y < gridPos.Y + (float)bounds.Height / GridHeight; y++)
                 {
-                    //Debug.LogUpdate(new Vector2(x, y));
-                    if (x < 0 || y < 0 || x >= Organisation.GetLength(1) || y >= Organisation.GetLength(0))
+                    if (x < 0 || y < 0 || x >= Grid.GetLength(1) || y >= Grid.GetLength(0))
                         continue;
 
-                    if (Organisation[y, x] == 1)
+                    if (Grid[y, x] && checkingFunction(x, y))
                         return true;
                 }
             }
@@ -74,45 +57,42 @@ namespace Fiourp
             return false;
         }
 
-        public override bool Collide(BoxColliderRotated other)
+        public override bool CollideRaw(Collider other)
         {
-            Vector2 relativePos = new Vector2(other.AbsoluteLeft, other.AbsoluteTop) - AbsolutePosition;
-            if (relativePos.X + other.Width < 0 || relativePos.Y + other.Height < 0 || relativePos.X >= Width || relativePos.Y >= Height)
+            if (other is AABBCollider aabb)
+                return CollideRaw(aabb);
+            else if (other is BoxCollider box)
+                return CollideRaw(box);
+            else
+                throw new NotImplementedException($"GridCollider - {other.GetType()} collision has not been implemented yet");
+        }
+
+        public override bool Contains(Vector2 point)
+        {
+            point = point - WorldPos;
+            if (point.X < 0 || point.Y < 0 || point.X >= Width || point.Y >= Height)
                 return false;
 
-            //Debug.PointUpdate(relativePos);
-            Vector2 gridPos = relativePos / new Vector2(GridWidth, GridHeight);
+            Point gridPoint = (point / new Vector2(GridWidth, GridHeight)).ToPoint();
+            return Grid[gridPoint.Y, gridPoint.X];
+        }
 
-            for (int x = (int)gridPos.X; x < gridPos.X + other.Width / GridWidth; x++)
+        private bool CollideRaw(AABBCollider other)
+            => GeneralCollidingFunction(other.Bounds, (x, y) => true);
+
+        private bool AABBBoxGridCollision(Collider collider)
+        {
+            return GeneralCollidingFunction(collider.Bounds, (x, y) =>
             {
-                for (int y = (int)gridPos.Y; y < gridPos.Y + other.Height / GridHeight; y++)
-                {
-                    //Debug.LogUpdate(new Vector2(x, y));
-                    if (x < 0 || y < 0 || x >= Organisation.GetLength(1) || y >= Organisation.GetLength(0))
-                        continue;
-
-
-                    if (Organisation[y, x] == 1)
-                    {
-                        box.Pos = Pos + new Vector2(x * GridWidth, y * GridHeight);
-                        if(other.Collide(box))
-                            return true;
-                    }
-                }
-            }
-
-            return false;
+                box.LocalPos = LocalPos + new Vector2(x * GridWidth, y * GridHeight);
+                return collider.CollideRaw(box);
+            });
         }
 
-        public override bool Collide(CircleCollider other)
-        {
-            return false;
-            throw new NotImplementedException();
-        }
+        private bool CollideRaw(BoxCollider other)
+            => AABBBoxGridCollision(other);
 
-        public override bool Collide(GridCollider other)
-        {
-            throw new NotImplementedException();
-        }
+        private bool CollideRaw(CircleCollider other)
+            => AABBBoxGridCollision(other);
     }
 }

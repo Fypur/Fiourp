@@ -116,15 +116,15 @@ namespace Fiourp
             return result;
         }
 
-        public static Physics.BoxContact BoxBoxClipping(BoxColliderRotated b1, BoxColliderRotated b2)
+        public static Physics.BoxContact BoxBoxClipping(BoxCollider b1, BoxCollider b2)
         {
-            SATOutput sat = BoxBoxSAT(b1.Rect, b2.Rect);
+            SATOutput sat = BoxBoxSAT(b1.WorldVertices, b2.WorldVertices);
 
             Physics.BoxContact contact = new Physics.BoxContact();
             contact.Colliding = true;
             bool xSatAxis;
 
-            BoxColliderRotated reference, incident;
+            BoxCollider reference, incident;
             switch (sat.AxisIndex)
             {
                 case 0:
@@ -159,7 +159,7 @@ namespace Fiourp
             contact.Incident = incident.ParentEntity.GetComponent<Rigidbody>();
             contact.Penetration = sat.Penetration;
 
-            Vector2 refToInc = incident.Rect[0] + (incident.Rect[2] - incident.Rect[0]) * 0.5f - reference.Rect[0] - (reference.Rect[2] - reference.Rect[0]) * 0.5f;
+            Vector2 refToInc = incident.WorldVertices[0] + (incident.WorldVertices[2] - incident.WorldVertices[0]) * 0.5f - reference.WorldVertices[0] - (reference.WorldVertices[2] - reference.WorldVertices[0]) * 0.5f;
 
             if (Vector2.Dot(refToInc, sat.MinPenetrationAxis) >= 0)
                 contact.Normal = sat.MinPenetrationAxis;
@@ -168,59 +168,59 @@ namespace Fiourp
 
             if (xSatAxis)
             {
-                if (Vector2.Dot(reference.Rect[1] - reference.Rect[0], contact.Normal) >= 0)
+                if (Vector2.Dot(reference.WorldVertices[1] - reference.WorldVertices[0], contact.Normal) >= 0)
                 {
-                    contact.ReferenceFace1 = reference.Rect[1];
-                    contact.ReferenceFace2 = reference.Rect[2];
+                    contact.ReferenceFace1 = reference.WorldVertices[1];
+                    contact.ReferenceFace2 = reference.WorldVertices[2];
                 }
                 else
                 {
-                    contact.ReferenceFace1 = reference.Rect[3];
-                    contact.ReferenceFace2 = reference.Rect[0];
+                    contact.ReferenceFace1 = reference.WorldVertices[3];
+                    contact.ReferenceFace2 = reference.WorldVertices[0];
                 }
 
             }
             else
             {
-                if (Vector2.Dot(reference.Rect[0] - reference.Rect[3], contact.Normal) >= 0)
+                if (Vector2.Dot(reference.WorldVertices[0] - reference.WorldVertices[3], contact.Normal) >= 0)
                 {
-                    contact.ReferenceFace1 = reference.Rect[0];
-                    contact.ReferenceFace2 = reference.Rect[1];
+                    contact.ReferenceFace1 = reference.WorldVertices[0];
+                    contact.ReferenceFace2 = reference.WorldVertices[1];
                 }
                 else
                 {
-                    contact.ReferenceFace1 = reference.Rect[2];
-                    contact.ReferenceFace2 = reference.Rect[3];
+                    contact.ReferenceFace1 = reference.WorldVertices[2];
+                    contact.ReferenceFace2 = reference.WorldVertices[3];
                 }
             }
 
             Vector2 inc1, inc2; //incident face
-            if (Math.Abs(Vector2.Dot(contact.Normal, (incident.Rect[1] - incident.Rect[0]).Normalized())) >= Math.Abs(Vector2.Dot(contact.Normal, (incident.Rect[2] - incident.Rect[1]).Normalized())))
+            if (Math.Abs(Vector2.Dot(contact.Normal, (incident.WorldVertices[1] - incident.WorldVertices[0]).Normalized())) >= Math.Abs(Vector2.Dot(contact.Normal, (incident.WorldVertices[2] - incident.WorldVertices[1]).Normalized())))
             {
                 //incident face is along y axis
-                if (Vector2.Dot(contact.Normal, incident.Rect[1] - incident.Rect[0]) <= 0)
+                if (Vector2.Dot(contact.Normal, incident.WorldVertices[1] - incident.WorldVertices[0]) <= 0)
                 {
-                    inc1 = incident.Rect[1];
-                    inc2 = incident.Rect[2];
+                    inc1 = incident.WorldVertices[1];
+                    inc2 = incident.WorldVertices[2];
                 }
                 else
                 {
-                    inc1 = incident.Rect[0];
-                    inc2 = incident.Rect[3];
+                    inc1 = incident.WorldVertices[0];
+                    inc2 = incident.WorldVertices[3];
                 }
             }
             else
             {
                 //incident face is along x axis
-                if (Vector2.Dot(contact.Normal, incident.Rect[1] - incident.Rect[2]) <= 0)
+                if (Vector2.Dot(contact.Normal, incident.WorldVertices[1] - incident.WorldVertices[2]) <= 0)
                 {
-                    inc1 = incident.Rect[0];
-                    inc2 = incident.Rect[1];
+                    inc1 = incident.WorldVertices[0];
+                    inc2 = incident.WorldVertices[1];
                 }
                 else
                 {
-                    inc1 = incident.Rect[2];
-                    inc2 = incident.Rect[3];
+                    inc1 = incident.WorldVertices[2];
+                    inc2 = incident.WorldVertices[3];
                 }
             }
 
@@ -268,28 +268,28 @@ namespace Fiourp
             return null; // No collision
         }
 
-        public static List<Vector2> LineBoxIntersection(BoxCollider b, Vector2 lineBegin, Vector2 lineEnd)
+        public static List<Vector2> LineBoxIntersection(AABBCollider b, Vector2 lineBegin, Vector2 lineEnd)
         {
             List<Vector2> intersection = new();
 
-            Vector2? left = LineIntersection(b.AbsolutePosition, b.AbsolutePosition + new Vector2(0, b.Height), lineBegin, lineEnd);
+            Vector2? left = LineIntersection(b.WorldPos, b.WorldPos + new Vector2(0, b.Height), lineBegin, lineEnd);
             if (left != null) intersection.Add(left.Value);
 
-            Vector2? top = LineIntersection(b.AbsolutePosition, b.AbsolutePosition + new Vector2(b.Width, 0), lineBegin, lineEnd);
+            Vector2? top = LineIntersection(b.WorldPos, b.WorldPos + new Vector2(b.Width, 0), lineBegin, lineEnd);
             if (top != null) intersection.Add(top.Value);
 
-            Vector2? right = LineIntersection(b.AbsolutePosition + new Vector2(b.Width, 0), b.AbsolutePosition + new Vector2(b.Width, b.Height), lineBegin, lineEnd);
+            Vector2? right = LineIntersection(b.WorldPos + new Vector2(b.Width, 0), b.WorldPos + new Vector2(b.Width, b.Height), lineBegin, lineEnd);
             if (right != null) intersection.Add(right.Value);
 
-            Vector2? bottom = LineIntersection(b.AbsolutePosition + new Vector2(0, b.Height), b.AbsolutePosition + new Vector2(b.Width, b.Height), lineBegin, lineEnd);
+            Vector2? bottom = LineIntersection(b.WorldPos + new Vector2(0, b.Height), b.WorldPos + new Vector2(b.Width, b.Height), lineBegin, lineEnd);
             if (bottom != null) intersection.Add(bottom.Value);
 
             return intersection;
         }
 
-        public static bool LineBoxCollision(BoxCollider b, Vector2 lineBegin, Vector2 lineEnd)
+        public static bool LineBoxCollision(AABBCollider b, Vector2 lineBegin, Vector2 lineEnd)
         {
-            if (b.Collide(lineBegin) && b.Collide(lineEnd))
+            if (b.Contains(lineBegin) || b.Contains(lineEnd))
                 return true;
 
             return LineBoxIntersection(b, lineBegin, lineEnd).Count != 0;

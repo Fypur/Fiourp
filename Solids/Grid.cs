@@ -9,7 +9,7 @@ namespace Fiourp
 {
     public class Grid : Solid
     {
-        public int[,] Organisation { get => (Collider).Organisation; set => (Collider).Organisation = value; }
+        public bool[,] Organization { get => Collider.Grid; set => Collider.Grid = value; }
         public int TileWidth => Collider.GridWidth;
         public int TileHeight => Collider.GridHeight;
 
@@ -17,7 +17,7 @@ namespace Fiourp
 
         private new GridCollider Collider => base.Collider as GridCollider;
 
-        public Grid(Vector2 position, int gridWidth, int gridHeight, int[,] org, Sprite[,] tiles = null) : base(position, gridWidth * tiles.GetLength(1), gridHeight * tiles.GetLength(0), Sprite.None)
+        public Grid(Vector2 position, int gridWidth, int gridHeight, bool[,] org, Sprite[,] tiles = null) : base(position, gridWidth * tiles.GetLength(1), gridHeight * tiles.GetLength(0), Sprite.None)
         {
             Tiles = tiles;
             RemoveComponent(base.Collider);
@@ -45,10 +45,11 @@ namespace Fiourp
             {
                 for(int y = Math.Max((int)startPos.Y, 0); y < Math.Min(startPos.Y + size.Y, Tiles.GetLength(0)); y++)
                 {
-                    Vector2 pos = new Vector2(x * gridCol.GridWidth, y * gridCol.GridHeight) + Collider.AbsolutePosition;
+                    Vector2 pos = new Vector2(x * gridCol.GridWidth, y * gridCol.GridHeight) + Collider.WorldPos;
                     if(Tiles[y, x] != Sprite.None && Tiles[y, x] != null)
                         Tiles[y, x].Draw(pos);
-                    if(Debug.DebugMode && Organisation[y, x] != 0)
+
+                    if(Debug.DebugMode && Organization[y, x])
                         Drawing.DrawEdge(new Rectangle(pos.ToPoint(), new Point(gridCol.GridWidth, gridCol.GridHeight)), 1, Color.Blue);
                     /*if (Organisation[y, x] != 0 && (Tiles[y, x] == null || Tiles[y, x] == Sprite.None))
                         Debug.LogUpdate(Organisation[y, x], Tiles[y, x], pos);
