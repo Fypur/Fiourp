@@ -1,9 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Fiourp
 {
@@ -14,8 +10,8 @@ namespace Fiourp
         public int GridHeight;
         public bool[,] Grid;
 
-        private int Width { get => GridWidth * Grid.GetLength(1); }
-        private int Height { get => GridHeight * Grid.GetLength(0); }
+        private int Width => GridWidth * Grid.GetLength(1);
+        private int Height => GridHeight * Grid.GetLength(0);
         public override Rectangle Bounds => new Rectangle((int)WorldPos.X, (int)WorldPos.Y, Width, Height);
 
 
@@ -63,9 +59,9 @@ namespace Fiourp
 
         public override bool CollideRaw(Collider other)
         {
-            if(other is AABBCollider aabb)
+            if (other is AABBCollider aabb)
                 return CollideRaw(aabb);
-            else if(other is BoxCollider box)
+            else if (other is BoxCollider box)
                 return CollideRaw(box);
             else
                 throw new NotImplementedException($"GridCollider - {other.GetType()} collision has not been implemented yet");
@@ -74,7 +70,7 @@ namespace Fiourp
         public override bool Contains(Vector2 point)
         {
             point = point - WorldPos;
-            if(point.X < 0 || point.Y < 0 || point.X >= Width || point.Y >= Height)
+            if (point.X < 0 || point.Y < 0 || point.X >= Width || point.Y >= Height)
                 return false;
 
             Point gridPoint = (point / new Vector2(GridWidth, GridHeight)).ToPoint();

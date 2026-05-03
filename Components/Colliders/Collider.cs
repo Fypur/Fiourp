@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
 using System.Collections.Generic;
 
 namespace Fiourp
@@ -62,7 +61,6 @@ namespace Fiourp
         public override void Render()
         {
 #if DEBUG
-
             if (Collidable && Debug.DebugMode)
                 DebugRender();
 #endif
