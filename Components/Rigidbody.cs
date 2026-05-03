@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
 
 namespace Fiourp
 {
@@ -22,16 +21,16 @@ namespace Fiourp
 
         public Rigidbody(float mass, float I, float friction)
         {
-            if(mass == float.PositiveInfinity)
+            if (mass == float.PositiveInfinity)
                 InvMass = 0;
             else
-                InvMass = 1f/mass;
+                InvMass = 1f / mass;
             if (I == float.PositiveInfinity)
                 InvI = 0;
             else
-                InvI = 1f/I;
+                InvI = 1f / I;
 
-                Friction = friction;
+            Friction = friction;
         }
 
         public override void Added()

@@ -1,10 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Fiourp
 {
@@ -41,7 +37,7 @@ namespace Fiourp
             for (int i = 0; i < lightNum; i++)
             {
                 Light l = lights[i];
-               
+
 
                 l.DrawRenderTarget();
 
@@ -49,11 +45,11 @@ namespace Fiourp
                     continue;
 
                 for (int y = 0; y < lvl.ChunksEdge.GetLength(0); y++)
-                    for(int x = 0; x < lvl.ChunksEdge.GetLength(1); x++)
+                    for (int x = 0; x < lvl.ChunksEdge.GetLength(1); x++)
                     {
 
                         if (!Collision.RectCircle(
-                            new Rectangle((int)lvl.Pos.X + x * lvl.ChunkSize * lvl.TileWidth, (int)lvl.Pos.Y + y * lvl.ChunkSize * lvl.TileHeight, lvl.ChunkSize * lvl.TileWidth, lvl.ChunkSize * lvl.TileHeight), 
+                            new Rectangle((int)lvl.Pos.X + x * lvl.ChunkSize * lvl.TileWidth, (int)lvl.Pos.Y + y * lvl.ChunkSize * lvl.TileHeight, lvl.ChunkSize * lvl.TileWidth, lvl.ChunkSize * lvl.TileHeight),
                             lights[i].WorldPosition, lights[i].Size))
                             continue;
 
@@ -117,19 +113,19 @@ namespace Fiourp
                             //Debug.PointUpdate(Color.Yellow, projectedEdgePos1, projectedEdgePos2);
 
                             //Drawing.DrawQuad(pos3, pos4, l.RenderTargetPosition + maxL.OnlyY(), l.RenderTargetPosition + maxL, Color.Transparent);
-                            if (midProjected.X != 0 && midProjected.Y != 0 && Vector2.DistanceSquared(midProjected, maxL / 2) < l.Size * l.Size) 
+                            if (midProjected.X != 0 && midProjected.Y != 0 && Vector2.DistanceSquared(midProjected, maxL / 2) < l.Size * l.Size)
                             {
-                                
+
                                 //Debug.LogUpdate(mid);
                                 if (diff.X == MaxLightSize)
                                 {
                                     if (midProjected.Y < MaxLightSize / 2)
-                                    Drawing.DrawQuad(projectedEdgePos1, projectedEdgePos2, l.RenderTargetPosition + maxL.OnlyX(), l.RenderTargetPosition, Color.Transparent); //Top
+                                        Drawing.DrawQuad(projectedEdgePos1, projectedEdgePos2, l.RenderTargetPosition + maxL.OnlyX(), l.RenderTargetPosition, Color.Transparent); //Top
                                     else
                                         Drawing.DrawQuad(projectedEdgePos1, projectedEdgePos2, l.RenderTargetPosition + maxL.OnlyY(), l.RenderTargetPosition + maxL, Color.Transparent); //Bottom
                                 }
 
-                                if(diff.Y == MaxLightSize)
+                                if (diff.Y == MaxLightSize)
                                 {
                                     //Debug.PointUpdate(Color.Orange, pos1, pos2);
                                     if (midProjected.X < MaxLightSize / 2)

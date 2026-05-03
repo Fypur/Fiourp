@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Fiourp
 {
@@ -53,7 +52,7 @@ namespace Fiourp
                 case RayTypes.Normal:
                     SlowRay(begin, direction, length, new(Engine.CurrentMap.Data.Solids));
                     break;
-            }   
+            }
         }
 
 
@@ -69,7 +68,7 @@ namespace Fiourp
                 case RayTypes.Normal:
                     SlowRay(begin, end - begin, Vector2.Distance(begin, end), new(Engine.CurrentMap.Data.Solids));
                     break;
-            }   
+            }
         }
 
         void FastRay(Vector2 begin, Vector2 direction, float length)
@@ -122,7 +121,7 @@ namespace Fiourp
             #region Walking the Ray and Checking if it Hit
 
             float travelledDistance = 0;
-            
+
             while (!Hit && travelledDistance < length)
             {
                 //Moving
@@ -153,8 +152,8 @@ namespace Fiourp
                             Hit = true;
                 }
             }
-            
-            if(Hit)
+
+            if (Hit)
                 EndPoint = begin + Vector2.Normalize(direction) * travelledDistance;
             else
                 EndPoint = end;

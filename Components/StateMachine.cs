@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Fiourp
 {
@@ -8,7 +7,7 @@ namespace Fiourp
     {
         public T CurrentState;
 
-        private Dictionary<T, Tuple<Action, Action, Action>> stateFuncs = 
+        private Dictionary<T, Tuple<Action, Action, Action>> stateFuncs =
             new Dictionary<T, Tuple<Action, Action, Action>>();
 
         private T previousState;
@@ -21,9 +20,9 @@ namespace Fiourp
 
         public override void Update()
         {
-            if(!previousState.Equals(CurrentState))
+            if (!previousState.Equals(CurrentState))
             {
-                if(stateFuncs.TryGetValue(previousState, out var stateExit))
+                if (stateFuncs.TryGetValue(previousState, out var stateExit))
                     stateExit.Item3?.Invoke();
                 if (stateFuncs.TryGetValue(CurrentState, out var stateEnter))
                     stateEnter.Item1?.Invoke();

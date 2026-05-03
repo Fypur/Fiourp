@@ -1,9 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Fiourp
 {
@@ -37,19 +33,19 @@ namespace Fiourp
             if (startPos.X > Width || startPos.Y > Height || startPos.X + Engine.Cam.Width < 0 || startPos.Y + Engine.Cam.Height < 0)
                 return;
 
-            
+
 
             Vector2 size = new Vector2((float)Engine.Cam.Width / gridCol.GridWidth, (float)Engine.Cam.Height / gridCol.GridHeight);
 
-            for(int x = Math.Max((int)startPos.X, 0); x < Math.Min(startPos.X + size.X, Tiles.GetLength(1)); x++)
+            for (int x = Math.Max((int)startPos.X, 0); x < Math.Min(startPos.X + size.X, Tiles.GetLength(1)); x++)
             {
-                for(int y = Math.Max((int)startPos.Y, 0); y < Math.Min(startPos.Y + size.Y, Tiles.GetLength(0)); y++)
+                for (int y = Math.Max((int)startPos.Y, 0); y < Math.Min(startPos.Y + size.Y, Tiles.GetLength(0)); y++)
                 {
                     Vector2 pos = new Vector2(x * gridCol.GridWidth, y * gridCol.GridHeight) + Collider.WorldPos;
-                    if(Tiles[y, x] != Sprite.None && Tiles[y, x] != null)
+                    if (Tiles[y, x] != Sprite.None && Tiles[y, x] != null)
                         Tiles[y, x].Draw(pos);
 
-                    if(Debug.DebugMode && Organization[y, x])
+                    if (Debug.DebugMode && Organization[y, x])
                         Drawing.DrawEdge(new Rectangle(pos.ToPoint(), new Point(gridCol.GridWidth, gridCol.GridHeight)), 1, Color.Blue);
                     /*if (Organisation[y, x] != 0 && (Tiles[y, x] == null || Tiles[y, x] == Sprite.None))
                         Debug.LogUpdate(Organisation[y, x], Tiles[y, x], pos);

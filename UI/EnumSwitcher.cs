@@ -1,9 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Fiourp
 {
@@ -25,9 +22,9 @@ namespace Fiourp
             int startIndex = 0;
             intActions = new();
 
-            for(int i = 0; i < values.Length; i++)
+            for (int i = 0; i < values.Length; i++)
             {
-                if(enumActions.TryGetValue(values[i], out Action action))
+                if (enumActions.TryGetValue(values[i], out Action action))
                     intActions[i] = action;
 
                 if (values[i].Equals(startValue))

@@ -1,9 +1,6 @@
-﻿using FMOD.Studio;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
-using System.Security.AccessControl;
-using System.Text;
 
 namespace Fiourp
 {
@@ -48,7 +45,7 @@ namespace Fiourp
 
             return false;
         }
-        
+
         public class SATOutput
         {
             public bool IsCollision;
@@ -103,7 +100,7 @@ namespace Fiourp
                         result.MinPenetrationAxis = axies[i];
                         result.AxisIndex = i;
                     }
-                    else if(max2 - min1 < result.Penetration)
+                    else if (max2 - min1 < result.Penetration)
                     {
                         result.Penetration = max2 - min1;
                         result.MinPenetrationAxis = axies[i];
@@ -150,7 +147,7 @@ namespace Fiourp
                 case -1:
                     contact.Colliding = false;
                     return contact;
-                    //throw new Exception("Clipping called even though there is no collision");
+                //throw new Exception("Clipping called even though there is no collision");
                 default:
                     throw new Exception("sat axis index is not within expected bounds");
             }
@@ -238,7 +235,7 @@ namespace Fiourp
         {
             if (box.Length != 4 || box2.Length != 4)
                 throw new Exception("Rect vertices are not set properly, Rectangle has more or less than 4 vertices");
-            
+
             //Indexes: UL = 0, UR = 1, LR = 2, LL = 3
             Vector2[] axies = new Vector2[4]
             {
@@ -257,7 +254,7 @@ namespace Fiourp
             Vector2 s2 = p3 - p2;
 
             float s = (-s1.Y * (p0.X - p2.X) + s1.X * (p0.Y - p2.Y)) / (-s2.X * s1.Y + s1.X * s2.Y);
-            float t = ( s2.X * (p0.Y - p2.Y) - s2.Y * (p0.X - p2.X)) / (-s2.X * s1.Y + s1.X * s2.Y);
+            float t = (s2.X * (p0.Y - p2.Y) - s2.Y * (p0.X - p2.X)) / (-s2.X * s1.Y + s1.X * s2.Y);
 
             if (s >= 0 && s <= 1 && t >= 0 && t <= 1)
             {
@@ -314,18 +311,18 @@ namespace Fiourp
             float t1 = (-b + delta) / (2 * a);
             if (delta == 0)
                 return new Vector2[1] { lineBegin + d * t1 };
-            
-            float t2 = (-b - delta) / (2 * a);
-            
 
-            if(t1 >= 0 && t1 <= 1)
+            float t2 = (-b - delta) / (2 * a);
+
+
+            if (t1 >= 0 && t1 <= 1)
             {
-                if(t2 >= 0 && t2 <= 1)
+                if (t2 >= 0 && t2 <= 1)
                     return new Vector2[2] { lineBegin + d * t1, lineBegin + d * t2 };
                 return new Vector2[1] { lineBegin + d * t1 };
             }
 
-            if(t2 >= 0 && t2 <= 1)
+            if (t2 >= 0 && t2 <= 1)
                 return new Vector2[1] { lineBegin + d * t2 };
 
             return new Vector2[0];

@@ -1,10 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Fiourp
 {
@@ -21,7 +17,7 @@ namespace Fiourp
         private Vector2 initPos;
 
         public Shaker(float time, float intensity, Func<Vector2> movingPos = null, bool shakeSprite = false)
-        { 
+        {
             Time = time;
             timeMaxValue = Time;
             Intensity = intensity;
@@ -32,7 +28,7 @@ namespace Fiourp
         public override void Added()
         {
             initPos = ParentEntity.ExactPos;
-            if(ShakeSprite)
+            if (ShakeSprite)
                 initPos = ParentEntity.Sprite.Offset;
             ParentEntity.AddComponent(new Coroutine(Shake()));
         }
@@ -43,9 +39,9 @@ namespace Fiourp
             {
                 void MoveSpriteBy(Entity entity, Vector2 offset)
                 {
-                    if(entity.Sprite != null)
+                    if (entity.Sprite != null)
                         entity.Sprite.Offset += offset;
-                    foreach(Entity child in entity.Children)
+                    foreach (Entity child in entity.Children)
                         MoveSpriteBy(child, offset);
                 }
 
@@ -64,7 +60,7 @@ namespace Fiourp
                 MoveSpriteBy(ParentEntity, initPos - ParentEntity.Sprite.Offset);
                 //ParentEntity.Sprite.Offset = initPos;
 
-                if(DestroyOnEnd)
+                if (DestroyOnEnd)
                     Destroy();
             }
             else

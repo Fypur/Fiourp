@@ -1,10 +1,4 @@
-﻿using Fiourp;
-using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.Xna.Framework;
 
 namespace Fiourp
 {
@@ -25,7 +19,7 @@ namespace Fiourp
         public static void FullScreen()
         {
             GraphicsDeviceManager graphics = Engine.Graphics;
-            
+
             if (!Engine.Graphics.IsFullScreen)
             {
                 resolutionMultiplierBeforeFullScreen = CurrentScreenSizeMultiplier;

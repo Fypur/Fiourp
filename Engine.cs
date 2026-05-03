@@ -1,11 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Fiourp
 {
@@ -49,7 +44,7 @@ namespace Fiourp
             }
             else
                 DataManager.Initialize();
-            
+
             Audio.Initialize();
         }
 
@@ -60,7 +55,7 @@ namespace Fiourp
             CurrentMap?.Update();
         }
 
-        public static void LateUpdate() 
+        public static void LateUpdate()
         {
             Input.UpdateOldState();
             Audio.Update();

@@ -1,9 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Fiourp
 {
@@ -15,10 +11,10 @@ namespace Fiourp
 
         public Color InsideColor;
         public Color OutsideColor;
-        
+
         public QuadPointLight(Vector2 localPosition, Vector2 SecondQuadLocalPosition, float direction, float range, float length, Color insideColor, Color outsideColor) : base(localPosition, length)
         {
-            if(Math.Abs(direction) % 360 < 90)
+            if (Math.Abs(direction) % 360 < 90)
             {
                 Vector2 v = LocalPosition;
                 LocalPosition = SecondQuadLocalPosition;

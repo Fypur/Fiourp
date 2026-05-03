@@ -1,7 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Fiourp
 {
@@ -21,13 +19,13 @@ namespace Fiourp
 
         public override bool CollideRaw(Collider other)
         {
-            if(other is AABBCollider aabb)
+            if (other is AABBCollider aabb)
                 return Bounds.Intersects(other.Bounds);
-            else if(other is BoxCollider box)
+            else if (other is BoxCollider box)
                 return box.CollideRaw(this);
-            else if(other is CircleCollider circle)
+            else if (other is CircleCollider circle)
                 return Collision.RectCircle(Bounds, circle.WorldPos, circle.Radius);
-            else if(other is GridCollider grid)
+            else if (other is GridCollider grid)
                 return grid.CollideRaw(this);
             else
                 throw new NotImplementedException($"Collision from AABBCollider with {other.GetType().Name} is not yet implemented.");

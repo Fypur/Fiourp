@@ -1,10 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Fiourp
 {
@@ -38,7 +33,7 @@ namespace Fiourp
         {
             LifeTime -= Engine.Deltatime;
 
-            if(LifeTime <= 0)
+            if (LifeTime <= 0)
             {
                 Active = false;
                 Visible = false;
@@ -50,7 +45,7 @@ namespace Fiourp
             Velocity *= (float)Math.Pow(Type.SpeedMultiplier, Engine.Deltatime);
             Pos += Velocity * Engine.Deltatime;
 
-            if(Type.Color2 != null)
+            if (Type.Color2 != null)
                 Sprite.Color = Color.Lerp(StartColor, Type.Color2.Value, Ease.Reverse(LifeTime / StartLifeTime));
 
             switch (Type.FadeMode)
@@ -79,7 +74,7 @@ namespace Fiourp
                     Size = Vector2.One * StartSize * (LifeTime / StartLifeTime);
                     break;
                 case ParticleType.FadeModes.EndLinear:
-                    if(LifeTime <= StartLifeTime * 0.25f)
+                    if (LifeTime <= StartLifeTime * 0.25f)
                         Size = Vector2.One * StartSize * (LifeTime / (StartLifeTime * 0.25f));
                     break;
                 case ParticleType.FadeModes.Smooth:
@@ -98,7 +93,7 @@ namespace Fiourp
 
         public override void Render()
         {
-            if(Followed != null)
+            if (Followed != null)
                 Sprite.Offset = Followed.Pos;
 
             base.Render();

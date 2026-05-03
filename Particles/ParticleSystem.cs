@@ -1,9 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Fiourp
 {
@@ -48,7 +43,7 @@ namespace Fiourp
                 maxParticles = 3000;
                 Particles = new Particle[maxParticles];
             }*/
-            
+
 
             if (index >= maxParticles)
                 index = 0;
@@ -62,7 +57,7 @@ namespace Fiourp
 
         public void Emit(ParticleType particle, int amount, Vector2 position, Entity followed, float direction, Color color)
         {
-            for(int i = 0; i < amount; i++)
+            for (int i = 0; i < amount; i++)
                 Emit(particle.Create(followed, position, direction, color));
         }
 
@@ -125,8 +120,8 @@ namespace Fiourp
 
         public void Render()
         {
-            foreach(Particle particle in Particles)
-                if(particle != null && particle.Visible)
+            foreach (Particle particle in Particles)
+                if (particle != null && particle.Visible)
                     particle.Render();
         }
     }

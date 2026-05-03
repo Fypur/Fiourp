@@ -1,9 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Metrics;
-using System.Net.Http.Headers;
-using System.Text;
 
 namespace Fiourp
 {
@@ -12,15 +9,15 @@ namespace Fiourp
         public static bool IsPointInPolygon(Vector2[] polygon, Vector2 point)
         {
             float MinX = float.PositiveInfinity, MinY = float.PositiveInfinity, MaxX = float.NegativeInfinity, MaxY = float.NegativeInfinity;
-            foreach(Vector2 p in polygon)
+            foreach (Vector2 p in polygon)
             {
-                if(p.X < MinX)
+                if (p.X < MinX)
                     MinX = p.X;
-                if(p.X > MaxX)
+                if (p.X > MaxX)
                     MaxX = p.X;
-                if(p.Y < MinY)
+                if (p.Y < MinY)
                     MinY = p.Y;
-                if(p.Y > MaxY)
+                if (p.Y > MaxY)
                     MaxY = p.Y;
             }
 
@@ -65,7 +62,7 @@ namespace Fiourp
             List<Vector2> allCorners = new List<Vector2>(Engine.CurrentMap.CurrentLevel.Corners);
             allCorners.AddRange(Engine.CurrentMap.CurrentLevel.InsideCorners);
 
-            
+
 
             List<Vector2> corners = new();
             Dictionary<Vector2, float> distancesSquared = new();
@@ -128,7 +125,7 @@ namespace Fiourp
 
             List<Vector2[]> edgesCoord = new();
             //On determine toutes les edges
-            foreach(int[] edge in Engine.CurrentMap.CurrentLevel.Edges)
+            foreach (int[] edge in Engine.CurrentMap.CurrentLevel.Edges)
             {
                 Vector2 coord1 = new Vector2(edge[0], edge[1]) * Engine.CurrentMap.CurrentLevel.TileWidth + Engine.CurrentMap.CurrentLevel.Pos;
                 Vector2 coord2 = new Vector2(edge[2], edge[3]) * Engine.CurrentMap.CurrentLevel.TileHeight + Engine.CurrentMap.CurrentLevel.Pos;
@@ -198,7 +195,7 @@ namespace Fiourp
             void CompareAndRemove(int index, int index2)
             {
                 //if (Vector2.DistanceSquared(points[index], points[index2]) < 1)
-                if(CeilingOrFloor(points[index].X) == CeilingOrFloor(points[index2].X) && CeilingOrFloor(points[index].Y) == CeilingOrFloor(points[index2].Y))
+                if (CeilingOrFloor(points[index].X) == CeilingOrFloor(points[index2].X) && CeilingOrFloor(points[index].Y) == CeilingOrFloor(points[index2].Y))
                 {
                     if (distancesSquared[points[index2]] < distancesSquared[points[index]])
                         points.RemoveAt(index2);
@@ -210,7 +207,7 @@ namespace Fiourp
                 /*if ()
                     points.RemoveAt(index2);*/
             }
-              
+
             for (int i = 0; i < points.Count - 2; i++)
             {
                 CompareAndRemove(i, i + 1);
@@ -327,7 +324,7 @@ namespace Fiourp
                 polygon[i] = point;
             }
 
-            
+
 #if DEBUG
             if (Debug.DebugMode)
             {

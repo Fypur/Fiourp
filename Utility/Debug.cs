@@ -1,7 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Fiourp
 {
@@ -13,7 +11,7 @@ namespace Fiourp
         {
             foreach (object l in log)
             {
-                if(l != null)
+                if (l != null)
                     Drawing.DebugUpdate.Add(l.ToString());
                 else
                     Drawing.DebugUpdate.Add("null");
@@ -24,7 +22,7 @@ namespace Fiourp
         {
             foreach (object l in log)
             {
-                if(l != null)
+                if (l != null)
                     Drawing.DebugForever.Add(l.ToString());
                 else
                     Drawing.DebugForever.Add("null");

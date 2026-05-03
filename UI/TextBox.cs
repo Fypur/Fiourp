@@ -1,9 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Fiourp
 {
@@ -118,7 +114,7 @@ namespace Fiourp
                         break;
                     case Alignement.BottomCenter:
                         Drawing.DrawString(Text, Pos + HalfSize.OnlyX() + Size.OnlyY() - textSize.OnlyX() / 2 - textSize.OnlyY(), Color, Font, TextScale);
-                        break; 
+                        break;
                     case Alignement.BottomRight:
                         Drawing.DrawString(Text, Pos + Size - textSize, Color, Font, TextScale);
                         break;
@@ -129,7 +125,7 @@ namespace Fiourp
                 Drawing.DrawEdge(new Rectangle(Pos.ToPoint(), Size.ToPoint()), 1, Color.Cyan);
 
             Pos = p;
-            if(Parent != null && Parent is not UIElement)
+            if (Parent != null && Parent is not UIElement)
             {
                 Width /= (int)Engine.Cam.ScreenSizeCoef;
                 Height /= (int)Engine.Cam.ScreenSizeCoef;

@@ -38,7 +38,9 @@ namespace Fiourp
             }
         }
 
-        public bool RenderTargetMode { get => Size == new Vector2(Engine.RenderTarget.Width, Engine.RenderTarget.Height);
+        public bool RenderTargetMode
+        {
+            get => Size == new Vector2(Engine.RenderTarget.Width, Engine.RenderTarget.Height);
             set
             {
                 if (value) Size = new Vector2(Engine.RenderTarget.Width, Engine.RenderTarget.Height);
@@ -64,7 +66,7 @@ namespace Fiourp
             set
             {
                 base.Pos = InBoundsPos(value, out bool changed) - Size / 2;
-                if(changed)
+                if (changed)
                     hasChanged = true;
             }
         }
@@ -74,7 +76,7 @@ namespace Fiourp
             get => base.Pos + Size / 2;
             set
             {
-                if(base.Pos - Size / 2 == value) return;
+                if (base.Pos - Size / 2 == value) return;
                 base.Pos = value - Size / 2;
                 hasChanged = true;
             }
@@ -145,7 +147,7 @@ namespace Fiourp
             if (bounds != null)
                 SetBoundaries((Rectangle)bounds);
         }
-        
+
         public override void Update()
         {
             base.Update();
@@ -173,9 +175,9 @@ namespace Fiourp
 
             //Debug.LogUpdate(FollowedPos(actor, xSmooth, ySmooth, strictFollowBounds, Bounds));
             //if(Math.Abs(amount.X) >= 0.1f)
-                MoveX(amount.X, new System.Collections.Generic.List<Entity>(Engine.CurrentMap.Data.CameraSolids), null);
+            MoveX(amount.X, new System.Collections.Generic.List<Entity>(Engine.CurrentMap.Data.CameraSolids), null);
             //if (Math.Abs(amount.Y) >= 0.1f)
-                MoveY(amount.Y, new System.Collections.Generic.List<Entity>(Engine.CurrentMap.Data.CameraSolids), null);
+            MoveY(amount.Y, new System.Collections.Generic.List<Entity>(Engine.CurrentMap.Data.CameraSolids), null);
 
             /*if (HasComponent<Shaker>())
             {
@@ -183,7 +185,8 @@ namespace Fiourp
                 shakerInitPos += ExactPos - previous;
             }*/
 
-            if (!Bounds.Contains(WholePos + Vector2.One) || !Bounds.Contains(WholePos + Size - Vector2.One)) {
+            if (!Bounds.Contains(WholePos + Vector2.One) || !Bounds.Contains(WholePos + Size - Vector2.One))
+            {
                 CenteredPos = FollowedPos(actor, xSmooth, ySmooth, strictFollowBounds, Bounds);
                 hasChanged = true;
             }
@@ -199,7 +202,7 @@ namespace Fiourp
 
             return new Vector2(
                 MathHelper.Lerp(CenteredPos.X, inBoundsActorPos.X, Engine.Deltatime * xSmooth),
-                MathHelper.Lerp(CenteredPos.Y, inBoundsActorPos.Y, 
+                MathHelper.Lerp(CenteredPos.Y, inBoundsActorPos.Y,
                     Engine.Deltatime * ySmooth * (strictFollowBounds.Contains(followed.MiddlePos) ? 1 : 2.5f)));
         }
 
@@ -235,7 +238,7 @@ namespace Fiourp
         public void Shake(float time, float intensity)
         {
             Shaker shaker = GetComponent<Shaker>();
-            if(shaker == null || time > shaker.Time ||  intensity > shaker.Intensity)
+            if (shaker == null || time > shaker.Time || intensity > shaker.Intensity)
             {
                 RemoveComponent(shaker);
                 AddComponent(new Shaker(time, intensity, () => CenteredPos));
@@ -248,14 +251,14 @@ namespace Fiourp
 
             if (Bounds == Rectangle.Empty)
             {
-                if(CenteredPos != position)
+                if (CenteredPos != position)
                     changed = true;
                 return position;
             }
 
             if ((Bounds.Contains(position - HalfSize) && Bounds.Contains(position + HalfSize)) || Bounds == Rectangle.Empty)
             {
-                if(position != CenteredPos)
+                if (position != CenteredPos)
                     changed = true;
 
                 return position;

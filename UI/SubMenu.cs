@@ -3,8 +3,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Fiourp
 {
@@ -24,7 +22,7 @@ namespace Fiourp
         {
             base.Update();
 
-            if(!Active || !Visible)
+            if (!Active || !Visible)
                 return;
 
             if (Input.UIActionBack.IsDown() && CanBack)
@@ -53,7 +51,7 @@ namespace Fiourp
                         elements[i].Left = elements[i - 1];
                 }
 
-                if(i + 1 < elements.Count)
+                if (i + 1 < elements.Count)
                 {
                     if (vertical)
                         elements[i].Down = elements[i + 1];
@@ -108,7 +106,7 @@ namespace Fiourp
 
             Coroutine c = (Coroutine)AddComponent(new Coroutine(OnOpen()));
 
-            if(SelectElementOnOpen)
+            if (SelectElementOnOpen)
                 SelectFirstElement();
 
 
@@ -143,7 +141,7 @@ namespace Fiourp
 
         public IEnumerator SlideTo(float time, Vector2[] offsets, List<Entity> entities, bool waitToSelect = false)
         {
-            for(int i = 0; i < entities.Count; i++)
+            for (int i = 0; i < entities.Count; i++)
             {
                 entities[i].Pos += offsets[i] / Options.DefaultUISizeMultiplier * Options.CurrentScreenSizeMultiplier;
                 offsets[i] = -offsets[i];
@@ -179,7 +177,7 @@ namespace Fiourp
             float t = 0;
             while (t < initTime)
             {
-                if(currentSize != Options.CurrentScreenSizeMultiplier)
+                if (currentSize != Options.CurrentScreenSizeMultiplier)
                 {
                     for (int i = 0; i < finalPos.Length; i++)
                         finalPos[i] = orig[i] / origSize * Options.CurrentScreenSizeMultiplier;
@@ -217,7 +215,7 @@ namespace Fiourp
                 entities[i].Pos = finalPos[i];
             }
 
-            if(waitToSelect)
+            if (waitToSelect)
                 SelectFirstElement();
         }
     }

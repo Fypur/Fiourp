@@ -1,8 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Fiourp
 {
@@ -13,7 +11,7 @@ namespace Fiourp
 
         public override Vector2 ExactPos
         {
-            get => new Vector2(Pos.X + xRemainder, Pos.Y + yRemainder); 
+            get => new Vector2(Pos.X + xRemainder, Pos.Y + yRemainder);
             set { Pos = VectorHelper.Floor(value); xRemainder = value.X - (float)Math.Floor(value.X); yRemainder = value.Y - (float)Math.Floor(value.Y); }
         }
         private float xRemainder;
@@ -46,7 +44,7 @@ namespace Fiourp
 
             List<Actor> ridingActors = GetAllRidingActors();
             List<Actor> ridingActorsX = new List<Actor>(ridingActors);
-            
+
             Collider.Collidable = false;
 
             if (moveX != 0)
@@ -65,7 +63,7 @@ namespace Fiourp
                             actor.MoveX(Pos.X - actor.Pos.X - actor.Width, actor.Squish);
 
                         actor.LiftSpeed = new Vector2(moveX / Engine.Deltatime, actor.LiftSpeed.Y);
-                        if(ridingActorsX.Contains(actor))
+                        if (ridingActorsX.Contains(actor))
                             ridingActorsX.Remove(actor);
                     }
                 }
@@ -76,8 +74,8 @@ namespace Fiourp
                     actor.LiftSpeed = new Vector2(moveX / Engine.Deltatime, actor.LiftSpeed.Y);
                 }
             }
-            
-            if(moveY != 0)
+
+            if (moveY != 0)
             {
                 yRemainder -= moveY;
                 Pos.Y += moveY;
@@ -87,7 +85,7 @@ namespace Fiourp
                     Actor actor = Engine.CurrentMap.Data.Actors[i];
                     if (Collider.Collide(actor))
                     {
-                        if(moveY > 0)
+                        if (moveY > 0)
                             actor.MoveY(Pos.Y + Height - actor.Pos.Y, actor.Squish);
                         else
                             actor.MoveY(Pos.Y - actor.Pos.Y - actor.Height, actor.Squish);
@@ -131,7 +129,7 @@ namespace Fiourp
                     {
                         finalX += sign;
                         move -= sign;
-                        
+
                     }
                     else
                     {
@@ -190,7 +188,7 @@ namespace Fiourp
         {
             List<Actor> ridingActors = new List<Actor>();
 
-            foreach(Actor a in Engine.CurrentMap.Data.Actors)
+            foreach (Actor a in Engine.CurrentMap.Data.Actors)
             {
                 if (a.IsRiding(this))
                     ridingActors.Add(a);

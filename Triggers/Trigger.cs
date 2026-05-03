@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Fiourp
 {
@@ -79,7 +78,7 @@ namespace Fiourp
             }
         }
 
-        public override void Render() 
+        public override void Render()
         {
             /*if (Debug.DebugMode)
             {
@@ -88,7 +87,7 @@ namespace Fiourp
             }*/
 
             base.Render();
-        } 
+        }
 
         public bool Contains(Entity entity)
             => enteredEntities.Contains(entity);
@@ -101,7 +100,7 @@ namespace Fiourp
 
         public override void OnDestroy()
         {
-            for(int i = enteredEntities.Count - 1; i >= 0; i--)
+            for (int i = enteredEntities.Count - 1; i >= 0; i--)
                 OnTriggerExit(enteredEntities[i]);
 
             base.OnDestroy();

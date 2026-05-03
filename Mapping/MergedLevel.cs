@@ -1,9 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Fiourp
 {
@@ -37,7 +34,7 @@ namespace Fiourp
                     size.Y += pos.Y - level.Pos.Y;
                     pos.Y = level.Pos.Y;
                 }
-                if(level.Pos.X + level.Size.X > pos.X + size.X)
+                if (level.Pos.X + level.Size.X > pos.X + size.X)
                     size.X += level.Pos.X + level.Size.X - pos.X;
                 if (level.Pos.Y + level.Size.Y > pos.Y + size.Y)
                     size.Y += level.Pos.Y + level.Size.Y - pos.Y;
@@ -61,7 +58,7 @@ namespace Fiourp
                 }
             }
 
-            
+
 
             return new LevelData(entities, pos, size, organisation, levelsMerged[0].ParentMap, enterAction);
         }

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Fiourp
 {
@@ -16,7 +14,7 @@ namespace Fiourp
 
         public Action OnComplete;
         public Action<Timer> UpdateAction;
-        
+
         public Timer(float maxValue, bool destroyOnComplete = true, Action<Timer> UpdateAction = null, Action OnComplete = null)
         {
             this.MaxValue = maxValue;
@@ -28,7 +26,7 @@ namespace Fiourp
 
         public override void Update()
         {
-            if(Value > 0 && !Paused)
+            if (Value > 0 && !Paused)
             {
                 Value -= Engine.Deltatime * TimeScale;
                 if (Value <= 0)

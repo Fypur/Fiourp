@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using FMOD;
+﻿using FMOD;
 using FMOD.Studio;
+using System;
+using System.Collections.Generic;
 
 namespace Fiourp
 {
@@ -10,7 +9,7 @@ namespace Fiourp
     {
         public static FMOD.Studio.System system;
         public static FMOD.System coreSystem;
-        private static Dictionary<string, EventDescription> cachedEventDescriptions = new Dictionary<string,EventDescription>();
+        private static Dictionary<string, EventDescription> cachedEventDescriptions = new Dictionary<string, EventDescription>();
 
         public static void Initialize()
         {
@@ -29,7 +28,7 @@ namespace Fiourp
 
         private static void Load()
         {
-            foreach(string path in DataManager.GetAllFMODBanksPaths())
+            foreach (string path in DataManager.GetAllFMODBanksPaths())
             {
                 RESULT result = system.loadBankFile(path, LOAD_BANK_FLAGS.NORMAL, out _);
                 system.getBankCount(out int count);
@@ -65,7 +64,7 @@ namespace Fiourp
 
         private static EventDescription GetEventDescription(string path)
         {
-            if(cachedEventDescriptions.TryGetValue(path, out EventDescription eventDescription))
+            if (cachedEventDescriptions.TryGetValue(path, out EventDescription eventDescription))
                 return eventDescription;
 
             switch (system.getEvent(path, out eventDescription))

@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Fiourp
 {
     public class MapData
     {
         public Dictionary<Type, List<Entity>> EntitiesByType = new Dictionary<Type, List<Entity>>();
-        
+
         public List<Entity> Entities = new List<Entity>();
         public List<Platform> Platforms = new List<Platform>();
         public List<Solid> Solids = new List<Solid>();

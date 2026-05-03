@@ -1,9 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Fiourp
 {
@@ -44,7 +40,7 @@ namespace Fiourp
             p.StartSize = Trail.Size * speed * VelocitySizeMultiplier;
 
             int bigSide = ParentEntity.Width > ParentEntity.Height ? ParentEntity.Width : ParentEntity.Height;
-            if(p.StartSize > bigSide / 2)
+            if (p.StartSize > bigSide / 2)
                 p.StartSize = bigSide / 2;
 
             p.Pos -= Microsoft.Xna.Framework.Vector2.One * p.StartSize / 2;

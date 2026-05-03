@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Fiourp
 {
@@ -48,7 +47,7 @@ namespace Fiourp
         {
             RenderAction?.Invoke(this);
 
-            for(int i = 0; i < Positions.Count - 1; i++)
+            for (int i = 0; i < Positions.Count - 1; i++)
             {
                 if (Texture != null)
                     Drawing.DrawLine(Texture, Positions[i], Positions[i + 1], Color, Thickness);

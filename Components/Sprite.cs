@@ -1,10 +1,9 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Xml;
 using System.IO;
+using System.Xml;
 
 namespace Fiourp
 {
@@ -25,8 +24,11 @@ namespace Fiourp
         public Texture2D Texture;
         public NineSlice NineSliceSettings;
         private float rotation = 0;
-        public float Rotation { get => rotation;
-            set => rotation = value % ((float)Math.PI * 2); }
+        public float Rotation
+        {
+            get => rotation;
+            set => rotation = value % ((float)Math.PI * 2);
+        }
 
         public Color Color = Color.White;
         public Vector2 Origin = Vector2.Zero; //This is relative to the size of the TEXTURE not the entity
@@ -40,7 +42,7 @@ namespace Fiourp
         public Rectangle? SourceRectangle = null;
         public bool Centered;
 
-        public Texture2D CurrentAnimationFrame => 
+        public Texture2D CurrentAnimationFrame =>
             CurrentAnimation.Frames[CurrentFrame];
         public Animation CurrentAnimation;
         public int CurrentFrame;
@@ -103,7 +105,7 @@ namespace Fiourp
             DesinationRectangle = rect;
         }
 
-#endregion
+        #endregion
 
         public override void Update()
         {
@@ -131,13 +133,13 @@ namespace Fiourp
                 OnLastFrame?.Invoke();
 
                 //OnLastFrame didn't change the animation
-                if(CurrentAnimation == was)
+                if (CurrentAnimation == was)
                 {
                     //Looping or going to next animation
                     if (CurrentAnimation.GoTo != "" && CurrentAnimation.GoTo != null)
                     {
                         //Loop
-                        if((animations[CurrentAnimation.GoTo] == CurrentAnimation || CurrentAnimation.IsLoop) && currentLoopAmount < CurrentAnimation.LoopAmount)
+                        if ((animations[CurrentAnimation.GoTo] == CurrentAnimation || CurrentAnimation.IsLoop) && currentLoopAmount < CurrentAnimation.LoopAmount)
                         {
                             CurrentFrame = 0;
                             currentLoopAmount++;
@@ -165,7 +167,7 @@ namespace Fiourp
 
         public override void Render()
         {
-            if(NineSliceSettings != null)
+            if (NineSliceSettings != null)
                 NineSliceSettings.Draw(this);
 
             if (Texture == null)
@@ -206,11 +208,11 @@ namespace Fiourp
 
         public void Add(AnimData animData)
         {
-            foreach(KeyValuePair<string, Animation> data in animData.Animations)
+            foreach (KeyValuePair<string, Animation> data in animData.Animations)
                 animations[data.Key] = data.Value;
 
             if (CurrentAnimation == null && animData.StartAnimationId != "")
-                 Play(animData.StartAnimationId);
+                Play(animData.StartAnimationId);
         }
 
         public void Play(string id)
@@ -242,7 +244,7 @@ namespace Fiourp
 
 
                 Slices = ((List<Slice>)((object[])Frames[0].Tag)[1]).ToArray();
-                if(Slices.Length != 0)
+                if (Slices.Length != 0)
                 { }
                 Frames[0].Tag = ((object[])Frames[0].Tag)[0];
             }
@@ -294,9 +296,9 @@ namespace Fiourp
 
         private static void LoadFolderXML(string path, XmlElement parent)
         {
-            foreach(XmlElement element in parent)
+            foreach (XmlElement element in parent)
             {
-                if(element.Name == "Folder")
+                if (element.Name == "Folder")
                 {
                     LoadFolderXML(path + "/" + element.GetAttribute("path"), element);
                     continue;
@@ -313,11 +315,11 @@ namespace Fiourp
 
                     Texture2D[] textures = DataManager.LoadAllGraphicsWithName(animPath, path);
 
-                    for(int i = 1; i < textures.Length + 1; i++)
+                    for (int i = 1; i < textures.Length + 1; i++)
                         textures[i - 1].Name = id + i.ToString();
 
                     string d = anim.GetAttribute("delay");
-                    
+
                     float[] delays = new float[textures.Length];
 
                     if (d != "")
@@ -327,7 +329,7 @@ namespace Fiourp
                     }
                     else
                         delays = DataManager.GetAnimationDelays(path + '/' + animPath);
-                    
+
 
                     if (anim.Name == "Anim")
                         AllAnimData[element.Name].Animations[id] = new Animation(textures, delays, animGoto);
@@ -335,8 +337,8 @@ namespace Fiourp
                     else if (anim.Name == "Loop")
                     {
                         int loopAmount = 1;
-                        
-                        if(int.TryParse(anim.GetAttribute("loop"), out int l))
+
+                        if (int.TryParse(anim.GetAttribute("loop"), out int l))
                             loopAmount = l;
 
                         if (animGoto == "")
@@ -356,9 +358,9 @@ namespace Fiourp
             Sprite s = new Sprite();
 
             s.OnLastFrame = OnLastFrame;
-            s.OnLoop = OnLoop ;
-            s.OnChange = OnChange ;
-            s.Texture = Texture ;
+            s.OnLoop = OnLoop;
+            s.OnChange = OnChange;
+            s.Texture = Texture;
             s.Rotation = Rotation;
             s.Color = Color;
             s.Origin = Origin;
@@ -367,11 +369,11 @@ namespace Fiourp
             s.SpriteEffect = SpriteEffect;
             s.LayerDepth = LayerDepth;
             s.DesinationRectangle = DesinationRectangle;
-            s.Centered = Centered ;
+            s.Centered = Centered;
             s.animations = animations;
-            s.animating = animating ;
+            s.animating = animating;
             s.CurrentAnimation = CurrentAnimation;
-            s.CurrentFrame = CurrentFrame ;
+            s.CurrentFrame = CurrentFrame;
             s.animTimer = animTimer;
 
             return s;

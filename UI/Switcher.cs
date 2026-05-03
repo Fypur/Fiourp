@@ -1,9 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Fiourp
 {
@@ -18,7 +15,7 @@ namespace Fiourp
 
         protected Dictionary<int, Action> Actions;
         protected Action<int> Action;
-        
+
 
         public Switcher(Vector2 position, int width, int height, bool centered, string fieldName, string fontID, Sprite sprite, int startValue, int numValues, Dictionary<int, Action> actions) : base(position, width, height, centered, sprite)
         {
@@ -50,7 +47,7 @@ namespace Fiourp
 
             if (Input.LeftControls.IsDown())
                 GoLeft();
-            if(Input.RightControls.IsDown())
+            if (Input.RightControls.IsDown())
                 GoRight();
         }
 

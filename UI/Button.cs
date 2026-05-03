@@ -1,9 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Fiourp
 {
@@ -99,7 +95,7 @@ namespace Fiourp
 
         public virtual void OnHover()
         {
-            if(Sprite != null)
+            if (Sprite != null)
             {
                 Sprite.Color.R -= 20;
                 Sprite.Color.B -= 20;

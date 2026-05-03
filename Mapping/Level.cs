@@ -1,9 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using Microsoft.Xna.Framework.Graphics;
-using System.Security.Principal;
 
 namespace Fiourp
 {
@@ -163,7 +161,7 @@ namespace Fiourp
         {
             EntityData.Add(entity);
 
-            if(DontDestroyOnUnloadEntities.Contains(entity))
+            if (DontDestroyOnUnloadEntities.Contains(entity))
                 DontDestroyOnUnloadEntities.Remove(entity);
         }
         public void DontDestroyOnUnload(Entity entity)
@@ -305,13 +303,13 @@ namespace Fiourp
             for (int y = 0; y < Organisation.GetLength(0); y++)
                 for (int x = 0; x < Organisation.GetLength(1); x++)
                 {
-                    if(GetOrganisation(x, y) != 0)
+                    if (GetOrganisation(x, y) != 0)
                     {
                         //Top
-                        if(GetOrganisation(x, y - 1) == 0 && (GetOrganisation(x - 1, y) == 0 || GetOrganisation(x - 1, y - 1) != 0))
+                        if (GetOrganisation(x, y - 1) == 0 && (GetOrganisation(x - 1, y) == 0 || GetOrganisation(x - 1, y - 1) != 0))
                         {
                             int xMove = x + 1;
-                            while(GetOrganisation(xMove, y) != 0 && GetOrganisation(xMove, y - 1) == 0)
+                            while (GetOrganisation(xMove, y) != 0 && GetOrganisation(xMove, y - 1) == 0)
                                 xMove++;
 
                             edges.Add(new int[4] { x, y, xMove, y });

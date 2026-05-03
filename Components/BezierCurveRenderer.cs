@@ -1,9 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Fiourp
 {
@@ -33,7 +30,7 @@ namespace Fiourp
 
 
             //Debug.PointUpdate(Color.Blue, ControlPoints.ToArray());
-            for (float t = 0; t <= 1 - 0.5f/subdivs; t += 1 / subdivs)
+            for (float t = 0; t <= 1 - 0.5f / subdivs; t += 1 / subdivs)
             {
                 Drawing.DrawLine(Bezier.Generic(ControlPoints, t), Bezier.Generic(ControlPoints, t + 1 / subdivs), Color, Thickness);
             }

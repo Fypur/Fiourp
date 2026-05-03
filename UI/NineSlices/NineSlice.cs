@@ -1,10 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Fiourp
 {
@@ -102,7 +97,7 @@ namespace Fiourp
 
             void DrawSlice(Sprite texture, Vector2 position, Point size)
             {
-                if(texture != null)
+                if (texture != null)
                     Drawing.Draw(texture.Texture, position + sprite.Offset, size.ToVector2() * sprite.Scale, sprite.Color, sprite.Rotation, sprite.Origin, sprite.SpriteEffect, sprite.LayerDepth);
                 /*Drawing.Draw
             }Edge(new Rectangle(position.ToPoint(), size.ToPoint()), 1, new Color(){ R = 255, G = 255, B = 255, A = 50 });*/

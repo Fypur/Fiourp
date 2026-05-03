@@ -1,7 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework.Input;
-using System;
 
 namespace Fiourp
 {
@@ -74,7 +72,7 @@ namespace Fiourp
         {
             int maxLayer = 2;
             List<Entity> loopedEntities = new List<Entity>(Data.Entities);
-            for(int l = -3; l <= maxLayer; l++)
+            for (int l = -3; l <= maxLayer; l++)
             {
                 for (int i = loopedEntities.Count - 1; i >= 0; i--)
                 {
@@ -103,8 +101,8 @@ namespace Fiourp
                 if (i < Data.UIElements.Count && Data.UIElements[i].Visible && !Data.UIElements[i].Overlay)
                     Data.UIElements[i].Render();
 
-            for(int i = Data.Entities.Count - 1; i >= 0; i--)
-                if(i < Data.Entities.Count && Data.Entities[i].Visible)
+            for (int i = Data.Entities.Count - 1; i >= 0; i--)
+                if (i < Data.Entities.Count && Data.Entities[i].Visible)
                     Data.Entities[i].UIChildRender();
         }
 
@@ -119,7 +117,7 @@ namespace Fiourp
         {
             Data.Entities.Add(entity);
 
-            if(entity is Platform p)
+            if (entity is Platform p)
             {
                 Data.Platforms.Add(p);
                 if (entity is Solid s)
@@ -146,7 +144,7 @@ namespace Fiourp
 
         public void Instantiate(IList<Entity> entities)
         {
-            foreach(Entity entity in entities)
+            foreach (Entity entity in entities)
             {
                 Data.Entities.Add(entity);
 
@@ -178,8 +176,8 @@ namespace Fiourp
 
         public void Destroy(Entity entity)
         {
-            for(int i = entity.Components.Count - 1; i >= 0; i--)
-                if(i < entity.Components.Count)
+            for (int i = entity.Components.Count - 1; i >= 0; i--)
+                if (i < entity.Components.Count)
                     entity.Components[i].Destroy();
 
             Data.Entities.Remove(entity);

@@ -1,8 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Fiourp
 {
@@ -17,10 +14,12 @@ namespace Fiourp
 
         protected bool selectableField = true;
 
-        public bool Selectable { get => selectableField; 
-            set 
-            { 
-                if (value != selectableField) 
+        public bool Selectable
+        {
+            get => selectableField;
+            set
+            {
+                if (value != selectableField)
                 {
                     selectableField = value;
                     if (value)
@@ -144,7 +143,7 @@ namespace Fiourp
                 else if (Input.RightControls.IsDown())
                     newSelected = NextSelected(Direction.Right);
 
-                if(newSelected != null)
+                if (newSelected != null)
                 {
                     newSelected.OnSelected();
                     OnLeaveSelected();
@@ -182,14 +181,14 @@ namespace Fiourp
         public virtual void OnSelected()
         {
             AddComponent(new Coroutine(Coroutine.WaitFramesThen(1, () => Selected = true)));
-            if(Sprite != null)
+            if (Sprite != null)
                 Sprite.Color = new Color(Sprite.Color.ToVector3() - new Color(50, 50, 50).ToVector3());
 
             for (int i = Children.Count - 1; i >= 0; i--)
                 if (Children[i] is UIElement ui)
                     ui.OnSelected();
         }
-        public virtual void OnLeaveSelected() 
+        public virtual void OnLeaveSelected()
         {
             Selected = false;
             if (Sprite != null)
@@ -213,7 +212,7 @@ namespace Fiourp
 
         public virtual void OnRemoveSelectable()
         {
-            if(Sprite != null)
+            if (Sprite != null)
                 Sprite.Color = new Color(Sprite.Color.ToVector3() - new Color(100, 100, 100).ToVector3());
 
             for (int i = Children.Count - 1; i >= 0; i--)
@@ -222,13 +221,13 @@ namespace Fiourp
         }
 
         public virtual void OnSizeChange() { }
-        
+
         public void AddElements(List<UIElement> uiElements)
         {
             if (uiElements == null)
                 return;
 
-            foreach(UIElement element in uiElements)
+            foreach (UIElement element in uiElements)
                 AddChild(element);
         }
 

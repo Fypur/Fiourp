@@ -1,9 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Fiourp
 {
@@ -72,7 +67,7 @@ namespace Fiourp
 
         public override void Update()
         {
-            if(LocalBounds != Rectangle.Empty)
+            if (LocalBounds != Rectangle.Empty)
                 ParticleSystem.Emit(ParticleType, new Rectangle(ParentEntity.Pos.ToPoint() + LocalBounds.Location, LocalBounds.Size), Amount);
             else
                 ParticleSystem.Emit(ParticleType, Amount, ParentEntity.Pos + LocalPosition, null, Direction.HasValue ? Direction.Value : ParticleType.Direction, Color);

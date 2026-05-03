@@ -1,10 +1,5 @@
 ﻿using FMOD.Studio;
 using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Fiourp
 {
@@ -48,7 +43,7 @@ namespace Fiourp
 
             Sound.getPlaybackState(out var state);
 
-            if(autoRemove && state == PLAYBACK_STATE.STOPPED)
+            if (autoRemove && state == PLAYBACK_STATE.STOPPED)
                 ParentEntity.RemoveComponent(this);
         }
 
@@ -79,7 +74,7 @@ namespace Fiourp
                 return true;
             return false;
         }
-        
+
         /// <summary>
         /// Volume should be in between 0 and 1
         /// </summary>

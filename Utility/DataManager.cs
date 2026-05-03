@@ -1,13 +1,13 @@
-﻿using Microsoft.Xna.Framework;
+﻿using AsepriteDotNet.Aseprite;
+using AsepriteDotNet.Aseprite.Types;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Aseprite;
+using MonoGame.Aseprite.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using MonoGame.Aseprite;
-using AsepriteDotNet.Aseprite;
-using AsepriteDotNet.Aseprite.Types;
-using MonoGame.Aseprite.Utils;
 
 namespace Fiourp
 {
@@ -21,7 +21,7 @@ namespace Fiourp
         public static Dictionary<string, Effect> PixelShaders = new();
 
         public static Dictionary<int, Dictionary<string, Texture2D>> Tilesets;
-        public static Dictionary<string,Texture2D> Objects = new();
+        public static Dictionary<string, Texture2D> Objects = new();
 
         public static Dictionary<string, Dictionary<string, SpriteFont>> Fonts = GetFonts();
 
@@ -30,7 +30,7 @@ namespace Fiourp
 
         public static void Initialize(string XMLPath)
         {
-            if(XMLPath != "")
+            if (XMLPath != "")
                 Tilesets = GetAllTileSets(XMLPath);
 
             Initialize();
@@ -62,12 +62,12 @@ namespace Fiourp
                 else if (loaded is AsepriteFile asepriteDoc)
                 {
                     Texture2D[] textures = asepriteDoc.Load();
-                    if(textures.Length == 1)
+                    if (textures.Length == 1)
                         AddTexture(key, textures[0]);
-                    for(int i = 1; i < textures.Length + 1; i++)
+                    for (int i = 1; i < textures.Length + 1; i++)
                         AddTexture(key + i, textures[i - 1]);
                 }
-                else if(loaded is Effect shader)
+                else if (loaded is Effect shader)
                 {
                     PixelShaders[key.Substring(key.LastIndexOf("PixelShaders/") + 13)] = shader;
                 }
@@ -79,7 +79,7 @@ namespace Fiourp
                     Textures[key] = texture;
                 }
             }
-            
+
             foreach (DirectoryInfo direct in dir.GetDirectories())
                 GetAllGraphicsFiles(direct.FullName.Substring(contentDirName.Length + "Graphics/".Length));
         }
@@ -140,7 +140,7 @@ namespace Fiourp
 
             float[] delays = new float[ase.Frames.Length];
 
-            for(int i = 0; i < ase.Frames.Length; i++)
+            for (int i = 0; i < ase.Frames.Length; i++)
                 delays[i] = (float)ase.Frames[i].Duration.TotalSeconds;
 
             return delays;
@@ -160,13 +160,13 @@ namespace Fiourp
                 string key = Path.GetFileNameWithoutExtension(directory.Name);
                 d[key] = new Dictionary<string, SpriteFont>();
 
-                foreach(FileInfo file in directory.GetFiles())
+                foreach (FileInfo file in directory.GetFiles())
                 {
                     string fileName = Path.GetFileNameWithoutExtension(file.Name);
                     d[key][fileName] = Content.Load<SpriteFont>("./Fonts/" + directory.Name + "/" + fileName);
                 }
             }
-            
+
             return d;
         }
 
@@ -192,7 +192,7 @@ namespace Fiourp
 
                 if (element.Name == "OneOfEach")
                     d[stringToInt(element.GetAttribute("id"))] = GetTileSetTextures(texture, stringToInt(element.GetAttribute("tileSize")), TileSetType.OneOfEach);
-                else if(element.Name == "RandomOf4")
+                else if (element.Name == "RandomOf4")
                     d[stringToInt(element.GetAttribute("id"))] = GetTileSetTextures(texture, stringToInt(element.GetAttribute("tileSize")), TileSetType.RandomOf4);
             }
 
@@ -229,8 +229,8 @@ namespace Fiourp
                     "doublePointTop", "doublePointBottom", "doublePointLeft", "doublePointRight",
                     "triplePointTopLeft", "triplePointTopRight", "triplePointBottomLeft", "triplePointBottomRight", };
 
-                    for(int y = 0; y < tileNamesR4.Length; y++)
-                        for(int x = 0; x < 4; x++)
+                    for (int y = 0; y < tileNamesR4.Length; y++)
+                        for (int x = 0; x < 4; x++)
                         {
                             d[tileNamesR4[y] + x] = tileset.CropTo(new Vector2(x * tileSize, y * tileSize), new Vector2(tileSize));
                             d[tileNamesR4[y] + x].Name = tileNamesR4[y] + x;
@@ -240,18 +240,19 @@ namespace Fiourp
                         for (int x = 0; x < 4; x++)
                         {
                             d[tileNamesR4Other[y * 4 + x]] = tileset.CropTo(new Vector2(x * tileSize, (y + tileNamesR4.Length) * tileSize), new Vector2(tileSize));
-                            d[tileNamesR4Other[y * 4 + x ]].Name = tileNamesR4Other[y * 4 + x];
+                            d[tileNamesR4Other[y * 4 + x]].Name = tileNamesR4Other[y * 4 + x];
                         }
 
                     for (int y = 0; y < 2; y++)
                         for (int x = 0; x < 4; x++)
                         {
                             d["padding" + (y * 4 + x + 1)] = tileset.CropTo(new Vector2(x * tileSize, (y + tileNamesR4.Length + tileNamesR4Other.Length / 4) * tileSize), new Vector2(tileSize));
-                            d["padding" + (y * 4 + x + 1)].Name = "padding" + (y * 4 + x + 1) ;
+                            d["padding" + (y * 4 + x + 1)].Name = "padding" + (y * 4 + x + 1);
                         }
 
                     break;
-            };
+            }
+            ;
 
             return d;
         }
@@ -259,13 +260,13 @@ namespace Fiourp
         public static Dictionary<Point, Texture2D> GetTileSetTextures(Texture2D tileset, int tileSize)
         {
             Dictionary<Point, Texture2D> tiles = new();
-            for(int x = 0; x < tileset.Width; x += tileSize)
+            for (int x = 0; x < tileset.Width; x += tileSize)
                 for (int y = 0; y < tileset.Height; y += tileSize)
                 {
                     tiles[new Point(x, y)] = tileset.CropTo(new Vector2(x, y), new Vector2(tileSize));
                     tiles[new Point(x, y)].Name = new Point(x, y).ToString();
                 }
-        return tiles;
+            return tiles;
         }
 
         /// <summary>
@@ -293,11 +294,11 @@ namespace Fiourp
         public static Texture2D Load(string path)
         {
             Textures.TryGetValue(path, out Texture2D texture);
-            if(texture != null)
+            if (texture != null)
                 return texture;
 
             object loaded = Content.Load<Object>(path);
-            if (loaded is Texture2D tex) 
+            if (loaded is Texture2D tex)
             {
                 Textures[path] = tex;
                 return tex;
@@ -311,7 +312,7 @@ namespace Fiourp
                 throw new Exception("File was not found under the right format");
         }
 
-        public static Texture2D[] Load(this AsepriteFile doc) 
+        public static Texture2D[] Load(this AsepriteFile doc)
         {
             Texture2D[] result = new Texture2D[doc.Frames.Length];
             for (int i = 0; i < doc.Frames.Length; i++)
@@ -322,14 +323,14 @@ namespace Fiourp
             result[0].Tag = new object[2];
             List<Sprite.Animation.Slice> slices = new();
 
-            foreach(AsepriteSlice slice in doc.Slices)
+            foreach (AsepriteSlice slice in doc.Slices)
             {
                 slices.Add(new Sprite.Animation.Slice(slice.Name, new Rectangle(slice.Keys[0].Bounds.X, slice.Keys[0].Bounds.Y, slice.Keys[0].Bounds.Width, slice.Keys[0].Bounds.Height), slice.UserData.Color.Value.ToXnaColor()));
             }
 
             ((object[])result[0].Tag)[1] = slices;
 
-            foreach(AsepriteTag tag in doc.Tags)
+            foreach (AsepriteTag tag in doc.Tags)
             {
                 for (int i = tag.From; i <= tag.To; i++)
                 {
@@ -356,12 +357,12 @@ namespace Fiourp
         public static string[] GetAllFMODBanksPaths()
         {
             if (!Directory.Exists(Content.RootDirectory + "/Audio/Desktop"))
-                return new string[] {};
+                return new string[] { };
 
             DirectoryInfo dir = new DirectoryInfo(Content.RootDirectory + "/Audio/Desktop");
             List<string> paths = new();
 
-            foreach(FileInfo f in dir.GetFiles())
+            foreach (FileInfo f in dir.GetFiles())
             {
                 if (f.Extension == ".bank")
                     paths.Add(f.FullName);
@@ -378,7 +379,7 @@ namespace Fiourp
 
             Color[] reversed = new Color[texture.Width * texture.Height];
 
-            for(int i = 0; i < data.Length; i++)
+            for (int i = 0; i < data.Length; i++)
                 reversed[data.Length - 1 - i] = data[i];
 
             flipped.Name = texture.Name + " FlippedXAndY";
@@ -394,9 +395,9 @@ namespace Fiourp
 
             Color[] reversed = new Color[texture.Width * texture.Height];
 
-            for(int y = 0; y < texture.Height; y++)
+            for (int y = 0; y < texture.Height; y++)
             {
-                for(int x = 0; x < texture.Width; x++)
+                for (int x = 0; x < texture.Width; x++)
                 {
                     int coords = x + y * texture.Width;
                     int reversedCoords = Math.Abs(x + 1 - texture.Width) + y * texture.Width;

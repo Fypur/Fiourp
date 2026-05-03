@@ -1,10 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Fiourp
 {
@@ -83,7 +79,7 @@ namespace Fiourp
 
             float dir = direction - 0.5f * DirectionRange + Rand.NextDouble() * DirectionRange;
             p.Velocity = VectorHelper.AngleToVector(dir) * Rand.NextFloat(SpeedMin, SpeedMax);
-            
+
             p.CustomUpdate = CustomUpdate;
             p.CustomRender = CustomRender;
 

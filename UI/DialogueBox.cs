@@ -1,9 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Fiourp
 {
@@ -15,7 +10,7 @@ namespace Fiourp
         private int currentTextIndex = 0;
         private string currentGeneratedString;
         private ControlList skipDialogControls;
-        
+
         public DialogueBox(string[] dialogue, ControlList skipDialogueControls)
             : base(new Vector2(140, 20), 1000, 300, new Sprite(Color.White, new Rectangle(140, 20, 1000, 300), 0.9f))
         {
@@ -31,11 +26,11 @@ namespace Fiourp
         public override void Update()
         {
             base.Update();
-            if(skipDialogControls.IsDown())
+            if (skipDialogControls.IsDown())
             {
                 if (TextBox.Text == currentGeneratedString)
                 {
-                    if(currentTextIndex + 1 >= Dialogue.Length)
+                    if (currentTextIndex + 1 >= Dialogue.Length)
                     {
                         Engine.CurrentMap.Destroy(this);
                         return;

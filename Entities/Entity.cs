@@ -1,8 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Fiourp
 {
@@ -54,7 +51,7 @@ namespace Fiourp
                 _ => Tags.Unknown
             };
 
-            if(sprite != null)
+            if (sprite != null)
             {
                 Sprite = sprite;
                 AddComponent(Sprite);
@@ -86,14 +83,14 @@ namespace Fiourp
             PreviousExactPos = ExactPos;
             PreviousPos = Pos;
 
-            foreach(Entity child in Children)
+            foreach (Entity child in Children)
                 child.Awake(); //We need this to be here for children to have CurrentLevel != null
         }
 
         public virtual void Update()
         {
             for (int i = Components.Count - 1; i >= 0; i--)
-                if(Components.Count > i && Components[i].Active)
+                if (Components.Count > i && Components[i].Active)
                     Components[i].Update();
         }
 
@@ -107,7 +104,7 @@ namespace Fiourp
                 Children[i].ExactPos += Pos - PreviousPos;
 #if DEBUG
                 if (Pos - PreviousPos != Vector2.Zero)
-                {  }
+                { }
 #endif
                 if (Children[i].Active)
                     Children[i].Update();
@@ -132,7 +129,7 @@ namespace Fiourp
 
         public void UpdateChildrenPos()
         {
-            foreach(Entity child in Children)
+            foreach (Entity child in Children)
             {
                 child.ExactPos += Pos - PreviousPos;
             }
@@ -146,11 +143,11 @@ namespace Fiourp
         public virtual void Render()
         {
             for (int i = Components.Count - 1; i >= 0; i--)
-                if(Components[i].Visible)
+                if (Components[i].Visible)
                     Components[i].Render();
 
             for (int i = Children.Count - 1; i >= 0; i--)
-                if(Children[i].Visible && Children[i].Tag != Tags.UI)
+                if (Children[i].Visible && Children[i].Tag != Tags.UI)
                     Children[i].Render();
 
             if (Debug.DebugMode)
@@ -213,9 +210,9 @@ namespace Fiourp
 
         public bool HasComponent<T>(out T component) where T : Component
         {
-            foreach(Component c in Components)
+            foreach (Component c in Components)
             {
-                if(c is T t)
+                if (c is T t)
                 {
                     component = t;
                     return true;
@@ -249,8 +246,8 @@ namespace Fiourp
 
         public bool TryGetComponent<T>(out T component) where T : Component
         {
-            foreach(Component c in Components)
-                if(c is T t)
+            foreach (Component c in Components)
+                if (c is T t)
                 {
                     component = t;
                     return true;
@@ -271,7 +268,7 @@ namespace Fiourp
 
         public void AddChildren(List<Entity> children)
         {
-            foreach(Entity child in children)
+            foreach (Entity child in children)
                 AddChild(child);
         }
 

@@ -15,7 +15,7 @@ namespace Fiourp
         private static GraphicsDevice graphicsDevice => Engine.Graphics.GraphicsDevice;
         public static Texture2D PointTexture;
         public static SpriteFont Font;
-        
+
         public static List<string> DebugUpdate = new List<string>();
         public static List<string> DebugForever = new List<string>();
         public static List<Tuple<Vector2, Color>> DebugPos = new List<Tuple<Vector2, Color>>();
@@ -68,7 +68,7 @@ namespace Fiourp
             defaultRasterizerState = RasterizerState.CullNone;
             defaultBlendState = BlendState.Additive;
         }
-        
+
         public static void Draw(Texture2D texture, Vector2 position)
            => spriteBatch.Draw(texture, position, Color.White);
 
@@ -180,7 +180,7 @@ namespace Fiourp
         public static void DrawString(string text, Vector2 position, Color color, Vector2 origin)
             => spriteBatch.DrawString(Font, text, position, color, 0, origin,
                 1, SpriteEffects.None, 1);
-        
+
         public static void DrawCenteredString(string text, Vector2 position, Color color)
             => spriteBatch.DrawString(Font, text, position, color, 0, Font.MeasureString(text) / 2,
                 1, SpriteEffects.None, 0.25f);
@@ -212,7 +212,7 @@ namespace Fiourp
             Vector2 scale = new Vector2(distance, thickness);
             spriteBatch.Draw(PointTexture, begin, null, color, angle, new Vector2(0f, 0.5f), scale, SpriteEffects.None, 1);
         }
-        
+
         public static void DrawLine(Texture2D texture, Vector2 begin, Vector2 end, Color color, int thickness = 1)
         {
             float distance = Vector2.Distance(begin, end);
@@ -239,7 +239,7 @@ namespace Fiourp
             float step = dotLength + gapLength;
             Vector2 normalized = (end - begin).Normalized();
 
-            for(int i = 0; i * step < distance; i++)
+            for (int i = 0; i * step < distance; i++)
             {
                 Vector2 a = begin + normalized * i * step;
                 Vector2 b = begin + normalized * (Math.Min(i * step + dotLength, distance));
@@ -269,7 +269,7 @@ namespace Fiourp
             Vector2 dir = (end - begin).Normalized();
             float length = (begin - end).Length();
             Vector2 from = begin;
-            for(float i = 0; i < length; i += stepSize)
+            for (float i = 0; i < length; i += stepSize)
             {
                 Vector2 to = begin + dir * i + VectorHelper.Normal(dir) * easeI(i / length) * (float)Math.Sin(insideFactor * i) * amplitude;
                 Drawing.DrawLine(from, to, color, 1);
@@ -338,8 +338,8 @@ namespace Fiourp
 
             Drawing.useCameraOffset = useCameraOffset;
 
-            graphicsDevice.BlendState= blendState == null ? defaultBlendState : blendState;
-            graphicsDevice.RasterizerState = rasterizerState == null ? defaultRasterizerState: rasterizerState;
+            graphicsDevice.BlendState = blendState == null ? defaultBlendState : blendState;
+            graphicsDevice.RasterizerState = rasterizerState == null ? defaultRasterizerState : rasterizerState;
         }
 
         public static void EndPrimitives()
@@ -354,7 +354,7 @@ namespace Fiourp
         private static void Flush()
         {
             if (!hasStartedBatching)
-                throw new Exception("Batching has not started");    
+                throw new Exception("Batching has not started");
 
             if (shapesCount <= 0)
                 return;
@@ -381,7 +381,7 @@ namespace Fiourp
         {
             if (shapeVerticesCount > vertices.Length)
                 throw new Exception("Drawn shape has more vertices that the maximum vertices used per batch.");
-            if(shapeIndicesCount > indices.Length)
+            if (shapeIndicesCount > indices.Length)
                 throw new Exception("Drawn shape has more indices that the maximum indices used per batch.");
 
             if (vertexCount + shapeVerticesCount + 2 >= vertices.Length || indicesCount + shapeIndicesCount + 2 >= indices.Length)
@@ -433,7 +433,7 @@ namespace Fiourp
             indices[indicesCount++] = ind; //v0
             indices[indicesCount++] = vertexCount++; //v3
             indices[indicesCount++] = ind + 1; //v1
-            
+
         }
 
         public static void DrawQuad(Vector2 a, Vector2 b, Vector2 c, Vector2 d, Color color)
@@ -466,10 +466,10 @@ namespace Fiourp
 #if DEBUG
             Vector2 pos = Vector2.Zero;
 
-            if(DebugUpdate.Count * Font.MeasureString("A").Y + DebugForever.Count * Font.MeasureString("A").Y > Engine.ScreenSize.Y)
+            if (DebugUpdate.Count * Font.MeasureString("A").Y + DebugForever.Count * Font.MeasureString("A").Y > Engine.ScreenSize.Y)
                 DebugForever.Clear();
 
-            foreach(string s in DebugUpdate)
+            foreach (string s in DebugUpdate)
             {
                 Drawing.DrawString(s, pos, Color.Brown, Vector2.Zero);
                 pos.Y += Font.MeasureString(s).Y;
@@ -491,7 +491,7 @@ namespace Fiourp
         {
 #if DEBUG
 
-            foreach(Tuple<Vector2, Color> pos in DebugPos)
+            foreach (Tuple<Vector2, Color> pos in DebugPos)
                 DrawPoint(pos.Item1 * screenScale, thickness, pos.Item2);
 
             foreach (Tuple<Vector2, Color> pos in DebugPosUpdate)

@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Fiourp
 {
@@ -11,7 +9,7 @@ namespace Fiourp
     {
         public TextBox FieldTextBox;
         private TextBox valueTextBox;
-        
+
         public ControlList Modified;
         public ControlList Controls;
         public ControlList KbMouseControls = new();
@@ -32,9 +30,9 @@ namespace Fiourp
             valueTextBox = (TextBox)AddChild(new TextBox(modified.GetAllControlNames(), fontID, Pos + new Vector2(width - w, 0), w, height, fontSize, TextColor, false, TextBox.Alignement.Right));
 
             Modified = modified;
-            foreach(Control control in modified)
+            foreach (Control control in modified)
             {
-                if(control.Key != null || control.MouseButton != null)
+                if (control.Key != null || control.MouseButton != null)
                     KbMouseControls.Add(control);
                 else
                     GamepadControls.Add(control);
@@ -45,7 +43,7 @@ namespace Fiourp
 
         public override void Update()
         {
-            if(!((Input.UIAction1.IsDown() || Input.GetKeyDown(Microsoft.Xna.Framework.Input.Keys.Enter))) && !recording)
+            if (!((Input.UIAction1.IsDown() || Input.GetKeyDown(Microsoft.Xna.Framework.Input.Keys.Enter))) && !recording)
                 base.Update();
 
             if (Parent is SubMenu s && s.CanBack)
@@ -74,7 +72,7 @@ namespace Fiourp
                 {
                     recording = true;
 
-                    if(Sprite != null)
+                    if (Sprite != null)
                         Sprite.Color = Color.DarkRed;
                     else
                     {
@@ -112,7 +110,7 @@ namespace Fiourp
 
             //Ending recording
             recording = false;
-            if(Sprite != null)
+            if (Sprite != null)
                 Sprite.Color = Color.White;
             else
             {

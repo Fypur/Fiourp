@@ -1,14 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Fiourp
 {
     public class TriggerComponent : Component
     {
         public Vector2 LocalPosition;
-        
+
         public Vector2 Size { get => Trigger.Size; set => Trigger.Size = value; }
         public List<Type> Triggerers { get => Trigger.Triggerers; set => Trigger.Triggerers = value; }
 
@@ -47,13 +46,13 @@ namespace Fiourp
         public override void Update()
         {
             Trigger.Pos = ParentEntity.Pos + LocalPosition;
-            if(Trigger.Active)
+            if (Trigger.Active)
                 Trigger.Update();
         }
 
         public override void Render()
         {
-            if(Trigger.Visible)
+            if (Trigger.Visible)
                 Trigger.Render();
         }
 

@@ -18,7 +18,9 @@ namespace Fiourp
         public override Vector2 ExactPos
         {
             get => new Vector2(Pos.X + xRemainder, Pos.Y + yRemainder);
-            set { Pos = VectorHelper.Floor(value);
+            set
+            {
+                Pos = VectorHelper.Floor(value);
                 xRemainder = value.X - (float)Math.Floor(value.X);
                 yRemainder = value.Y - (float)Math.Floor(value.Y);
             }
@@ -129,7 +131,7 @@ namespace Fiourp
             MoveY(amount.Y, CallbackOnCollisionY);
         }
 
-        public void MoveTo(Vector2 pos, Action CallbackOnCollisionX = null, Action CallbackOnCollisionY = null) 
+        public void MoveTo(Vector2 pos, Action CallbackOnCollisionX = null, Action CallbackOnCollisionY = null)
         {
             MoveX(pos.X - ExactPos.X, CallbackOnCollisionX);
             MoveY(pos.Y - ExactPos.Y, CallbackOnCollisionY);

@@ -1,9 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Fiourp
 {
@@ -136,7 +133,7 @@ namespace Fiourp
             //TODO: Make this faster and possible for circle collders etc
 
             List<Contact> newContacts = new();
-            for(int i = 0; i < Engine.CurrentMap.Data.Bodies.Count; i++)
+            for (int i = 0; i < Engine.CurrentMap.Data.Bodies.Count; i++)
             {
                 for (int j = i + 1; j < Engine.CurrentMap.Data.Bodies.Count; j++)
                 {
@@ -154,7 +151,7 @@ namespace Fiourp
 
                         //TODO: check for edge ID
                         Contact c = contacts.Find((c2) => (c2.Reference == rb1 && c2.Incident == rb2) || (c2.Reference == rb1 && c2.Incident == rb2));
-                        if(c != null)
+                        if (c != null)
                         {
                             separate[0].Pn = c.Pn; //Super ghetto
                             separate[0].Pt = c.Pt;
@@ -189,7 +186,7 @@ namespace Fiourp
                 rb.AngularVelocity += rb.InvI * rb.Torque * Engine.Deltatime;
             }
 
-            foreach(Contact contact in contacts)
+            foreach (Contact contact in contacts)
                 contact.PreStep();
 
             SolveConstraints();

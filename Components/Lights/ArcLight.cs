@@ -1,9 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Fiourp
 {
@@ -14,7 +9,7 @@ namespace Fiourp
         public float Length;
         public Color InsideColor;
         public Color OutsideColor;
-        
+
         public ArcLight(Vector2 localPosition, float direction, float range, float length, Color insideColor, Color outsideColor) : base(localPosition, length)
         {
             Direction = MathHelper.ToRadians(direction);

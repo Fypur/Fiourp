@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Fiourp
 {
@@ -67,7 +66,7 @@ namespace Fiourp
         {
             List<Control> controls = new();
 
-            if(kbState != kbPreviousState)
+            if (kbState != kbPreviousState)
             {
                 foreach (Keys key in kbState.GetPressedKeys())
                 {
@@ -85,7 +84,7 @@ namespace Fiourp
                 }
             }
 
-            if(gamePadState.PacketNumber != previousGamePadState.PacketNumber)
+            if (gamePadState.PacketNumber != previousGamePadState.PacketNumber)
             {
                 foreach (Buttons button in Enum.GetValues<Buttons>())
                 {
@@ -164,7 +163,7 @@ namespace Fiourp
         public Keys? Key { get; set; }
         public MouseButton? MouseButton { get; set; }
         public Buttons? ControllerButton { get; set; }
-        public object Value 
+        public object Value
         {
             get
             {
@@ -179,7 +178,7 @@ namespace Fiourp
                 { Key = key; MouseButton = null; ControllerButton = null; }
                 else if (value is MouseButton button)
                 { MouseButton = button; ControllerButton = null; Key = null; }
-                else if(value is Buttons cbutton)
+                else if (value is Buttons cbutton)
                 { ControllerButton = cbutton; Key = null; MouseButton = null; }
             }
         }
@@ -228,7 +227,7 @@ namespace Fiourp
                 return Key.ToString();
             if (MouseButton != null)
                 return "Mouse " + MouseButton.ToString();
-            if(ControllerButton != null)
+            if (ControllerButton != null)
                 return "Controller " + ControllerButton.ToString();
 #if DEBUG
             throw new Exception("Control To String not outputing anything: Key, MouseButton and ControllerButton are null");
@@ -253,7 +252,7 @@ namespace Fiourp
             {
                 if (control is Keys k)
                     Controls.Add(new Control(k));
-                else if(control is MouseButton m)
+                else if (control is MouseButton m)
                     Controls.Add(new Control(m));
                 else if (control is Buttons b)
                     Controls.Add(new Control(b));
@@ -308,7 +307,7 @@ namespace Fiourp
             bool returned = false;
             foreach (Control c in Controls)
             {
-                if(c.Is())
+                if (c.Is())
                     return false;
                 if (c.IsUp())
                     returned = true;

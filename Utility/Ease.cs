@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Fiourp
 {
@@ -19,12 +17,12 @@ namespace Fiourp
             => (float)Math.Pow(x, 5);
 
         public static float QuintOut(float x)
-            => 1 - (float) Math.Pow(1 - x, 5);
+            => 1 - (float)Math.Pow(1 - x, 5);
 
         public static float QuintInAndOut(float x)
             => x < 0.5 ? 16 * x * x * x * x * x : 1 - (float)Math.Pow(-2 * x + 2, 5) / 2;
 
-        public static float None(float x) 
+        public static float None(float x)
             => x;
 
         /// <summary>
