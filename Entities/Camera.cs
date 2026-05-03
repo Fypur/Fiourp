@@ -210,7 +210,7 @@ namespace Fiourp
         {
             Vector2 initPos = CenteredPos;
             Vector2 newPos = CenteredPos + offset;
-            moveTimer = (Timer)AddComponent(new Timer(time, true, (t) =>
+            moveTimer = (Timer)AddComponent(new Timer(time, (t) =>
             {
                 /*Vector2 amount = Vector2.Lerp(initPos, newPos, (easingFunction ?? Ease.None).Invoke(Ease.Reverse(t.Value / t.MaxValue))) - CenteredPos;
                 Debug.LogUpdate(amount);

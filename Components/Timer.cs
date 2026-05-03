@@ -15,7 +15,7 @@ namespace Fiourp
         public Action OnComplete;
         public Action<Timer> UpdateAction;
 
-        public Timer(float maxValue, bool destroyOnComplete = true, Action<Timer> UpdateAction = null, Action OnComplete = null)
+        public Timer(float maxValue, Action<Timer> UpdateAction = null, Action OnComplete = null, bool destroyOnComplete = true)
         {
             this.MaxValue = maxValue;
             Value = maxValue;

@@ -43,7 +43,7 @@ namespace Fiourp
             Times = timesBetweenPositions;
             EasingFunction = easingfunction;
 
-            MovingTimer = new Timer(Times[currentIndex + (increment ? 0 : -1)] - currentTime, true, (timer) =>
+            MovingTimer = new Timer(Times[currentIndex + (increment ? 0 : -1)] - currentTime, (timer) =>
             {
                 if (!Cycling)
                     timer.PauseUntil(() => Cycling);
@@ -129,7 +129,7 @@ namespace Fiourp
 
         private void StartTimer()
         {
-            MovingTimer = new Timer(Times[nextIndex + (increment ? -1 : 0)], true, (timer) =>
+            MovingTimer = new Timer(Times[nextIndex + (increment ? -1 : 0)], (timer) =>
             {
                 if (!Cycling)
                     timer.PauseUntil(() => Cycling);

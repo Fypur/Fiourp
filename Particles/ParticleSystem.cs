@@ -18,7 +18,7 @@ namespace Fiourp
         {
             for (int i = 0; i < particleNumber; i++)
             {
-                AddComponent(new Timer(NextFloat(random, minTime, maxTime), true, null, () =>
+                AddComponent(new Timer(NextFloat(random, minTime, maxTime), null, () =>
                 {
                     Vector2 pos = Pos + new Vector2(Width * (float)random.NextDouble(), Height * (float)(random.NextDouble()));
                     Vector2 size = random.VectorBetween(minParticleSize, maxParticleSize);

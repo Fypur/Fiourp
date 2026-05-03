@@ -36,11 +36,11 @@ namespace Fiourp
 
         public void StartBlink(float blinkTime)
         {
-            blinkTimer = (Timer)ParentEntity.AddComponent(new Timer(blinkTime, false, null, () =>
+            blinkTimer = (Timer)ParentEntity.AddComponent(new Timer(blinkTime, null, () =>
             {
                 Visible = false;
                 RefreshBlink(true);
-            }));
+            }, false));
         }
 
         private void RefreshBlink(bool visible)

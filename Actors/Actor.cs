@@ -34,7 +34,7 @@ namespace Fiourp
             Collider = new AABBCollider(Vector2.Zero, width, height);
             AddComponent(Collider);
 
-            liftSpeedTimer = (Timer)AddComponent(new Timer(liftSpeedGrace, false, null, () => LiftSpeed = Vector2.Zero));
+            liftSpeedTimer = (Timer)AddComponent(new Timer(liftSpeedGrace, null, () => LiftSpeed = Vector2.Zero, false));
             liftSpeedTimer.Paused = true;
         }
 
@@ -54,6 +54,7 @@ namespace Fiourp
 
                 if (value == Vector2.Zero)
                     return;
+
                 liftSpeedTimer.Paused = false;
                 liftSpeedTimer.Value = liftSpeedGrace;
             }
