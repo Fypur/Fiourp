@@ -19,7 +19,7 @@ namespace Fiourp
 
         public void StopAllCoroutines()
         {
-            foreach (Coroutine c in GetComponents<Coroutine>())
+            foreach (Coroutine c in GetAllComponents<Coroutine>())
                 RemoveComponent(c);
         }
 

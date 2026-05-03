@@ -115,7 +115,7 @@ namespace Fiourp
         public override void Awake()
         {
             PreviousExactPos = ExactPos;
-            PreviousPos = Pos;
+            previousPos = Pos;
 
             Pos = Pos / Options.DefaultUISizeMultiplier * Options.CurrentScreenSizeMultiplier;
             Size = Size / Options.DefaultUISizeMultiplier * Options.CurrentScreenSizeMultiplier;

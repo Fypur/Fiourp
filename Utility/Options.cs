@@ -49,7 +49,7 @@ namespace Fiourp
         {
             void SetStats(UIElement element, int oldMult, int newMult)
             {
-                element.PreviousPos += element.Pos / oldMult * newMult - element.Pos;
+                element.previousPos += element.Pos / oldMult * newMult - element.Pos;
                 element.PreviousExactPos += element.Pos - element.Pos / oldMult * newMult;
 
                 element.Pos = element.Pos / oldMult * newMult;

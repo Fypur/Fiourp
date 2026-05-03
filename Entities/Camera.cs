@@ -5,7 +5,7 @@ namespace Fiourp
 {
     public class Camera : Actor
     {
-        public new Rectangle Bounds = Rectangle.Empty;
+        public Rectangle Bounds = Rectangle.Empty;
         public Rectangle StrictFollowBounds => new Rectangle(new Vector2(-Engine.RenderTarget.Width / (float)2, -Engine.RenderTarget.Height / (float)4).ToPoint(), new Vector2(Engine.RenderTarget.Width, Engine.RenderTarget.Height / 2).ToPoint());
 
         private bool hasChanged;
@@ -162,7 +162,7 @@ namespace Fiourp
         {
             base.LateUpdate();
 
-            PreviousPos = WholePos;
+            previousPos = WholePos;
         }
 
         public void Refresh()
