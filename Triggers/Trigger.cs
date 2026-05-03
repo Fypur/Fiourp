@@ -8,12 +8,7 @@ namespace Fiourp
     {
         public List<Type> Triggerers;
 
-        private string name;
         private List<Entity> enteredEntities = new List<Entity>();
-
-        public Action<Entity> OnTriggerEnterAction;
-        public Action<Entity> OnTriggerStayAction;
-        public Action<Entity> OnTriggerExitAction;
 
         public Trigger(Vector2 position, Vector2 size, List<Type> triggerers, Sprite sprite)
             : base(position, (int)size.X, (int)size.Y, sprite)
@@ -21,7 +16,6 @@ namespace Fiourp
             Pos = position;
             Size = size;
             Triggerers = triggerers;
-            name = GetType().Name;
 
             Collider = new AABBCollider(Vector2.Zero, (int)size.X, (int)size.Y);
             AddComponent(Collider);
@@ -44,8 +38,8 @@ namespace Fiourp
             Collider = collider;
             AddComponent(Collider);
 
-            Width = (int)collider.Width;
-            Height = (int)collider.Height;
+            Width = collider.Width;
+            Height = collider.Height;
         }
 
         public override void Update()
@@ -55,6 +49,7 @@ namespace Fiourp
             for (int i = Triggerers.Count - 1; i >= 0; i--)
             {
                 Engine.CurrentMap.Data.EntitiesByType.TryGetValue(Triggerers[i], out List<Entity> triggers);
+
                 if (triggers == null)
                     continue;
 
@@ -66,37 +61,25 @@ namespace Fiourp
                         if (enteredEntities.Contains(entity))
                             OnTriggerStay(entity);
                         else
-                        {
                             OnTriggerEnter(entity);
-                        }
                     }
                     else if (enteredEntities.Contains(entity))
-                    {
                         OnTriggerExit(entity);
-                    }
                 }
             }
-        }
-
-        public override void Render()
-        {
-            /*if (Debug.DebugMode)
-            {
-                Drawing.DrawString(name, Pos + Size / 2, Color.Aqua, true);
-                Drawing.Draw(new Rectangle(Pos.ToPoint(), Size.ToPoint()), Color.Aqua * 0.2f);
-            }*/
-
-            base.Render();
         }
 
         public bool Contains(Entity entity)
             => enteredEntities.Contains(entity);
 
-        public virtual void OnTriggerEnter(Entity entity) { enteredEntities.Add(entity); OnTriggerEnterAction?.Invoke(entity); }
+        public virtual void OnTriggerEnter(Entity entity)
+            => enteredEntities.Add(entity);
 
-        public virtual void OnTriggerStay(Entity entity) { OnTriggerStayAction?.Invoke(entity); }
+        public virtual void OnTriggerStay(Entity entity)
+        { }
 
-        public virtual void OnTriggerExit(Entity entity) { enteredEntities.Remove(entity); OnTriggerExitAction?.Invoke(entity); }
+        public virtual void OnTriggerExit(Entity entity)
+            => enteredEntities.Remove(entity);
 
         public override void OnDestroy()
         {
