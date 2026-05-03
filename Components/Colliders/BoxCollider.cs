@@ -1,8 +1,6 @@
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Transactions;
-using Microsoft.Xna.Framework;
 
 namespace Fiourp;
 
@@ -14,10 +12,10 @@ public class BoxCollider : Collider
     public float Rotation;
     public Vector2 PivotPoint;
 
-    public Vector2[] Coords { get; private set; }
+    public Vector2[] WorldVertices { get; private set; }
 
     public override Rectangle Bounds => new Rectangle((ParentEntity.Pos + new Vector2(LocalLeft, LocalTop)).ToPoint(), new Vector2(LocalRight - LocalLeft, LocalBottom - LocalTop).ToPoint());
-    
+
     public BoxCollider(Vector2 localPosition, int width, int height, float rotationDeg, Vector2 pivotPoint) : base()
     {
         LocalPos = localPosition;
@@ -30,7 +28,7 @@ public class BoxCollider : Collider
     public override void Added()
     {
         base.Added();
-        
+
         RefreshVertices();
     }
 
@@ -41,13 +39,13 @@ public class BoxCollider : Collider
         //put rotation between -pi and +pi
         Rotation = Rotation - (float)Math.Floor(Rotation / (2 * float.Pi)) * 2f * float.Pi;
         if (Rotation > Math.PI) Rotation -= 2 * float.Pi;
-        
+
         RefreshVertices();
     }
 
     public void RefreshVertices()
     {
-        Coords = new Vector2[4]
+        WorldVertices = new Vector2[4]
         {
             VectorHelper.RotateAround(WorldPos, AbsolutePivotPoint, Rotation),
             (VectorHelper.RotateAround(WorldPos + new Vector2(Width, 0), AbsolutePivotPoint, Rotation)),
@@ -63,13 +61,13 @@ public class BoxCollider : Collider
 
     public override bool CollideRaw(Collider other)
     {
-        if(other is BoxCollider box)
-            return Collision.BoxBoxSAT(Coords, box.Coords).IsCollision;
-        else if(other is AABBCollider aabb)
-            return Collision.BoxBoxSAT(Coords, other.Bounds.ToPoints()).IsCollision;
-        else if(other is CircleCollider circle)
-            return Collision.RotatedRectCircle(Coords, other.WorldPos, circle.Radius);
-        else if(other is GridCollider grid)
+        if (other is BoxCollider box)
+            return Collision.BoxBoxSAT(WorldVertices, box.WorldVertices).IsCollision;
+        else if (other is AABBCollider aabb)
+            return Collision.BoxBoxSAT(WorldVertices, other.Bounds.ToPoints()).IsCollision;
+        else if (other is CircleCollider circle)
+            return Collision.RotatedRectCircle(WorldVertices, other.WorldPos, circle.Radius);
+        else if (other is GridCollider grid)
             return grid.CollideRaw(this);
         else
             throw new NotImplementedException($"Collision from BoxCollider with {other.GetType().Name} is not yet implemented.");
@@ -91,10 +89,10 @@ public class BoxCollider : Collider
         return true;*/
 
         //project along rectangle and compare scalar products
-        Vector2 r = point - Coords[0];
-        float sc1 = Vector2.Dot(r, Coords[1] - Coords[0]);
-        float sc2 = Vector2.Dot(r, Coords[3] - Coords[0]);
-        if(sc1 < 0 || sc1 > (Coords[1] - Coords[0]).LengthSquared() || sc2 < 0 || sc2 > (Coords[3] - Coords[0]).LengthSquared())
+        Vector2 r = point - WorldVertices[0];
+        float sc1 = Vector2.Dot(r, WorldVertices[1] - WorldVertices[0]);
+        float sc2 = Vector2.Dot(r, WorldVertices[3] - WorldVertices[0]);
+        if (sc1 < 0 || sc1 > (WorldVertices[1] - WorldVertices[0]).LengthSquared() || sc2 < 0 || sc2 > (WorldVertices[3] - WorldVertices[0]).LengthSquared())
             return false;
         return true;
     }
@@ -105,14 +103,16 @@ public class BoxCollider : Collider
         int sign = Math.Sign(radians);
         radians = Math.Abs(radians);
 
-        while(radians > 0)
+        while (radians > 0)
         {
             float oldRotation = Rotation;
             Rotation += minRot * sign;
             Update();
 
-            foreach(Entity e in checkedCollision){
-                if(e != ParentEntity && Collide(e)){
+            foreach (Entity e in checkedCollision)
+            {
+                if (e != ParentEntity && Collide(e))
+                {
                     Rotation = oldRotation;
                     Update();
                     onCollision();
@@ -126,10 +126,10 @@ public class BoxCollider : Collider
 
     protected override void DebugRender()
     {
-        Drawing.DrawLine(Coords[0], Coords[1], DebugColor, 1);
-        Drawing.DrawLine(Coords[1], Coords[2], DebugColor, 1);
-        Drawing.DrawLine(Coords[2], Coords[3], DebugColor, 1);
-        Drawing.DrawLine(Coords[3], Coords[0], DebugColor, 1);
+        Drawing.DrawLine(WorldVertices[0], WorldVertices[1], DebugColor, 1);
+        Drawing.DrawLine(WorldVertices[1], WorldVertices[2], DebugColor, 1);
+        Drawing.DrawLine(WorldVertices[2], WorldVertices[3], DebugColor, 1);
+        Drawing.DrawLine(WorldVertices[3], WorldVertices[0], DebugColor, 1);
     }
 
     public float LocalLeft
@@ -137,7 +137,7 @@ public class BoxCollider : Collider
         get
         {
             float minX = float.PositiveInfinity;
-            foreach (Vector2 point in Coords)
+            foreach (Vector2 point in WorldVertices)
             {
                 if (point.X < minX)
                     minX = point.X;
@@ -152,7 +152,7 @@ public class BoxCollider : Collider
         get
         {
             float maxX = float.NegativeInfinity;
-            foreach (Vector2 point in Coords)
+            foreach (Vector2 point in WorldVertices)
             {
                 if (point.X > maxX)
                     maxX = point.X;
@@ -167,7 +167,7 @@ public class BoxCollider : Collider
         get
         {
             float minY = float.PositiveInfinity;
-            foreach (Vector2 point in Coords)
+            foreach (Vector2 point in WorldVertices)
             {
                 if (point.Y < minY)
                     minY = point.Y;
@@ -182,7 +182,7 @@ public class BoxCollider : Collider
         get
         {
             float maxY = float.NegativeInfinity;
-            foreach (Vector2 point in Coords)
+            foreach (Vector2 point in WorldVertices)
             {
                 if (point.Y > maxY)
                     maxY = point.Y;

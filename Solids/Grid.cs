@@ -9,7 +9,7 @@ namespace Fiourp
 {
     public class Grid : Solid
     {
-        public bool[,] Grid { get => Collider.Grid; set => Collider.Grid = value; }
+        public bool[,] Organization { get => Collider.Grid; set => Collider.Grid = value; }
         public int TileWidth => Collider.GridWidth;
         public int TileHeight => Collider.GridHeight;
 
@@ -49,7 +49,7 @@ namespace Fiourp
                     if(Tiles[y, x] != Sprite.None && Tiles[y, x] != null)
                         Tiles[y, x].Draw(pos);
 
-                    if(Debug.DebugMode && Grid[y, x] != 0)
+                    if(Debug.DebugMode && Organization[y, x])
                         Drawing.DrawEdge(new Rectangle(pos.ToPoint(), new Point(gridCol.GridWidth, gridCol.GridHeight)), 1, Color.Blue);
                     /*if (Organisation[y, x] != 0 && (Tiles[y, x] == null || Tiles[y, x] == Sprite.None))
                         Debug.LogUpdate(Organisation[y, x], Tiles[y, x], pos);
