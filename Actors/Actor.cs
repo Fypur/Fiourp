@@ -10,12 +10,15 @@ namespace Fiourp
     public abstract class Actor : Entity
     {
         public Vector2 Velocity;
+        public AABBCollider Collider;
 
+        private float xRemainder;
+        private float yRemainder;
         private Vector2 currentLiftSpeed;
         private Timer liftSpeedTimer;
         private const float liftSpeedGrace = 0.16f;
 
-        public override Vector2 ExactPos
+        public Vector2 ExactPos
         {
             get => new Vector2(Pos.X + xRemainder, Pos.Y + yRemainder);
             set
@@ -25,24 +28,6 @@ namespace Fiourp
                 yRemainder = value.Y - (float)Math.Floor(value.Y);
             }
         }
-        private float xRemainder;
-        private float yRemainder;
-
-        public Actor(Vector2 position, int width, int height, Sprite sprite)
-            : base(position, width, height, sprite)
-        {
-            Collider = new AABBCollider(Vector2.Zero, width, height);
-            AddComponent(Collider);
-
-            liftSpeedTimer = (Timer)AddComponent(new Timer(liftSpeedGrace, null, () => LiftSpeed = Vector2.Zero, false));
-            liftSpeedTimer.Paused = true;
-        }
-
-        public virtual bool IsRiding(Solid solid)
-            => Collider.CollideAt(solid, Pos + new Vector2(0, 1));
-
-        public virtual void Squish()
-            => Engine.CurrentMap.Destroy(this);
 
         public Vector2 LiftSpeed
         {
@@ -59,6 +44,22 @@ namespace Fiourp
                 liftSpeedTimer.Value = liftSpeedGrace;
             }
         }
+
+        public Actor(Vector2 position, AABBCollider collider, Sprite sprite)
+            : base(position)
+        {
+            Collider = collider;
+            AddComponent(Collider);
+
+            liftSpeedTimer = (Timer)AddComponent(new Timer(liftSpeedGrace, null, () => LiftSpeed = Vector2.Zero, false));
+            liftSpeedTimer.Paused = true;
+        }
+
+        public virtual bool IsRiding(Solid solid)
+            => Collider.CollideAt(solid, Pos + new Vector2(0, 1));
+
+        public virtual void Squish()
+            => Engine.CurrentMap.Destroy(this);
 
         public void MoveX(float amount, Action CallbackOnCollision)
             => MoveX(amount, (entity) => CallbackOnCollision?.Invoke());

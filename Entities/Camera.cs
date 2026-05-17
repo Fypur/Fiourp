@@ -4,18 +4,16 @@ namespace Fiourp
 {
     public class Camera : Entity
     {
-        public int Width;
-        public int Height;
-
         private bool needToRecalculateMatrix;
         private bool needToRecalculateInverseMatrix;
-        public override Vector2 Pos
+
+        public new Vector2 Pos
         {
             get => base.Pos;
             set { if (value != base.Pos) { needToRecalculateMatrix = true; base.Pos = value; } }
         }
 
-        public override float Rotation
+        public new float Rotation
         {
             get => base.Rotation;
             set { if (value != base.Rotation) { needToRecalculateMatrix = true; base.Rotation = value; } }
@@ -72,8 +70,6 @@ namespace Fiourp
             Rotation = rotation;
             ZoomLevel = zoomLevel;
 
-            if (bounds != null)
-                SetBoundaries((Rectangle)bounds);
         }
 
         public void Refresh()

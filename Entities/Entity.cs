@@ -5,8 +5,8 @@ namespace Fiourp
 {
     public class Entity
     {
-        public virtual Vector2 Pos { get; set; }
-        public virtual float Rotation { get; set; }
+        public Vector2 Pos;
+        public float Rotation { get; set; }
 
         public bool Active = true;
         public bool Visible = true;
@@ -14,9 +14,6 @@ namespace Fiourp
         public Tags Tag;
         public enum Tags { Unknown, Actor, Solid, Trigger, UI, Decoration }
         public int Layer = 0;
-
-
-        public Collider Collider;
 
         public List<Component> Components = new List<Component>();
 
@@ -53,9 +50,6 @@ namespace Fiourp
             for (int i = Components.Count - 1; i >= 0; i--)
                 if (Components[i].Visible)
                     Components[i].Render();
-
-            if (Debug.DebugMode)
-                Collider?.Render();
         }
 
         public virtual void OnDestroy()
