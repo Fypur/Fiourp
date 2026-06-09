@@ -3,7 +3,7 @@ using System;
 
 namespace Fiourp
 {
-    public class Grid : Solid
+    public class Grid : Entity
     {
         public bool[,] Organization { get => Collider.Grid; set => Collider.Grid = value; }
         public int TileWidth => Collider.GridWidth;
@@ -11,14 +11,13 @@ namespace Fiourp
 
         public Sprite[,] Tiles;
 
-        private new GridCollider Collider => base.Collider as GridCollider;
+        private GridCollider Collider;
 
-        public Grid(Vector2 position, int gridWidth, int gridHeight, bool[,] org, Sprite[,] tiles = null) : base(position, gridWidth * tiles.GetLength(1), gridHeight * tiles.GetLength(0), Sprite.None)
+        public Grid(Vector2 position, int gridWidth, int gridHeight, bool[,] org, Sprite[,] tiles = null) : base(position)
         {
             Tiles = tiles;
-            RemoveComponent(base.Collider);
-            base.Collider = new GridCollider(Vector2.Zero, gridWidth, gridHeight, org);
-            AddComponent(base.Collider);
+            Collider = new GridCollider(Vector2.Zero, gridWidth, gridHeight, org);
+            AddComponent(Collider);
         }
         public override void Render()
         {
@@ -30,7 +29,7 @@ namespace Fiourp
             var gridCol = Collider;
             Vector2 startPos = (Engine.Cam.Pos - Pos) / gridCol.GridSize;
 
-            if (startPos.X > Width || startPos.Y > Height || startPos.X + Engine.Cam.Width < 0 || startPos.Y + Engine.Cam.Height < 0)
+            if (startPos.X > Collider.Width || startPos.Y > Collider.Height || startPos.X + Engine.Cam.Width < 0 || startPos.Y + Engine.Cam.Height < 0)
                 return;
 
 

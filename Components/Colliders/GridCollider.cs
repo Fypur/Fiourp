@@ -10,8 +10,8 @@ namespace Fiourp
         public int GridHeight;
         public bool[,] Grid;
 
-        private int Width => GridWidth * Grid.GetLength(1);
-        private int Height => GridHeight * Grid.GetLength(0);
+        public int Width => GridWidth * Grid.GetLength(1);
+        public int Height => GridHeight * Grid.GetLength(0);
         public override Rectangle Bounds => new Rectangle((int)WorldPos.X, (int)WorldPos.Y, Width, Height);
 
 

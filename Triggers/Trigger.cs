@@ -6,40 +6,19 @@ namespace Fiourp
 {
     public class Trigger : Entity
     {
+        public Collider Collider;
         public List<Type> Triggerers;
 
         private List<Entity> enteredEntities = new List<Entity>();
 
-        public Trigger(Vector2 position, Vector2 size, List<Type> triggerers, Sprite sprite)
-            : base(position, (int)size.X, (int)size.Y, sprite)
+        public Trigger(Vector2 position, Collider collider, List<Type> triggerers) : base(position)
         {
             Pos = position;
-            Size = size;
             Triggerers = triggerers;
 
-            Collider = new AABBCollider(Vector2.Zero, (int)size.X, (int)size.Y);
-            AddComponent(Collider);
-
-            Collider.DebugColor = Color.White;
-        }
-
-        public Trigger(Vector2 position, int width, int height, List<Type> triggerers, Sprite sprite)
-            : this(position, new Vector2(width, height), triggerers, sprite)
-        { }
-
-        public Trigger(Rectangle bounds, List<Type> triggerers, Sprite sprite)
-            : this(bounds.Location.ToVector2(), bounds.Size.ToVector2(), triggerers, sprite)
-        { }
-
-        public Trigger(Vector2 position, AABBCollider collider, List<Type> triggerers, Sprite sprite)
-            : this(position, 1, 1, triggerers, sprite)
-        {
-            RemoveComponent(Collider);
             Collider = collider;
+            Collider.DebugColor = Color.White;
             AddComponent(Collider);
-
-            Width = collider.Width;
-            Height = collider.Height;
         }
 
         public override void Update()
