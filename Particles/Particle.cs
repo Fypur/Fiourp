@@ -15,18 +15,21 @@ namespace Fiourp
 
         public Vector2 Velocity;
         public float StartSize;
+        public float Size;
 
+        public Sprite Sprite;
         public Color Color => Sprite.Color;
 
         public Action<Particle> CustomUpdate;
         public Action<Particle> CustomRender;
 
-        public Particle(ParticleType type, Entity followed, Vector2 position, float Size) : base(position, (int)Size, (int)Size, new Sprite(type.Texture))
+        public Particle(ParticleType type, Entity followed, Vector2 position, float size) : base(position)
         {
+            Sprite = new Sprite(type.Texture);
             Type = type;
             Followed = followed;
             LifeTime = StartLifeTime;
-            StartSize = Size;
+            StartSize = size;
         }
 
         public override void Update()
@@ -71,18 +74,18 @@ namespace Fiourp
             switch (Type.SizeChange)
             {
                 case ParticleType.FadeModes.Linear:
-                    Size = Vector2.One * StartSize * (LifeTime / StartLifeTime);
+                    Size = StartSize * (LifeTime / StartLifeTime);
                     break;
                 case ParticleType.FadeModes.EndLinear:
                     if (LifeTime <= StartLifeTime * 0.25f)
-                        Size = Vector2.One * StartSize * (LifeTime / (StartLifeTime * 0.25f));
+                        Size = StartSize * (LifeTime / (StartLifeTime * 0.25f));
                     break;
                 case ParticleType.FadeModes.Smooth:
-                    Size = Vector2.One * StartSize * Ease.QuintOut(LifeTime / StartLifeTime);
+                    Size = StartSize * Ease.QuintOut(LifeTime / StartLifeTime);
                     break;
                 case ParticleType.FadeModes.EndSmooth:
                     if (LifeTime <= StartLifeTime * 0.25f)
-                        Size = Vector2.One * StartSize * Ease.CubeInAndOut(LifeTime / (StartLifeTime * 0.25f));
+                        Size = StartSize * Ease.CubeInAndOut(LifeTime / (StartLifeTime * 0.25f));
                     break;
                 default:
                     break;
