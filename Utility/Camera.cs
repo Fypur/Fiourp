@@ -2,21 +2,23 @@
 
 namespace Fiourp
 {
-    public class Camera : Entity
+    public class Camera
     {
         private bool needToRecalculateMatrix;
         private bool needToRecalculateInverseMatrix;
 
-        public new Vector2 Pos
+        private Vector2 pos;
+        public Vector2 Pos
         {
-            get => base.Pos;
-            set { if (value != base.Pos) { needToRecalculateMatrix = true; base.Pos = value; } }
+            get => pos;
+            set { if (value != pos) { needToRecalculateMatrix = true; pos = value; } }
         }
 
-        public new float Rotation
+        private float rotation;
+        public float Rotation
         {
-            get => base.Rotation;
-            set { if (value != base.Rotation) { needToRecalculateMatrix = true; base.Rotation = value; } }
+            get => rotation;
+            set { if (value != rotation) { needToRecalculateMatrix = true; rotation = value; } }
         }
 
         private float zoom;
@@ -35,7 +37,7 @@ namespace Fiourp
                 {
                     needToRecalculateMatrix = false;
                     needToRecalculateInverseMatrix = true;
-                    Vector2 wholePos = Pos;
+                    Vector2 wholePos = pos;
                     wholePos.Round();
                     view = Matrix.CreateTranslation(new Vector3(-VectorHelper.Round(wholePos), 0.0f)) *
                            Matrix.CreateScale(ZoomLevel) *
@@ -62,14 +64,13 @@ namespace Fiourp
         }
 
 
-        public Camera(Vector2 position, float rotation, float zoomLevel) : base(position)
+        public Camera(Vector2 position, float rotation, float zoomLevel)
         {
             Engine.Cam = this;
 
             Pos = position;
             Rotation = rotation;
             ZoomLevel = zoomLevel;
-
         }
 
         public void Refresh()

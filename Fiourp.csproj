@@ -83,6 +83,7 @@
 
   <ItemGroup>
     <Folder Include="Properties\" />
+    <Folder Include="Triggers\" />
   </ItemGroup>
 
 </Project>
