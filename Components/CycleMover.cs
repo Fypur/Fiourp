@@ -157,11 +157,7 @@ namespace Fiourp
         }
 
         void MoveParentTo(Vector2 position)
-        {
-            if (ParentEntity is Actor actor) actor.MoveTo(position);
-            else if (ParentEntity is MovingSolid solid) solid.MoveTo(position);
-            else throw new Exception("No moving function found for parentEntity");
-        }
+            => ParentEntity.Move(position - ParentEntity.Pos);
 
         public override void Removed()
         {

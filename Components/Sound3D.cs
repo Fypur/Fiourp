@@ -30,7 +30,7 @@ namespace Fiourp
         {
             base.Added();
 
-            attributes.position = (ParentEntity.MiddlePos - Engine.Cam.MiddlePos).ToFMODVector();
+            attributes.position = (ParentEntity.Pos - Engine.Cam.Pos).ToFMODVector();
             Sound.set3DAttributes(attributes);
         }
 
@@ -38,7 +38,7 @@ namespace Fiourp
         {
             base.Update();
 
-            attributes.position = (ParentEntity.MiddlePos - Engine.Cam.MiddlePos).ToFMODVector();
+            attributes.position = (ParentEntity.Pos - Engine.Cam.Pos).ToFMODVector();
             Sound.set3DAttributes(attributes);
 
             Sound.getPlaybackState(out var state);

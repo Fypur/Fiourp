@@ -61,19 +61,19 @@ namespace Fiourp
         public virtual void Squish()
             => Engine.CurrentMap.Destroy(this);
 
-        public void MoveX(float amount, Action CallbackOnCollision)
-            => MoveX(amount, (entity) => CallbackOnCollision?.Invoke());
+        public void MoveX(float amount, Action callbackOnCollision)
+            => MoveX(amount, (entity) => callbackOnCollision?.Invoke());
 
-        public void MoveY(float amount, Action CallbackOnCollision)
-            => MoveY(amount, (entity) => CallbackOnCollision?.Invoke());
+        public void MoveY(float amount, Action callbackOnCollision)
+            => MoveY(amount, (entity) => callbackOnCollision?.Invoke());
 
-        public void MoveX(float amount, Action<Entity> CallbackOnCollision = null)
-            => MoveX(amount, new List<Entity>(Engine.CurrentMap.Data.Solids), CallbackOnCollision);
+        public void MoveX(float amount, Action<Entity> callbackOnCollision = null)
+            => MoveX(amount, new List<Entity>(Engine.CurrentMap.Data.Solids), callbackOnCollision);
 
-        public void MoveY(float amount, Action<Entity> CallbackOnCollision = null)
-            => MoveY(amount, new List<Entity>(Engine.CurrentMap.Data.Solids), CallbackOnCollision);
+        public void MoveY(float amount, Action<Entity> callbackOnCollision = null)
+            => MoveY(amount, new List<Entity>(Engine.CurrentMap.Data.Solids), callbackOnCollision);
 
-        public void MoveX(float amount, List<Entity> checkedCollision, Action<Entity> CallbackOnCollision = null)
+        public void MoveX(float amount, List<Entity> checkedCollision, Action<Entity> callbackOnCollision = null)
         {
             xRemainder += amount;
             int move = (int)Math.Floor(xRemainder);
@@ -93,7 +93,7 @@ namespace Fiourp
                     else
                     {
                         xRemainder = 0;
-                        CallbackOnCollision?.Invoke(collided);
+                        callbackOnCollision?.Invoke(collided);
                         break;
                     }
                 }
@@ -126,6 +126,9 @@ namespace Fiourp
                 }
             }
         }
+
+        public override void Move(Vector2 moveAmount)
+            => Move(moveAmount, null, null);
 
         public void Move(Vector2 amount, Action CallbackOnCollisionX = null, Action CallbackOnCollisionY = null)
         {

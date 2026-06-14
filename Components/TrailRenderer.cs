@@ -12,11 +12,14 @@ namespace Fiourp
 
         public Func<bool> Condition;
 
+        private Vector2 previousPos;
+
         public TrailRenderer(ParticleType trail, Vector2 localPosition, float velocitySizeMultiplier)
         {
             Trail = trail;
             LocalPosition = localPosition;
             VelocitySizeMultiplier = velocitySizeMultiplier;
+            previousPos = ParentEntity.Pos;
         }
 
         public override void Render()
@@ -28,24 +31,20 @@ namespace Fiourp
 
             Particle p = Trail.Create(ParentEntity.Pos + LocalPosition);
 
-            float speed;
-            if (ParentEntity is Actor actor)
-                speed = actor.Velocity.Length();
-            else if (ParentEntity is MovingSolid solid)
-                speed = solid.Velocity.Length();
-            else
-                speed = ((ParentEntity.Pos - ParentEntity.PreviousExactPos) / Engine.Deltatime).Length();
-
-
+            float speed = ((ParentEntity.Pos - previousPos) / Engine.Deltatime).Length();
             p.StartSize = Trail.Size * speed * VelocitySizeMultiplier;
 
-            int bigSide = ParentEntity.Width > ParentEntity.Height ? ParentEntity.Width : ParentEntity.Height;
+
+            /*int bigSide = ParentEntity.Width > ParentEntity.Height ? ParentEntity.Width : ParentEntity.Height;
             if (p.StartSize > bigSide / 2)
                 p.StartSize = bigSide / 2;
+            */ // ?
 
-            p.Pos -= Microsoft.Xna.Framework.Vector2.One * p.StartSize / 2;
+            p.Pos -= Vector2.One * p.StartSize / 2;
 
             Engine.CurrentMap.MiddlegroundSystem.Emit(p);
+
+            previousPos = ParentEntity.Pos;
         }
     }
 }

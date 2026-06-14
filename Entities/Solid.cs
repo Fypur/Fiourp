@@ -27,7 +27,7 @@ namespace Fiourp
             AddComponent(sprite);
         }
 
-        public void Move(Vector2 vector)
+        public override void Move(Vector2 vector)
             => Move(vector.X, vector.Y);
 
         public virtual void Move(float x, float y)

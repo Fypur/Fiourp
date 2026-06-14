@@ -17,10 +17,12 @@ namespace Fiourp
         public Vector2 Forces;
         public float Torque;
 
-        public Collider Collider => ParentEntity.Collider;
+        public Collider Collider;
 
-        public Rigidbody(float mass, float I, float friction)
+        public Rigidbody(Collider collider, float mass, float I, float friction)
         {
+            Collider = collider;
+
             if (mass == float.PositiveInfinity)
                 InvMass = 0;
             else

@@ -12,7 +12,7 @@ namespace Fiourp
         public bool Visible = true;
 
         public Tags Tag;
-        public enum Tags { Unknown, Actor, Solid, Trigger, UI, Decoration }
+        public enum Tags { Unknown, Actor, Solid, Trigger, UI }
         public int Layer = 0;
 
         public List<Component> Components = new List<Component>();
@@ -27,7 +27,6 @@ namespace Fiourp
                 Solid => Tags.Solid,
                 Trigger => Tags.Trigger,
                 UIElement => Tags.UI,
-                Decoration => Tags.Decoration,
                 _ => Tags.Unknown
             };
         }
@@ -60,6 +59,9 @@ namespace Fiourp
 
         public virtual bool CollidingConditions(Collider other)
             => true;
+
+        public virtual void Move(Vector2 moveAmount)
+            => Pos += moveAmount;
 
         public Component AddComponent(Component component)
         {
