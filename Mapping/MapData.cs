@@ -6,17 +6,10 @@ namespace Fiourp
 {
     public class MapData
     {
-        public Dictionary<Type, List<Entity>> EntitiesByType = new Dictionary<Type, List<Entity>>();
-
         public List<Entity> Entities = new List<Entity>();
-        public List<Platform> Platforms = new List<Platform>();
-        public List<Solid> Solids = new List<Solid>();
-        public List<Solid> CameraSolids = new List<Solid>();
-        public List<Actor> Actors = new List<Actor>();
+
+        public Dictionary<Type, List<Entity>> EntitiesByType = new Dictionary<Type, List<Entity>>();
         public List<Rigidbody> Bodies = new List<Rigidbody>();
-        public List<Trigger> Triggers = new List<Trigger>();
-        public List<UIElement> UIElements = new List<UIElement>();
-        public List<Decoration> Decorations = new List<Decoration>();
 
         public List<T> GetEntities<T>() where T : Entity
         {

@@ -11,8 +11,6 @@ namespace Fiourp
         public bool Active = true;
         public bool Visible = true;
 
-        public Tags Tag;
-        public enum Tags { Unknown, Actor, Solid, Trigger, UI }
         public int Layer = 0;
 
         public List<Component> Components = new List<Component>();
@@ -20,15 +18,6 @@ namespace Fiourp
         public Entity(Vector2 position)
         {
             Pos = position;
-
-            Tag = this switch
-            {
-                Actor => Tags.Actor,
-                Solid => Tags.Solid,
-                Trigger => Tags.Trigger,
-                UIElement => Tags.UI,
-                _ => Tags.Unknown
-            };
         }
 
         public virtual void Awake()
