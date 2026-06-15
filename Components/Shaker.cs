@@ -41,13 +41,6 @@ namespace Fiourp
         {
             if (ShakeSprite != null)
             {
-                void MoveSpriteBy(Entity entity, Vector2 offset)
-                {
-                    if (ShakeSprite != null)
-
-
-                }
-
                 while (Time > 0)
                 {
                     initPos = UpdatedInitPos == null ? initPos : UpdatedInitPos();

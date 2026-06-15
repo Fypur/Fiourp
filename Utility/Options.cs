@@ -39,13 +39,13 @@ namespace Fiourp
             int oldMult = CurrentScreenSizeMultiplier;
             CurrentScreenSizeMultiplier = multiplier;
 
-            foreach (UIElement element in Engine.CurrentMap.Data.UIElements)
-                SetUIStatsForSize(element, oldMult, multiplier);
+            /*foreach (UIElement element in Engine.CurrentMap.Data.UIElements)
+                SetUIStatsForSize(element, oldMult, multiplier);*/
 
             SetScreenSize(new Vector2(lowestResolutionX, lowestResolutionX / 16 * 9) * multiplier);
         }
 
-        private static void SetUIStatsForSize(UIElement element, int oldMult, int newMult)
+        /*private static void SetUIStatsForSize(UIElement element, int oldMult, int newMult)
         {
             void SetStats(UIElement element, int oldMult, int newMult)
             {
@@ -60,7 +60,7 @@ namespace Fiourp
             SetStats(element, oldMult, newMult);
             foreach (UIElement child in element.Children)
                 SetUIStatsForSize(child, oldMult, newMult);
-        }
+        }*/
 
         private static void SetScreenSize(Vector2 screenSize)
         {

@@ -23,6 +23,8 @@ namespace Fiourp
 
         public Texture2D Texture;
         public NineSlice NineSliceSettings;
+        private int nineSliceWidth;
+        private int nineSliceHeight;
         private float rotation = 0;
         public float Rotation
         {
@@ -67,9 +69,11 @@ namespace Fiourp
             Texture = texture;
         }
 
-        public Sprite(NineSlice nineSliceSettings)
+        public Sprite(NineSlice nineSliceSettings, int width, int height)
         {
             NineSliceSettings = nineSliceSettings;
+            nineSliceWidth = width;
+            nineSliceHeight = height;
         }
 
         public Sprite(Texture2D texture, Vector2 origin)
@@ -168,7 +172,7 @@ namespace Fiourp
         public override void Render()
         {
             if (NineSliceSettings != null)
-                NineSliceSettings.Draw(this);
+                NineSliceSettings.Draw(nineSliceWidth, nineSliceHeight, this);
 
             if (Texture == null)
                 return;
