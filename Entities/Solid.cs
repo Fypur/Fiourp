@@ -4,27 +4,29 @@ using System.Collections.Generic;
 
 namespace Fiourp
 {
-    public abstract class Solid : Entity
+    public abstract class Solid : Kinematic
     {
-        public AABBCollider Collider;
-        public Vector2 Velocity;
+        public static List<Solid> InstantiatedSolids = new();
 
         protected List<Actor> ridingActors;
-        private float xRemainder;
-        private float yRemainder;
-
-        public Vector2 ExactPos
-        {
-            get => new Vector2(Pos.X + xRemainder, Pos.Y + yRemainder);
-            set { Pos = VectorHelper.Floor(value); xRemainder = value.X - (float)Math.Floor(value.X); yRemainder = value.Y - (float)Math.Floor(value.Y); }
-        }
 
         public Solid(Vector2 position, AABBCollider collider, Color color) : this(position, collider, new Sprite(color)) { }
-        public Solid(Vector2 position, AABBCollider collider, Sprite sprite) : base(position)
+        public Solid(Vector2 position, AABBCollider collider, Sprite sprite) : base(position, collider, sprite)
         {
             Collider = collider;
             AddComponent(Collider);
-            AddComponent(sprite);
+        }
+
+        public override void Awake()
+        {
+            base.Awake();
+            InstantiatedSolids.Add(this);
+        }
+
+        public override void OnDestroy()
+        {
+            InstantiatedSolids.Remove(this);
+            base.OnDestroy();
         }
 
         public override void Move(Vector2 vector)
@@ -59,10 +61,10 @@ namespace Fiourp
                 xRemainder -= moveX;
                 Pos.X += moveX;
 
-                for (int i = Engine.CurrentMap.Data.Actors.Count - 1; i >= 0; i--)
+                for (int i = Actor.InstantiatedActors.Count - 1; i >= 0; i--)
                 {
-                    Actor actor = Engine.CurrentMap.Data.Actors[i];
-                    if (Collider.Collide(actor))
+                    Actor actor = Actor.InstantiatedActors[i];
+                    if (Collider.Collide(actor.Collider))
                     {
                         if (moveX > 0)
                             actor.MoveX(Pos.X + Collider.Width - actor.Pos.X, actor.Squish);
@@ -87,10 +89,10 @@ namespace Fiourp
                 yRemainder -= moveY;
                 Pos.Y += moveY;
 
-                for (int i = Engine.CurrentMap.Data.Actors.Count - 1; i >= 0; i--)
+                for (int i = Actor.InstantiatedActors.Count - 1; i >= 0; i--)
                 {
-                    Actor actor = Engine.CurrentMap.Data.Actors[i];
-                    if (Collider.Collide(actor))
+                    Actor actor = Actor.InstantiatedActors[i];
+                    if (Collider.Collide(actor.Collider))
                     {
                         if (moveY > 0)
                             actor.MoveY(Pos.Y + Collider.Height - actor.Pos.Y, actor.Squish);
@@ -131,7 +133,7 @@ namespace Fiourp
 
                 while (move != 0)
                 {
-                    if (!Collider.CollideAt(new List<Entity>(Engine.CurrentMap.Data.Solids), Pos + new Vector2(finalX + sign, 0), out Entity other))
+                    if (!CollideAt(new List<Kinematic>(InstantiatedSolids), Pos + new Vector2(finalX + sign, 0), out Kinematic other))
                     {
                         finalX += sign;
                         move -= sign;
@@ -155,7 +157,7 @@ namespace Fiourp
 
                 while (move != 0)
                 {
-                    if (!Collider.CollideAt(new List<Entity>(Engine.CurrentMap.Data.Solids), Pos + new Vector2(0, finalY + sign), out Entity other))
+                    if (!CollideAt(new List<Kinematic>(InstantiatedSolids), Pos + new Vector2(0, finalY + sign), out Kinematic other))
                     {
                         finalY += sign;
                         move -= sign;
@@ -181,7 +183,7 @@ namespace Fiourp
         {
             List<Actor> ridingActors = new List<Actor>();
 
-            foreach (Actor a in Engine.CurrentMap.Data.Actors)
+            foreach (Actor a in Actor.InstantiatedActors)
             {
                 if (a.IsRiding(this))
                     ridingActors.Add(a);

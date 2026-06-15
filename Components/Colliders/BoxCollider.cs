@@ -1,6 +1,5 @@
 using Microsoft.Xna.Framework;
 using System;
-using System.Collections.Generic;
 
 namespace Fiourp;
 
@@ -95,33 +94,6 @@ public class BoxCollider : Collider
         if (sc1 < 0 || sc1 > (WorldVertices[1] - WorldVertices[0]).LengthSquared() || sc2 < 0 || sc2 > (WorldVertices[3] - WorldVertices[0]).LengthSquared())
             return false;
         return true;
-    }
-
-    //Should replace this to be handled by the physics engine
-    public void Rotate(float radians, float minRot, List<Entity> checkedCollision, Action onCollision)
-    {
-        int sign = Math.Sign(radians);
-        radians = Math.Abs(radians);
-
-        while (radians > 0)
-        {
-            float oldRotation = Rotation;
-            Rotation += minRot * sign;
-            Update();
-
-            foreach (Entity e in checkedCollision)
-            {
-                if (e != ParentEntity && Collide(e))
-                {
-                    Rotation = oldRotation;
-                    Update();
-                    onCollision();
-                    return;
-                }
-            }
-
-            radians -= minRot;
-        }
     }
 
     protected override void DebugRender()

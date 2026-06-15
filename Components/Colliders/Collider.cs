@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using System.Collections.Generic;
 
 namespace Fiourp
 {
@@ -24,38 +23,6 @@ namespace Fiourp
                 return false;
 
             return CollideRaw(other);
-        }
-
-        public bool Collide(Entity entity)
-            => Collide(entity.Collider);
-
-        public bool CollideAt(Vector2 position)
-            => CollideAt(new List<Entity>(Engine.CurrentMap.Data.Solids), position, out _);
-
-        public bool CollideAt(List<Entity> checkedEntities, Vector2 position)
-            => CollideAt(checkedEntities, position, out _);
-
-        public bool CollideAt(Entity entity, Vector2 position)
-            => CollideAt(new List<Entity>() { entity }, position);
-
-        public bool CollideAt(List<Entity> checkedEntities, Vector2 position, out Entity collidedEntity)
-        {
-            Vector2 oldPos = ParentEntity.Pos;
-            ParentEntity.Pos = position;
-            Update();
-            collidedEntity = null;
-
-            foreach (Entity e in checkedEntities)
-                if (Collide(e) && e != ParentEntity)
-                {
-                    ParentEntity.Pos = oldPos;
-                    collidedEntity = e;
-                    return true;
-                }
-
-            ParentEntity.Pos = oldPos;
-            Update();
-            return false;
         }
 
         public override void Render()

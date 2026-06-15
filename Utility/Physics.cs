@@ -200,7 +200,7 @@ namespace Fiourp
                 rb.ParentEntity.Rotation = rb.ParentEntity.Rotation - (float)Math.Floor(rb.ParentEntity.Rotation / (2 * float.Pi)) * 2f * float.Pi;
                 if (rb.ParentEntity.Rotation > Math.PI) rb.ParentEntity.Rotation -= 2 * float.Pi;
 
-                ((BoxCollider)rb.ParentEntity.Collider).Rotation = rb.ParentEntity.Rotation; //TODO: Generalize
+                ((BoxCollider)rb.Collider).Rotation = rb.ParentEntity.Rotation; //TODO: Generalize
 
                 rb.Forces = Vector2.Zero;
                 rb.Torque = 0;

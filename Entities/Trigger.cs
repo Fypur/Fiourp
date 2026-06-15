@@ -9,10 +9,16 @@ namespace Fiourp
         public Collider Collider;
         public List<Type> Triggerers;
 
-        private List<Entity> enteredEntities = new List<Entity>();
+        private List<Kinematic> enteredEntities = new List<Kinematic>();
 
         public Trigger(Vector2 position, Collider collider, List<Type> triggerers) : base(position)
         {
+            foreach (Type t in triggerers)
+            {
+                if (!typeof(Kinematic).IsAssignableFrom(t))
+                    throw new Exception($"The Trigger class doesn't function with entities that don't inherit from Kinematic such as {t.Name}.");
+            }
+
             Pos = position;
             Triggerers = triggerers;
 
@@ -34,8 +40,9 @@ namespace Fiourp
 
                 for (int y = triggers.Count - 1; y >= 0; y--)
                 {
-                    Entity entity = Engine.CurrentMap.Data.EntitiesByType[Triggerers[i]][y];
-                    if (Collider.Collide(entity))
+                    Kinematic entity = (Kinematic)Engine.CurrentMap.Data.EntitiesByType[Triggerers[i]][y];
+
+                    if (Collider.Collide(entity.Collider))
                     {
                         if (enteredEntities.Contains(entity))
                             OnTriggerStay(entity);
@@ -48,16 +55,16 @@ namespace Fiourp
             }
         }
 
-        public bool Contains(Entity entity)
+        public bool Contains(Kinematic entity)
             => enteredEntities.Contains(entity);
 
-        public virtual void OnTriggerEnter(Entity entity)
+        public virtual void OnTriggerEnter(Kinematic entity)
             => enteredEntities.Add(entity);
 
-        public virtual void OnTriggerStay(Entity entity)
+        public virtual void OnTriggerStay(Kinematic entity)
         { }
 
-        public virtual void OnTriggerExit(Entity entity)
+        public virtual void OnTriggerExit(Kinematic entity)
             => enteredEntities.Remove(entity);
 
         public override void OnDestroy()

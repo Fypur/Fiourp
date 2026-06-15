@@ -66,7 +66,7 @@ namespace Fiourp
                     FastRay(begin, end - begin, Vector2.Distance(begin, end));
                     break;
                 case RayTypes.Normal:
-                    SlowRay(begin, end - begin, Vector2.Distance(begin, end), new(Engine.CurrentMap.Data.Solids));
+                    SlowRay(begin, end - begin, Vector2.Distance(begin, end), new(Solid.InstantiatedSolids));
                     break;
             }
         }
@@ -161,14 +161,14 @@ namespace Fiourp
             #endregion
         }
 
-        void SlowRay(Vector2 begin, Vector2 direction, float length, List<Entity> checkedEntities)
+        void SlowRay(Vector2 begin, Vector2 direction, float length, List<Kinematic> checkedEntities)
         {
             direction = direction.Normalized() * 0.5f;
 
             for (int i = 0; i < length; i++)
             {
                 Vector2 end = begin + i * direction;
-                foreach (Entity entity in checkedEntities)
+                foreach (Kinematic entity in checkedEntities)
                 {
                     if (entity.Collider.Contains(end))
                     {
