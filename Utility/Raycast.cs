@@ -4,12 +4,11 @@ using System.Collections.Generic;
 
 namespace Fiourp
 {
-    public class Raycast
+    public struct RaycastData
     {
         public bool Hit;
         public Vector2 BeginPoint;
         public Vector2 EndPoint;
-        public bool UseOnlyLevelOrganisation;
 
         private float? distance = null;
         private float? distanceSquared = null;
@@ -38,59 +37,32 @@ namespace Fiourp
             }
         }
 
-        public enum RayTypes { Normal, MapTiles }
-
-        public Raycast(RayTypes rayType, Vector2 begin, Vector2 direction, float length, bool onlyInLevel = false)
+        public RaycastData(Vector2 beginPoint)
         {
-            BeginPoint = begin;
-            UseOnlyLevelOrganisation = onlyInLevel;
-            switch (rayType)
-            {
-                case RayTypes.MapTiles:
-                    FastRay(begin, direction, length);
-                    break;
-                case RayTypes.Normal:
-                    SlowRay(begin, direction, length, new(Engine.CurrentMap.Data.Solids));
-                    break;
-            }
+            BeginPoint = beginPoint;
         }
+    }
 
+    public class Raycast
+    {
+        public static RaycastData FastRay(Vector2 begin, Vector2 end, GridCollider grid)
+            => FastRay(begin, end - begin, Vector2.Distance(begin, end), grid);
 
-        public Raycast(RayTypes rayType, Vector2 begin, Vector2 end, bool onlyInLevel = false)
+        public static RaycastData FastRay(Vector2 begin, Vector2 direction, float length, GridCollider grid)
         {
-            BeginPoint = begin;
-            UseOnlyLevelOrganisation = onlyInLevel;
-            switch (rayType)
-            {
-                case RayTypes.MapTiles:
-                    FastRay(begin, end - begin, Vector2.Distance(begin, end));
-                    break;
-                case RayTypes.Normal:
-                    SlowRay(begin, end - begin, Vector2.Distance(begin, end), new(Solid.InstantiatedSolids));
-                    break;
-            }
-        }
+            //Ray Direction, Step Size and Original Pos Tile
 
-        void FastRay(Vector2 begin, Vector2 direction, float length)
-        {
-            #region Ray Direction, Step Size and Original Pos Tile
-
-            Map map = Engine.CurrentMap;
             Vector2 end = begin + Vector2.Normalize(direction) * length;
 
             Vector2 rayDir = Vector2.Normalize(direction);
-
-            Grid grid = (Grid)Engine.CurrentMap.Data.EntitiesByType[typeof(Grid)][0];
-
             //The hypothenus' size for one Unit (a tile width) on the x and y axis
             Vector2 rayUnitStep = new Vector2((float)Math.Sqrt(grid.TileWidth * grid.TileWidth + (rayDir.Y * grid.TileWidth / rayDir.X) * (rayDir.Y * grid.TileWidth / rayDir.X)),
                 (float)Math.Sqrt(grid.TileHeight * grid.TileHeight + (rayDir.X * grid.TileHeight / rayDir.Y) * (rayDir.X * grid.TileHeight / rayDir.Y)));
 
             //The tile the begin point is on and the one the end point is on : position truncated to a multiple of the tile's width or height
             Vector2 mapPoint = new Vector2((float)Math.Floor(begin.X / grid.TileWidth) * grid.TileWidth, (float)Math.Floor(begin.Y / grid.TileWidth) * grid.TileHeight);
-            #endregion
 
-            #region Ray Direction for Each Dimension and Length for non tiled objects
+            //Ray Direction for Each Dimension and Length for non tiled objects
 
             Vector2 rayStep;
             Vector2 rayLength1D;
@@ -116,13 +88,13 @@ namespace Fiourp
                 rayStep.Y = grid.TileHeight;
                 rayLength1D.Y = (grid.TileWidth + mapPoint.Y - begin.Y) * rayUnitStep.Y / grid.TileWidth;
             }
-            #endregion
 
-            #region Walking the Ray and Checking if it Hit
+            //Walking the Ray and Checking if it Hit
 
             float travelledDistance = 0;
+            RaycastData data = new RaycastData(begin);
 
-            while (!Hit && travelledDistance < length)
+            while (!data.Hit && travelledDistance < length)
             {
                 //Moving
                 if (rayLength1D.X < rayLength1D.Y)
@@ -138,32 +110,22 @@ namespace Fiourp
                     rayLength1D.Y += rayUnitStep.Y;
                 }
 
-                //Checking
-                if (!UseOnlyLevelOrganisation)
-                {
-                    if (grid.Collider.Bounds.Contains(mapPoint) && travelledDistance < length)
-                        if (((GridCollider)grid.Collider).Grid[(int)(mapPoint.Y - grid.Collider.WorldPos.Y) / grid.TileHeight, (int)(mapPoint.X - grid.Collider.WorldPos.X) / grid.TileWidth])
-                            Hit = true;
-                }
-                else
-                {
-                    if (Engine.CurrentMap.CurrentLevel.Contains(mapPoint) && travelledDistance < length)
-                        if (Engine.CurrentMap.CurrentLevel.Organisation[(int)(mapPoint.Y - Engine.CurrentMap.CurrentLevel.Pos.Y) / grid.TileHeight, (int)(mapPoint.X - Engine.CurrentMap.CurrentLevel.Pos.X) / grid.TileWidth] > 0)
-                            Hit = true;
-                }
+                if (grid.Contains(mapPoint) && travelledDistance < length && grid.GridLayout[(int)(mapPoint.Y - grid.WorldPos.Y) / grid.TileHeight, (int)(mapPoint.X - grid.WorldPos.X) / grid.TileWidth])
+                    data.Hit = true;
             }
 
-            if (Hit)
-                EndPoint = begin + Vector2.Normalize(direction) * travelledDistance;
+            if (data.Hit)
+                data.EndPoint = begin + Vector2.Normalize(direction) * travelledDistance;
             else
-                EndPoint = end;
+                data.EndPoint = end;
 
-            #endregion
+            return data;
         }
 
-        void SlowRay(Vector2 begin, Vector2 direction, float length, List<Kinematic> checkedEntities)
+        public static RaycastData SlowRay(Vector2 begin, Vector2 direction, float length, List<Kinematic> checkedEntities)
         {
             direction = direction.Normalized() * 0.5f;
+            RaycastData data = new RaycastData(begin);
 
             for (int i = 0; i < length; i++)
             {
@@ -172,53 +134,17 @@ namespace Fiourp
                 {
                     if (entity.Collider.Contains(end))
                     {
-                        Hit = true;
-                        EndPoint = end;
-                        return;
+                        data.Hit = true;
+                        data.EndPoint = end;
+                        return data;
                     }
                 }
             }
 
-            Hit = false;
-            EndPoint = begin + direction * length;
-        }
+            data.Hit = false;
+            data.EndPoint = begin + direction * length;
 
-        public static Raycast FiveRays(Vector2 from, Vector2 to, bool waitForHit, bool varyTarget = true, float varienceMagnitude = 1, bool onlyInLevel = false)
-        {
-            var r0 = new Raycast(Raycast.RayTypes.MapTiles, from, to);
-            if (r0.Hit == waitForHit)
-                return r0;
-
-            for (int x = -1; x <= 1; x++)
-                for (int y = -1; y <= 1; y++)
-                {
-                    var r = new Raycast(Raycast.RayTypes.MapTiles,
-                        from + (varyTarget ? Vector2.Zero : Vector2.UnitX * x * varienceMagnitude + Vector2.UnitY * y * varienceMagnitude),
-                        to + (varyTarget ? Vector2.UnitX * x * varienceMagnitude + Vector2.UnitY * y * varienceMagnitude : Vector2.Zero), onlyInLevel);
-                    if (r.Hit == waitForHit)
-                        return r;
-                }
-
-            return r0;
-        }
-
-        public static Raycast FiveRays(Vector2 from, Vector2 to, Func<Raycast, bool> waitForHit, bool varyTarget = true, float varienceMagnitude = 1)
-        {
-            var r0 = new Raycast(Raycast.RayTypes.MapTiles, from, to);
-            if (waitForHit(r0))
-                return r0;
-
-            for (int x = -1; x <= 1; x++)
-                for (int y = -1; y <= 1; y++)
-                {
-                    var r = new Raycast(Raycast.RayTypes.MapTiles,
-                        from + (varyTarget ? Vector2.Zero : Vector2.UnitX * x * varienceMagnitude + Vector2.UnitY * y * varienceMagnitude),
-                        to + (varyTarget ? Vector2.UnitX * x * varienceMagnitude + Vector2.UnitY * y * varienceMagnitude : Vector2.Zero));
-                    if (waitForHit(r0))
-                        return r;
-                }
-
-            return r0;
+            return data;
         }
     }
 }

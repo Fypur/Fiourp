@@ -31,9 +31,8 @@ namespace Fiourp
         }
 
 
-        public static void FlushLights()
+        public static void FlushLights(GridCollider grid)
         {
-            var lvl = Engine.CurrentMap.CurrentLevel;
             for (int i = 0; i < lightNum; i++)
             {
                 Light l = lights[i];
@@ -44,20 +43,20 @@ namespace Fiourp
                 if (!l.CollideWithWalls)
                     continue;
 
-                for (int y = 0; y < lvl.ChunksEdge.GetLength(0); y++)
-                    for (int x = 0; x < lvl.ChunksEdge.GetLength(1); x++)
+                for (int y = 0; y < grid.ChunksEdge.GetLength(0); y++)
+                    for (int x = 0; x < grid.ChunksEdge.GetLength(1); x++)
                     {
 
                         if (!Collision.RectCircle(
-                            new Rectangle((int)lvl.Pos.X + x * lvl.ChunkSize * lvl.TileWidth, (int)lvl.Pos.Y + y * lvl.ChunkSize * lvl.TileHeight, lvl.ChunkSize * lvl.TileWidth, lvl.ChunkSize * lvl.TileHeight),
+                            new Rectangle((int)grid.ParentEntity.Pos.X + x * grid.ChunkSize * grid.TileWidth, (int)grid.ParentEntity.Pos.Y + y * grid.ChunkSize * grid.TileHeight, grid.ChunkSize * grid.TileWidth, grid.ChunkSize * grid.TileHeight),
                             lights[i].WorldPosition, lights[i].Size))
                             continue;
 
-                        foreach (int[] edge in lvl.ChunksEdge[y, x])
+                        foreach (int[] edge in grid.ChunksEdge[y, x])
                         {
                             Vector2 lightWorldPos = lights[i].WorldPosition;
-                            Vector2 edgePos1 = new Vector2(edge[0] * lvl.TileWidth, edge[1] * lvl.TileHeight) + lvl.Pos;
-                            Vector2 edgePos2 = new Vector2(edge[2] * lvl.TileWidth, edge[3] * lvl.TileHeight) + lvl.Pos;
+                            Vector2 edgePos1 = new Vector2(edge[0] * grid.TileWidth, edge[1] * grid.TileHeight) + grid.ParentEntity.Pos;
+                            Vector2 edgePos2 = new Vector2(edge[2] * grid.TileWidth, edge[3] * grid.TileHeight) + grid.ParentEntity.Pos;
                             Vector2 maxL = new Vector2(MaxLightSize);
 
                             Vector2[] intersection = Collision.LineCircleIntersection(edgePos1, edgePos2, l.WorldPosition, l.Size);

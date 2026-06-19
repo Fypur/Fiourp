@@ -23,8 +23,7 @@ namespace Fiourp
         public static bool GamePadConnected => gamePadState.IsConnected;
 
         public static Vector2 ScreenMousePos { get => mouseState.Position.ToVector2(); }
-        public static Vector2 MousePos { get => Engine.Cam.ScreenToWorldPosition(Engine.Cam.ScreenToRenderTargetPosition(mouseState.Position.ToVector2())); }
-        public static Vector2 MousePosNoRenderTarget { get => MousePos * Engine.Cam.ScreenSizeCoef; }
+        public static Vector2 MousePos { get => Engine.Cam.ScreenToWorldPosition(mouseState.Position.ToVector2()); }
 
         public static ControlList LeftControls = new ControlList(Keys.Left, Keys.A, Keys.Q, Buttons.LeftThumbstickLeft, Buttons.DPadLeft);
         public static ControlList RightControls = new ControlList(Keys.Right, Keys.D, Buttons.LeftThumbstickRight, Buttons.DPadRight);

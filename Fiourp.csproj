@@ -32,6 +32,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Triggers\**" />
+    <EmbeddedResource Remove="Triggers\**" />
+    <None Remove="Triggers\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MonoGame.Aseprite" Version="6.3.2" />
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.4.1" />
   </ItemGroup>
@@ -83,7 +89,6 @@
 
   <ItemGroup>
     <Folder Include="Properties\" />
-    <Folder Include="Triggers\" />
   </ItemGroup>
 
 </Project>

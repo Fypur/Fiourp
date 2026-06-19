@@ -49,7 +49,7 @@ namespace Fiourp
             return IsMatch;
         }
 
-        public static PolygonPoint[] GetCircleVisibilityPolygon(Vector2 middle, float distance)
+        public static PolygonPoint[] GetCircleVisibilityPolygon(Vector2 middle, float distance, GridCollider grid)
         {
             //Obtenir tous les corners à l'interieur du cercle
             //Cast sur les corners pour éliminer
@@ -59,8 +59,8 @@ namespace Fiourp
 
 
 
-            List<Vector2> allCorners = new List<Vector2>(Engine.CurrentMap.CurrentLevel.Corners);
-            allCorners.AddRange(Engine.CurrentMap.CurrentLevel.InsideCorners);
+            List<Vector2> allCorners = new List<Vector2>(grid.Corners);
+            allCorners.AddRange(grid.InsideCorners);
 
 
 
@@ -77,7 +77,7 @@ namespace Fiourp
 
                 //Les 5 raycast comme ça c'est juste pcq des fois c'est un peu funky et un seul raycast trouve que y a collision
                 //au pixel près. Donc j'en fait 5 pcq un raycast sur maptiles c'est pas expensive
-                Raycast r = new Raycast(Raycast.RayTypes.MapTiles, middle, corner, true);
+                RaycastData r = Raycast.FastRay(middle, corner, grid);
                 if (r.Hit)
                 {
                     r.Hit = Vector2.DistanceSquared(r.EndPoint, corner) > 1.1f;
@@ -99,14 +99,14 @@ namespace Fiourp
             {
                 points.Add(corner);
 
-                var r = new Raycast(Raycast.RayTypes.MapTiles, middle, corner - middle, distance, true);
-                var r2 = new Raycast(Raycast.RayTypes.MapTiles, middle, corner - middle - Vector2.UnitX * 0.1f - Vector2.UnitY * 0.1f, distance, true);
-                var r3 = new Raycast(Raycast.RayTypes.MapTiles, middle, corner - middle - Vector2.UnitX * 0.1f + Vector2.UnitY * 0.1f, distance, true);
-                var r4 = new Raycast(Raycast.RayTypes.MapTiles, middle, corner - middle + Vector2.UnitX * 0.1f - Vector2.UnitY * 0.1f, distance, true);
-                var r5 = new Raycast(Raycast.RayTypes.MapTiles, middle, corner - middle + Vector2.UnitX * 0.1f + Vector2.UnitY * 0.1f, distance, true);
+                var r = Raycast.FastRay(middle, corner - middle, distance, grid);
+                var r2 = Raycast.FastRay(middle, corner - middle - Vector2.UnitX * 0.1f - Vector2.UnitY * 0.1f, distance, grid);
+                var r3 = Raycast.FastRay(middle, corner - middle - Vector2.UnitX * 0.1f + Vector2.UnitY * 0.1f, distance, grid);
+                var r4 = Raycast.FastRay(middle, corner - middle + Vector2.UnitX * 0.1f - Vector2.UnitY * 0.1f, distance, grid);
+                var r5 = Raycast.FastRay(middle, corner - middle + Vector2.UnitX * 0.1f + Vector2.UnitY * 0.1f, distance, grid);
                 //Debug.PointUpdate(Color.DarkGreen, r5.EndPoint);
 
-                Raycast bestRay = r;
+                RaycastData bestRay = r;
                 if (r2.DistanceSquared >= bestRay.DistanceSquared)
                     bestRay = r2;
                 if (r3.DistanceSquared >= bestRay.DistanceSquared)
@@ -125,10 +125,10 @@ namespace Fiourp
 
             List<Vector2[]> edgesCoord = new();
             //On determine toutes les edges
-            foreach (int[] edge in Engine.CurrentMap.CurrentLevel.Edges)
+            foreach (int[] edge in grid.Edges)
             {
-                Vector2 coord1 = new Vector2(edge[0], edge[1]) * Engine.CurrentMap.CurrentLevel.TileWidth + Engine.CurrentMap.CurrentLevel.Pos;
-                Vector2 coord2 = new Vector2(edge[2], edge[3]) * Engine.CurrentMap.CurrentLevel.TileHeight + Engine.CurrentMap.CurrentLevel.Pos;
+                Vector2 coord1 = new Vector2(edge[0], edge[1]) * grid.TileWidth + grid.ParentEntity.Pos;
+                Vector2 coord2 = new Vector2(edge[2], edge[3]) * grid.TileHeight + grid.ParentEntity.Pos;
                 edgesCoord.Add(new Vector2[] { coord1, coord2 });
             }
 
@@ -162,7 +162,7 @@ namespace Fiourp
                         continue;
 
                     //Raycast bestRay = Raycast.FiveRays(middle, p, false, true, 0.001f);
-                    Raycast r = new Raycast(Raycast.RayTypes.MapTiles, middle, p, true);
+                    RaycastData r = Raycast.FastRay(middle, p, grid);
 
                     if (!r.Hit || Vector2.DistanceSquared(r.EndPoint, p) < 1.1f)
                     {
