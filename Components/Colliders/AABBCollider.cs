@@ -9,6 +9,8 @@ namespace Fiourp
         public int Height;
 
         public override Rectangle Bounds => new Rectangle((int)WorldPos.X, (int)WorldPos.Y, Width, Height);
+        public Vector2 Size => new Vector2(Width, Height);
+        public Vector2 HalfSize => new Vector2(Width / 2, Height / 2);
 
         public AABBCollider(Vector2 localPosition, int width, int height)
         {

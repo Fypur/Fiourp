@@ -13,7 +13,6 @@ namespace Fiourp
         public static float Deltatime;
 
         public static Camera Cam;
-        public static Entity Player;
         public static Map CurrentMap;
         public static RenderTarget2D RenderTarget;
         public static RenderTarget2D PrimitivesRenderTarget;

@@ -8,6 +8,7 @@ namespace Fiourp
     {
         public Vector2 Velocity;
         public AABBCollider Collider;
+        public Sprite Sprite;
 
         protected float xRemainder;
         protected float yRemainder;
@@ -23,12 +24,32 @@ namespace Fiourp
             }
         }
 
+        public Vector2 MiddlePos
+        {
+            get => new Vector2(Pos.X + Collider.Width / 2, Pos.Y + Collider.Height / 2);
+            set
+            {
+                Vector2 pos = value - Collider.Size / 2;
+                Pos = VectorHelper.Floor(pos);
+            }
+        }
+
+        public Vector2 MiddleExactPos
+        {
+            get => new Vector2(Pos.X + xRemainder + Collider.Width / 2, Pos.Y + yRemainder + Collider.Height / 2);
+            set
+            {
+                Vector2 pos = value - Collider.Size / 2;
+                Pos = VectorHelper.Floor(pos);
+                xRemainder = pos.X - (float)Math.Floor(pos.X);
+                yRemainder = pos.Y - (float)Math.Floor(pos.Y);
+            }
+        }
+
         public Kinematic(Vector2 position, AABBCollider collider, Sprite sprite) : base(position)
         {
-            Collider = collider;
-
-            AddComponent(collider);
-            AddComponent(sprite);
+            AddComponent(Collider = collider);
+            AddComponent(Sprite = sprite);
         }
 
         public bool CollideAt(Kinematic collider, Vector2 position)
