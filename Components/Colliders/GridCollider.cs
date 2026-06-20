@@ -75,10 +75,8 @@ namespace Fiourp
         {
             if (other is AABBCollider aabb)
                 return CollideRaw(aabb);
-            else if (other is BoxCollider box)
-                return CollideRaw(box);
-            else
-                throw new NotImplementedException($"GridCollider - {other.GetType()} collision has not been implemented yet");
+
+            return AABBBoxGridCollision(other);
         }
 
         public override bool Contains(Vector2 point)

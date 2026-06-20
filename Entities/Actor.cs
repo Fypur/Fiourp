@@ -31,7 +31,7 @@ namespace Fiourp
             }
         }
 
-        public Actor(Vector2 position, AABBCollider collider, Sprite sprite)
+        public Actor(Vector2 position, Collider collider, Sprite sprite)
             : base(position, collider, sprite)
         {
             liftSpeedTimer = (Timer)AddComponent(new Timer(liftSpeedGrace, null, () => LiftSpeed = Vector2.Zero, false));

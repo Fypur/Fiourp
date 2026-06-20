@@ -8,14 +8,12 @@ namespace Fiourp
     {
         public static List<Solid> InstantiatedSolids = new();
 
+        protected AABBCollider AABBCollider => (AABBCollider)Collider;
         protected List<Actor> ridingActors;
 
         public Solid(Vector2 position, AABBCollider collider, Color color) : this(position, collider, new Sprite(color)) { }
         public Solid(Vector2 position, AABBCollider collider, Sprite sprite) : base(position, collider, sprite)
-        {
-            Collider = collider;
-            AddComponent(Collider);
-        }
+        { }
 
         public override void Awake()
         {
@@ -67,9 +65,9 @@ namespace Fiourp
                     if (Collider.Collide(actor.Collider))
                     {
                         if (moveX > 0)
-                            actor.MoveX(Pos.X + Collider.Width - actor.Pos.X, actor.Squish);
+                            actor.MoveX(Pos.X + Collider.Bounds.Width - actor.Pos.X, actor.Squish);
                         else
-                            actor.MoveX(Pos.X - actor.Pos.X - actor.Collider.Width, actor.Squish);
+                            actor.MoveX(Pos.X - actor.Pos.X - actor.Collider.Bounds.Width, actor.Squish);
 
                         actor.LiftSpeed = new Vector2(moveX / Engine.Deltatime, actor.LiftSpeed.Y);
                         if (ridingActorsX.Contains(actor))
@@ -95,9 +93,9 @@ namespace Fiourp
                     if (Collider.Collide(actor.Collider))
                     {
                         if (moveY > 0)
-                            actor.MoveY(Pos.Y + Collider.Height - actor.Pos.Y, actor.Squish);
+                            actor.MoveY(Pos.Y + Collider.Bounds.Height - actor.Pos.Y, actor.Squish);
                         else
-                            actor.MoveY(Pos.Y - actor.Pos.Y - actor.Collider.Height, actor.Squish);
+                            actor.MoveY(Pos.Y - actor.Pos.Y - actor.Collider.Bounds.Height, actor.Squish);
 
                         actor.LiftSpeed = new Vector2(actor.LiftSpeed.X, moveY / Engine.Deltatime);
                         if (ridingActors.Contains(actor))

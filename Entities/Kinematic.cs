@@ -7,11 +7,21 @@ namespace Fiourp
     public abstract class Kinematic : Entity
     {
         public Vector2 Velocity;
-        public AABBCollider Collider;
+        public Collider Collider;
         public Sprite Sprite;
 
         protected float xRemainder;
         protected float yRemainder;
+
+        public Vector2 MiddlePos
+        {
+            get => new Vector2(Pos.X + Collider.Bounds.Width / 2, Pos.Y + Collider.Bounds.Height / 2);
+            set
+            {
+                Vector2 pos = value - new Vector2(Collider.Bounds.Width / 2, Collider.Bounds.Height / 2);
+                Pos = VectorHelper.Floor(pos);
+            }
+        }
 
         public Vector2 ExactPos
         {
@@ -24,29 +34,19 @@ namespace Fiourp
             }
         }
 
-        public Vector2 MiddlePos
-        {
-            get => new Vector2(Pos.X + Collider.Width / 2, Pos.Y + Collider.Height / 2);
-            set
-            {
-                Vector2 pos = value - Collider.Size / 2;
-                Pos = VectorHelper.Floor(pos);
-            }
-        }
-
         public Vector2 MiddleExactPos
         {
-            get => new Vector2(Pos.X + xRemainder + Collider.Width / 2, Pos.Y + yRemainder + Collider.Height / 2);
+            get => new Vector2(Pos.X + xRemainder + Collider.Bounds.Width / 2, Pos.Y + yRemainder + Collider.Bounds.Height / 2);
             set
             {
-                Vector2 pos = value - Collider.Size / 2;
+                Vector2 pos = value - new Vector2(Collider.Bounds.Width / 2, Collider.Bounds.Height / 2);
                 Pos = VectorHelper.Floor(pos);
                 xRemainder = pos.X - (float)Math.Floor(pos.X);
                 yRemainder = pos.Y - (float)Math.Floor(pos.Y);
             }
         }
 
-        public Kinematic(Vector2 position, AABBCollider collider, Sprite sprite) : base(position)
+        public Kinematic(Vector2 position, Collider collider, Sprite sprite) : base(position)
         {
             AddComponent(Collider = collider);
             AddComponent(Sprite = sprite);
