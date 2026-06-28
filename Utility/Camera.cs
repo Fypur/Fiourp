@@ -4,6 +4,11 @@ namespace Fiourp
 {
     public class Camera
     {
+        public int Width;
+        public int Height;
+        public int ViewportWidth;
+        public int ViewportHeight;
+
         private bool needToRecalculateMatrix;
         private bool needToRecalculateInverseMatrix;
 
@@ -21,13 +26,6 @@ namespace Fiourp
             set { if (value != rotation) { needToRecalculateMatrix = true; rotation = value; } }
         }
 
-        private float zoom;
-        public float ZoomLevel
-        {
-            get => zoom;
-            set { if (value != zoom) { needToRecalculateMatrix = true; zoom = value; } }
-        }
-
         private Matrix view;
         public Matrix ViewMatrix
         {
@@ -40,7 +38,7 @@ namespace Fiourp
                     Vector2 wholePos = pos;
                     wholePos.Round();
                     view = Matrix.CreateTranslation(new Vector3(-VectorHelper.Round(wholePos), 0.0f)) *
-                           Matrix.CreateScale(ZoomLevel) *
+                           Matrix.CreateScale(new Vector3(ViewportWidth / Width, ViewportHeight / Height, 1f)) *
                            Matrix.CreateRotationZ(MathHelper.ToRadians(Rotation));
                 }
 
@@ -53,7 +51,7 @@ namespace Fiourp
         {
             get
             {
-                if (needToRecalculateInverseMatrix)
+                if (needToRecalculateMatrix || needToRecalculateInverseMatrix)
                 {
                     inverseMatrix = Matrix.Invert(ViewMatrix);
                     needToRecalculateInverseMatrix = false;
@@ -64,13 +62,18 @@ namespace Fiourp
         }
 
 
-        public Camera(Vector2 position, float rotation, float zoomLevel)
+        public Camera(Vector2 position, float rotation, float viewportWidth, float viewportHeight)
         {
             Engine.Cam = this;
 
             Pos = position;
             Rotation = rotation;
             ZoomLevel = zoomLevel;
+
+            Width = viewportWidth;
+            Height = viewportHeight;
+            ViewportWidth = viewportWidth;
+            ViewportHeight = viewportHeight;
         }
 
         public void Refresh()
