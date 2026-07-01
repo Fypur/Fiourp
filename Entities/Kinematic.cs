@@ -49,7 +49,9 @@ namespace Fiourp
         public Kinematic(Vector2 position, Collider collider, Sprite sprite) : base(position)
         {
             AddComponent(Collider = collider);
-            AddComponent(Sprite = sprite);
+
+            if (sprite != null)
+                AddComponent(Sprite = sprite);
         }
 
         public bool CollideAt(Kinematic collider, Vector2 position)
