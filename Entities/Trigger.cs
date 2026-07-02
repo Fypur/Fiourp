@@ -6,6 +6,8 @@ namespace Fiourp
 {
     public class Trigger : Entity
     {
+        public static List<Trigger> InstanciatedTriggers = new List<Trigger>();
+
         public Collider Collider;
         public List<Type> Triggerers;
 
@@ -25,6 +27,13 @@ namespace Fiourp
             Collider = collider;
             Collider.DebugColor = Color.White;
             AddComponent(Collider);
+        }
+
+        public override void Awake()
+        {
+            base.Awake();
+
+            InstanciatedTriggers.Add(this);
         }
 
         public override void Update()
@@ -69,6 +78,7 @@ namespace Fiourp
 
         public override void OnDestroy()
         {
+            InstanciatedTriggers.Remove(this);
             for (int i = enteredEntities.Count - 1; i >= 0; i--)
                 OnTriggerExit(enteredEntities[i]);
 

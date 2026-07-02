@@ -182,11 +182,11 @@ namespace Fiourp
 
             if (Texture == Drawing.PointTexture)
             {
-                /*if (DesinationRectangle == null)
+                if (DesinationRectangle == null)
                 {
                     Rectangle rect;
-                    if (ParentEntity != null)
-                        rect = ParentEntity.Bounds;
+                    if (ParentEntity is Kinematic kinematic)
+                        rect = kinematic.Collider.Bounds;
                     else
                         rect = Texture.Bounds;
 
@@ -194,11 +194,11 @@ namespace Fiourp
                     Drawing.Draw(Texture, ParentEntity.Pos + Offset, SourceRectangle, Color, Rotation, Origin, new Vector2(rect.Width, rect.Height) * Scale, SpriteEffect, LayerDepth);
                 }
                 else
-                    Drawing.Draw(Texture, (Rectangle)DesinationRectangle, Color, Rotation, Origin, Scale, SpriteEffect, LayerDepth);*/
+                    Drawing.Draw(Texture, (Rectangle)DesinationRectangle, Color, Rotation, Origin, Scale, SpriteEffect, LayerDepth);
             }
-            /*else if (Centered)
-                Drawing.Draw(Texture, ParentEntity.Pos + ParentEntity.HalfSize + Offset, SourceRectangle, Color, Rotation, Origin,
-                    Scale, SpriteEffects.None, 1);*/ //TODO: Fix this sprite thing
+            else if (Centered && ParentEntity is Kinematic kinematic)
+                Drawing.Draw(Texture, ParentEntity.Pos + kinematic.Collider.Bounds.Size.ToVector2() / 2 + Offset, SourceRectangle, Color, Rotation, Origin,
+                    Scale, SpriteEffects.None, 1);
             else
                 Drawing.Draw(Texture, ParentEntity.Pos + Offset, SourceRectangle, Color, Rotation, Origin, Scale, SpriteEffect, LayerDepth);
         }
