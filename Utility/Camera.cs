@@ -4,10 +4,16 @@ namespace Fiourp
 {
     public class Camera
     {
-        public int Width;
-        public int Height;
         public int ViewportWidth;
         public int ViewportHeight;
+
+        public int Width;
+        public int Height;
+        public Vector2 Size
+        {
+            get => new Vector2(Width, Height);
+            set { Width = (int)value.X; Height = (int)value.Y; }
+        }
 
         private bool needToRecalculateMatrix;
         private bool needToRecalculateInverseMatrix;
@@ -35,11 +41,11 @@ namespace Fiourp
                 {
                     needToRecalculateMatrix = false;
                     needToRecalculateInverseMatrix = true;
-                    Vector2 wholePos = pos;
-                    wholePos.Round();
-                    view = Matrix.CreateTranslation(new Vector3(-VectorHelper.Round(wholePos), 0.0f)) *
+                    //math below is potentially wrong
+                    view = Matrix.CreateTranslation(new Vector3(-VectorHelper.Round(pos), 0.0f)) *
                            Matrix.CreateScale(new Vector3(ViewportWidth / Width, ViewportHeight / Height, 1f)) *
-                           Matrix.CreateRotationZ(MathHelper.ToRadians(Rotation));
+                           Matrix.CreateRotationZ(MathHelper.ToRadians(Rotation)) *
+                           Matrix.CreateTranslation(new Vector3(ViewportWidth / 2f, ViewportHeight / 2f, 0f));
                 }
 
                 return view;
@@ -62,13 +68,12 @@ namespace Fiourp
         }
 
 
-        public Camera(Vector2 position, float rotation, float viewportWidth, float viewportHeight)
+        public Camera(Vector2 position, float rotation, int viewportWidth, int viewportHeight)
         {
             Engine.Cam = this;
 
             Pos = position;
             Rotation = rotation;
-            ZoomLevel = zoomLevel;
 
             Width = viewportWidth;
             Height = viewportHeight;

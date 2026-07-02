@@ -7,6 +7,7 @@ namespace Fiourp
     public abstract class Kinematic : Entity
     {
         public Vector2 Velocity;
+
         public Collider Collider;
         public Sprite Sprite;
 
@@ -48,6 +49,7 @@ namespace Fiourp
 
         public Kinematic(Vector2 position, Collider collider, Sprite sprite) : base(position)
         {
+            Children = new();
             AddComponent(Collider = collider);
 
             if (sprite != null)

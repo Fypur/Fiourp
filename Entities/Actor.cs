@@ -70,6 +70,8 @@ namespace Fiourp
 
         public void MoveX(float amount, List<Kinematic> checkedCollision, Action<Kinematic> callbackOnCollision = null)
         {
+            float oldXRemainder = xRemainder;
+
             xRemainder += amount;
             int move = (int)Math.Floor(xRemainder);
 
@@ -93,10 +95,15 @@ namespace Fiourp
                     }
                 }
             }
+
+            foreach (Kinematic child in Children)
+                child.Move(new Vector2(xRemainder - oldXRemainder, 0));
         }
 
         public void MoveY(float amount, List<Kinematic> checkedCollision, Action<Kinematic> CallbackOnCollision = null)
         {
+            float oldYRemainder = yRemainder;
+
             yRemainder += amount;
             int move = (int)Math.Floor(yRemainder);
 
@@ -120,6 +127,9 @@ namespace Fiourp
                     }
                 }
             }
+
+            foreach (Kinematic child in Children)
+                child.Move(new Vector2(xRemainder - oldYRemainder, 0));
         }
 
         public override void Move(Vector2 moveAmount)
@@ -129,12 +139,6 @@ namespace Fiourp
         {
             MoveX(amount.X, CallbackOnCollisionX);
             MoveY(amount.Y, CallbackOnCollisionY);
-        }
-
-        public void MoveTo(Vector2 pos, Action CallbackOnCollisionX = null, Action CallbackOnCollisionY = null)
-        {
-            MoveX(pos.X - ExactPos.X, CallbackOnCollisionX);
-            MoveY(pos.Y - ExactPos.Y, CallbackOnCollisionY);
         }
     }
 }

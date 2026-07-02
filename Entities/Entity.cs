@@ -15,6 +15,9 @@ namespace Fiourp
 
         public List<Component> Components = new List<Component>();
 
+        protected List<Entity> Children;
+        public Entity Parent = null;
+
         public Entity(Vector2 position)
         {
             Pos = position;
@@ -117,6 +120,18 @@ namespace Fiourp
 
             component = null;
             return false;
+        }
+
+        public void AddChild(Entity child)
+        {
+            Children.Add(child);
+            child.Parent = this;
+        }
+
+        public void RemoveChild(Entity child)
+        {
+            Children.Remove(child);
+            child.Parent = null;
         }
 
         public void SelfDestroy()
