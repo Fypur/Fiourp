@@ -56,89 +56,61 @@ namespace Fiourp
             base.OnDestroy();
         }
 
-        public void MoveX(float amount, Action callbackOnCollision)
-            => MoveX(amount, (entity) => callbackOnCollision?.Invoke());
-
-        public void MoveY(float amount, Action callbackOnCollision)
-            => MoveY(amount, (entity) => callbackOnCollision?.Invoke());
-
         public void MoveX(float amount, Action<Kinematic> callbackOnCollision = null)
-            => MoveX(amount, new List<Kinematic>(Solid.InstantiatedSolids), callbackOnCollision);
+            => Move(amount, new List<Kinematic>(Solid.InstantiatedSolids), true, callbackOnCollision);
 
         public void MoveY(float amount, Action<Kinematic> callbackOnCollision = null)
-            => MoveY(amount, new List<Kinematic>(Solid.InstantiatedSolids), callbackOnCollision);
+            => Move(amount, new List<Kinematic>(Solid.InstantiatedSolids), false, callbackOnCollision);
+
+        public override void Move(Vector2 moveAmount)
+        {
+            Move(moveAmount.X, new List<Kinematic>(Solid.InstantiatedSolids), true, null);
+            Move(moveAmount.Y, new List<Kinematic>(Solid.InstantiatedSolids), false, null);
+        }
 
         public void MoveX(float amount, List<Kinematic> checkedCollision, Action<Kinematic> callbackOnCollision = null)
-        {
-            float oldXRemainder = xRemainder;
+            => Move(amount, checkedCollision, true, callbackOnCollision);
 
-            xRemainder += amount;
-            int move = (int)Math.Floor(xRemainder);
+        public void MoveY(float amount, List<Kinematic> checkedCollision, Action<Kinematic> CallbackOnCollision = null)
+            => Move(amount, checkedCollision, false, CallbackOnCollision);
+
+        private void Move(float amount, List<Kinematic> checkedCollision, bool xAxis, Action<Kinematic> callbackOnCollision = null)
+        {
+            ref float remainder = ref (xAxis ? ref xRemainder : ref yRemainder);
+            float oldRemainder = remainder;
+
+            remainder += amount;
+            int move = (int)Math.Floor(remainder);
 
             if (move != 0)
             {
-                xRemainder -= move;
+                remainder -= move;
                 int sign = Math.Sign(move);
+                Vector2 moveVector = xAxis ? new Vector2(sign, 0) : new Vector2(0, sign);
 
                 while (move != 0)
                 {
-                    if (!CollideAt(checkedCollision, Pos + new Vector2(sign, 0), out Kinematic collided))
+                    if (!CollideAt(checkedCollision, Pos + moveVector, out Kinematic collided))
                     {
-                        Pos.X += sign;
+                        if (xAxis)
+                            Pos.X += sign;
+                        else
+                            Pos.Y += sign;
+
                         move -= sign;
                     }
                     else
                     {
-                        xRemainder = 0;
+                        remainder = 0;
                         callbackOnCollision?.Invoke(collided);
                         break;
                     }
                 }
             }
 
+            Vector2 childMove = xAxis ? new Vector2(remainder - oldRemainder, 0) : new Vector2(0, remainder - oldRemainder);
             foreach (Kinematic child in Children)
-                child.Move(new Vector2(xRemainder - oldXRemainder, 0));
-        }
-
-        public void MoveY(float amount, List<Kinematic> checkedCollision, Action<Kinematic> CallbackOnCollision = null)
-        {
-            float oldYRemainder = yRemainder;
-
-            yRemainder += amount;
-            int move = (int)Math.Floor(yRemainder);
-
-            if (move != 0)
-            {
-                yRemainder -= move;
-                int sign = Math.Sign(move);
-
-                while (move != 0)
-                {
-                    if (!CollideAt(checkedCollision, Pos + new Vector2(0, sign), out Kinematic collided))
-                    {
-                        Pos.Y += sign;
-                        move -= sign;
-                    }
-                    else
-                    {
-                        yRemainder = 0;
-                        CallbackOnCollision?.Invoke(collided);
-                        break;
-                    }
-                }
-            }
-
-            foreach (Kinematic child in Children)
-                child.Move(new Vector2(xRemainder - oldYRemainder, 0));
-        }
-
-        public override void Move(Vector2 moveAmount)
-            => Move(moveAmount, null, null);
-
-        public void Move(Vector2 amount, Action CallbackOnCollisionX = null, Action CallbackOnCollisionY = null)
-        {
-            MoveX(amount.X, CallbackOnCollisionX);
-            MoveY(amount.Y, CallbackOnCollisionY);
+                child.Move(childMove);
         }
     }
 }

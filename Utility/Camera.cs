@@ -4,17 +4,6 @@ namespace Fiourp
 {
     public class Camera
     {
-        public int ViewportWidth;
-        public int ViewportHeight;
-
-        public int Width;
-        public int Height;
-        public Vector2 Size
-        {
-            get => new Vector2(Width, Height);
-            set { Width = (int)value.X; Height = (int)value.Y; }
-        }
-
         private bool needToRecalculateMatrix;
         private bool needToRecalculateInverseMatrix;
 
@@ -24,6 +13,14 @@ namespace Fiourp
             get => pos;
             set { if (value != pos) { needToRecalculateMatrix = true; pos = value; } }
         }
+
+        private Vector2 scale;
+        public Vector2 Scale
+        {
+            get => scale;
+            set { if (value != scale) { needToRecalculateMatrix = true; scale = value; } }
+        }
+
 
         private float rotation;
         public float Rotation
@@ -43,7 +40,7 @@ namespace Fiourp
                     needToRecalculateInverseMatrix = true;
                     //math below is potentially wrong
                     view = Matrix.CreateTranslation(new Vector3(-VectorHelper.Round(pos), 0.0f)) *
-                           Matrix.CreateScale(new Vector3(ViewportWidth / Width, ViewportHeight / Height, 1f)) *
+                           Matrix.CreateScale(new Vector3(Scale, 1f)) *
                            Matrix.CreateRotationZ(MathHelper.ToRadians(Rotation)) *
                            Matrix.CreateTranslation(new Vector3(ViewportWidth / 2f, ViewportHeight / 2f, 0f));
                 }
@@ -68,17 +65,11 @@ namespace Fiourp
         }
 
 
-        public Camera(Vector2 position, float rotation, int viewportWidth, int viewportHeight)
+        public Camera(Vector2 position, float rotation, Vector2 scale)
         {
-            Engine.Cam = this;
-
             Pos = position;
             Rotation = rotation;
-
-            Width = viewportWidth;
-            Height = viewportHeight;
-            ViewportWidth = viewportWidth;
-            ViewportHeight = viewportHeight;
+            Scale = scale;
         }
 
         public void Refresh()
