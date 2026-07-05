@@ -19,6 +19,11 @@ namespace Fiourp
             Trail = trail;
             LocalPosition = localPosition;
             VelocitySizeMultiplier = velocitySizeMultiplier;
+        }
+
+        public override void Added()
+        {
+            base.Added();
             previousPos = ParentEntity.Pos;
         }
 

@@ -17,10 +17,10 @@ namespace Fiourp
         public int Height => TileHeight * GridLayout.GetLength(0);
         public override Rectangle Bounds => new Rectangle((int)WorldPos.X, (int)WorldPos.Y, Width, Height);
 
-        public readonly Vector2[] Corners;
-        public readonly Vector2[] InsideCorners;
-        public readonly List<int[]> Edges;
-        public readonly List<int[]>[,] ChunksEdge;
+        public Vector2[] Corners { get; private set; }
+        public Vector2[] InsideCorners { get; private set; }
+        public List<int[]> Edges { get; private set; }
+        public List<int[]>[,] ChunksEdge { get; private set; }
 
 
         private AABBCollider box;
@@ -31,17 +31,17 @@ namespace Fiourp
             TileWidth = tileWidth;
             TileHeight = tileHeight;
             GridLayout = layout;
+        }
+
+        public override void Added()
+        {
+            base.Added();
 
             Corners = GetLevelCorners();
             InsideCorners = GetLevelInsideCorners();
 
             ChunksEdge = new List<int[]>[(int)Math.Ceiling(GridLayout.GetLength(0) / (float)ChunkSize), (int)Math.Ceiling(GridLayout.GetLength(1) / (float)ChunkSize)];
             Edges = GetEdges();
-        }
-
-        public override void Added()
-        {
-            base.Added();
 
             box = (AABBCollider)ParentEntity.AddComponent(new AABBCollider(LocalPos, TileWidth, TileHeight));
             box.Collidable = false;

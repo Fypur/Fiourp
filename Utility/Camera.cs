@@ -4,6 +4,9 @@ namespace Fiourp
 {
     public class Camera
     {
+        public int ViewportWidth;
+        public int ViewportHeight;
+
         private bool needToRecalculateMatrix;
         private bool needToRecalculateInverseMatrix;
 
@@ -40,8 +43,8 @@ namespace Fiourp
                     needToRecalculateInverseMatrix = true;
                     //math below is potentially wrong
                     view = Matrix.CreateTranslation(new Vector3(-VectorHelper.Round(pos), 0.0f)) *
-                           Matrix.CreateScale(new Vector3(Scale, 1f)) *
-                           Matrix.CreateRotationZ(MathHelper.ToRadians(Rotation)) *
+                           Matrix.CreateRotationZ(MathHelper.ToRadians(rotation)) *
+                           Matrix.CreateScale(new Vector3(scale, 1f)) *
                            Matrix.CreateTranslation(new Vector3(ViewportWidth / 2f, ViewportHeight / 2f, 0f));
                 }
 
@@ -65,11 +68,13 @@ namespace Fiourp
         }
 
 
-        public Camera(Vector2 position, float rotation, Vector2 scale)
+        public Camera(Vector2 position, float rotation, Vector2 scale, int viewportWidth, int viewportHeight)
         {
             Pos = position;
             Rotation = rotation;
             Scale = scale;
+            ViewportWidth = viewportWidth;
+            ViewportHeight = viewportHeight;
         }
 
         public void Refresh()

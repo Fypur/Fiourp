@@ -68,9 +68,9 @@ namespace Fiourp
                     if (Collider.Collide(actor.Collider))
                     {
                         if (moveX > 0)
-                            actor.MoveX(Pos.X + Collider.Bounds.Width - actor.Pos.X, actor.Squish);
+                            actor.MoveX(Pos.X + Collider.Bounds.Width - actor.Pos.X, (k) => actor.Squish());
                         else
-                            actor.MoveX(Pos.X - actor.Pos.X - actor.Collider.Bounds.Width, actor.Squish);
+                            actor.MoveX(Pos.X - actor.Pos.X - actor.Collider.Bounds.Width, (k) => actor.Squish());
 
                         actor.LiftSpeed = new Vector2(moveX / Engine.Deltatime, actor.LiftSpeed.Y);
                         if (ridingActorsX.Contains(actor))
@@ -96,9 +96,9 @@ namespace Fiourp
                     if (Collider.Collide(actor.Collider))
                     {
                         if (moveY > 0)
-                            actor.MoveY(Pos.Y + Collider.Bounds.Height - actor.Pos.Y, actor.Squish);
+                            actor.MoveY(Pos.Y + Collider.Bounds.Height - actor.Pos.Y, (k) => actor.Squish());
                         else
-                            actor.MoveY(Pos.Y - actor.Pos.Y - actor.Collider.Bounds.Height, actor.Squish);
+                            actor.MoveY(Pos.Y - actor.Pos.Y - actor.Collider.Bounds.Height, (k) => actor.Squish());
 
                         actor.LiftSpeed = new Vector2(actor.LiftSpeed.X, moveY / Engine.Deltatime);
                         if (ridingActors.Contains(actor))

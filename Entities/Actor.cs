@@ -42,7 +42,7 @@ namespace Fiourp
             => CollideAt(solid, Pos + new Vector2(0, 1));
 
         public virtual void Squish()
-            => Engine.CurrentMap.Destroy(this);
+            => SelfDestroy();
 
         public override void Awake()
         {
@@ -109,7 +109,7 @@ namespace Fiourp
             }
 
             Vector2 childMove = xAxis ? new Vector2(remainder - oldRemainder, 0) : new Vector2(0, remainder - oldRemainder);
-            foreach (Kinematic child in Children)
+            foreach (Entity child in Children)
                 child.Move(childMove);
         }
     }
