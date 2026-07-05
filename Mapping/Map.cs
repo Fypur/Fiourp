@@ -13,12 +13,17 @@ namespace Fiourp
         public ParticleSystem MiddlegroundSystem = new ParticleSystem();
         public ParticleSystem BackgroundSystem = new ParticleSystem();
 
+        public List<Kinematic> Kinematics = new();
+        public List<Kinematic> NonActorKinematics = new();
+        public List<Solid> Solids = new();
+        public List<Actor> Actors = new();
+
         public Map()
         {
             Data = new MapData();
         }
 
-        public void Update()
+        public virtual void Update()
         {
             for (int i = Data.Entities.Count - 1; i >= 0; i--)
                 if (i < Data.Entities.Count && Data.Entities[i].Active)
@@ -29,18 +34,18 @@ namespace Fiourp
             ForegroundSystem.Update();
         }
 
-        public void LateUpdate()
+        public virtual void LateUpdate()
         {
             for (int i = Data.Entities.Count - 1; i >= 0; i--)
                 if (i < Data.Entities.Count && Data.Entities[i].Active)
                     Data.Entities[i].LateUpdate();
         }
 
-        public void Render()
+        public virtual void Render()
         {
             List<Entity> loopedEntities = new List<Entity>(Data.Entities);
 
-            for (int l = -MinLayer; l <= MaxLayer; l++)
+            for (int l = MinLayer; l <= MaxLayer; l++)
             {
                 for (int i = loopedEntities.Count - 1; i >= 0; i--)
                 {
@@ -68,7 +73,7 @@ namespace Fiourp
             ForegroundSystem.Render();
         }
 
-        public Entity Instantiate(Entity entity)
+        public virtual Entity Instantiate(Entity entity)
         {
             Data.Entities.Add(entity);
 
@@ -78,11 +83,26 @@ namespace Fiourp
             else
                 Engine.CurrentMap.Data.EntitiesByType[type].Add(entity);
 
+            if (entity is Kinematic kinematic)
+            {
+                if (entity is Actor actor)
+                    Actors.Add(actor);
+                else
+                    NonActorKinematics.Add(kinematic);
+
+                if (entity is Solid solid)
+                    Solids.Add(solid);
+
+                Kinematics.Add(kinematic);
+            }
+
+            entity.ParentMap = this;
+
             entity.Awake();
             return entity;
         }
 
-        public void Destroy(Entity entity)
+        public virtual void Destroy(Entity entity)
         {
             for (int i = entity.Components.Count - 1; i >= 0; i--)
                 if (i < entity.Components.Count)
@@ -91,7 +111,23 @@ namespace Fiourp
             Data.Entities.Remove(entity);
 
             Engine.CurrentMap.Data.EntitiesByType[entity.GetType()].Remove(entity);
+
+            if (entity is Kinematic kinematic)
+            {
+                if (entity is Actor actor)
+                    Actors.Remove(actor);
+                else
+                    NonActorKinematics.Remove(kinematic);
+
+                if (entity is Solid solid)
+                    Solids.Remove(solid);
+
+                Kinematics.Remove(kinematic);
+            }
+
             entity.OnDestroy();
+
+            entity.ParentMap = null;
         }
     }
 }

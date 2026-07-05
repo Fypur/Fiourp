@@ -326,7 +326,7 @@ namespace Fiourp
 
 
 #if DEBUG
-            if (Debug.DebugMode)
+            /*if (Debug.DebugMode)
             {
                 for (int i = 0; i < polygon.Length; i++)
                 {
@@ -338,7 +338,7 @@ namespace Fiourp
                         Debug.LogUpdate("Sqrd Dist : " + distancesSquared[polygon[i].Position]);
                     }
                 }
-            }
+            }*/
 #endif
 
             return polygon;

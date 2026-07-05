@@ -25,11 +25,12 @@ namespace Fiourp
 
         public Particle(ParticleType type, Entity followed, Vector2 position, float size) : base(position)
         {
-            Sprite = new Sprite(type.Texture);
+            AddComponent(Sprite = new Sprite(type.Texture));
             Type = type;
             Followed = followed;
             LifeTime = StartLifeTime;
             StartSize = size;
+            Size = StartSize;
         }
 
         public override void Update()
@@ -98,6 +99,8 @@ namespace Fiourp
         {
             if (Followed != null)
                 Sprite.Offset = Followed.Pos;
+
+            Sprite.Scale = new Vector2(Size);
 
             base.Render();
 

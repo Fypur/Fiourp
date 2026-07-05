@@ -15,8 +15,10 @@ namespace Fiourp
 
         public List<Component> Components = new List<Component>();
 
-        protected List<Entity> Children;
+        protected List<Entity> Children = new();
         public Entity Parent = null;
+
+        public Map ParentMap;
 
         public Entity(Vector2 position)
         {

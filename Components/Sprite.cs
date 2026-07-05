@@ -190,7 +190,6 @@ namespace Fiourp
                     else
                         rect = Texture.Bounds;
 
-                    rect.Location += Offset.ToPoint();
                     Drawing.Draw(Texture, ParentEntity.Pos + Offset, SourceRectangle, Color, Rotation, Origin, new Vector2(rect.Width, rect.Height) * Scale, SpriteEffect, LayerDepth);
                 }
                 else

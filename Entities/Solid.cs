@@ -6,8 +6,6 @@ namespace Fiourp
 {
     public abstract class Solid : Kinematic
     {
-        public static List<Solid> InstantiatedSolids = new();
-
         protected AABBCollider AABBCollider => (AABBCollider)Collider;
         protected List<Actor> ridingActors;
 
@@ -15,22 +13,13 @@ namespace Fiourp
         public Solid(Vector2 position, AABBCollider collider, Sprite sprite) : base(position, collider, sprite)
         { }
 
-        public override void Awake()
-        {
-            base.Awake();
-            InstantiatedSolids.Add(this);
-        }
-
-        public override void OnDestroy()
-        {
-            InstantiatedSolids.Remove(this);
-            base.OnDestroy();
-        }
-
         public override void Move(Vector2 vector)
-            => Move(vector.X, vector.Y);
+            => Move(vector.X, vector.Y, ParentMap.Actors);
 
-        public virtual void Move(float x, float y)
+        public void Move(float x, float y)
+            => Move(x, y, ParentMap.Actors);
+
+        public void Move(float x, float y, List<Actor> actors)
         {
             xRemainder += x;
             yRemainder += y;
@@ -52,7 +41,7 @@ namespace Fiourp
 
             if (moveX == 0 && moveY == 0) return;
 
-            List<Actor> ridingActors = GetAllRidingActors();
+            List<Actor> ridingActors = GetAllRidingActors(actors);
             List<Actor> ridingActorsX = new List<Actor>(ridingActors);
 
             Collider.Collidable = false;
@@ -62,9 +51,9 @@ namespace Fiourp
                 xRemainder -= moveX;
                 Pos.X += moveX;
 
-                for (int i = Actor.InstantiatedActors.Count - 1; i >= 0; i--)
+                for (int i = actors.Count - 1; i >= 0; i--)
                 {
-                    Actor actor = Actor.InstantiatedActors[i];
+                    Actor actor = actors[i];
                     if (Collider.Collide(actor.Collider))
                     {
                         if (moveX > 0)
@@ -90,9 +79,9 @@ namespace Fiourp
                 yRemainder -= moveY;
                 Pos.Y += moveY;
 
-                for (int i = Actor.InstantiatedActors.Count - 1; i >= 0; i--)
+                for (int i = actors.Count - 1; i >= 0; i--)
                 {
-                    Actor actor = Actor.InstantiatedActors[i];
+                    Actor actor = actors[i];
                     if (Collider.Collide(actor.Collider))
                     {
                         if (moveY > 0)
@@ -117,9 +106,11 @@ namespace Fiourp
         }
 
         public void MoveCollideSolids(Vector2 amount, Action CallbackOnCollisionX = null, Action CallbackOnCollisionY = null)
-            => MoveCollideSolids(amount.X, amount.Y, CallbackOnCollisionX, CallbackOnCollisionY);
+            => MoveCollideSolids(amount.X, amount.Y, ParentMap.Actors, ParentMap.NonActorKinematics, CallbackOnCollisionX, CallbackOnCollisionY);
+        public void MoveCollideSolids(Vector2 amount, List<Actor> actors, List<Kinematic> otherKinematics, Action CallbackOnCollisionX = null, Action CallbackOnCollisionY = null)
+            => MoveCollideSolids(amount.X, amount.Y, actors, otherKinematics, CallbackOnCollisionX, CallbackOnCollisionY);
 
-        public void MoveCollideSolids(float amountX, float amountY, Action CallbackOnCollisionX = null, Action CallbackOnCollisionY = null)
+        public void MoveCollideSolids(float amountX, float amountY, List<Actor> actors, List<Kinematic> otherSolids, Action CallbackOnCollisionX = null, Action CallbackOnCollisionY = null)
         {
             float finalX = 0;
             float finalY = 0;
@@ -134,7 +125,7 @@ namespace Fiourp
 
                 while (move != 0)
                 {
-                    if (!CollideAt(new List<Kinematic>(InstantiatedSolids), Pos + new Vector2(finalX + sign, 0), out Kinematic other))
+                    if (!CollideAt(otherSolids, Pos + new Vector2(finalX + sign, 0), out Kinematic other))
                     {
                         finalX += sign;
                         move -= sign;
@@ -158,7 +149,7 @@ namespace Fiourp
 
                 while (move != 0)
                 {
-                    if (!CollideAt(new List<Kinematic>(InstantiatedSolids), Pos + new Vector2(0, finalY + sign), out Kinematic other))
+                    if (!CollideAt(otherSolids, Pos + new Vector2(0, finalY + sign), out Kinematic other))
                     {
                         finalY += sign;
                         move -= sign;
@@ -172,25 +163,33 @@ namespace Fiourp
                 }
             }
 
-            Move(finalX, finalY);
+            Move(finalX, finalY, actors);
         }
 
-        public void MoveTo(Vector2 pos)
-        {
-            Move(pos.X - ExactPos.X, pos.Y - ExactPos.Y);
-        }
-
-        private List<Actor> GetAllRidingActors()
+        private List<Actor> GetAllRidingActors(List<Actor> actors)
         {
             List<Actor> ridingActors = new List<Actor>();
 
-            foreach (Actor a in Actor.InstantiatedActors)
+            foreach (Actor a in actors)
             {
                 if (a.IsRiding(this))
                     ridingActors.Add(a);
             }
 
             return ridingActors;
+        }
+
+        public Solid AddChild(Solid child)
+        {
+            Children.Add(child);
+            child.Parent = this;
+            return child;
+        }
+
+        public void RemoveChild(Solid child)
+        {
+            Children.Remove(child);
+            child.Parent = null;
         }
     }
 }
