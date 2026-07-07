@@ -42,31 +42,32 @@ namespace Fiourp
         public virtual void Squish()
             => SelfDestroy();
 
-        public override void Move(Vector2 moveAmount)
+        public override Vector2 Move(Vector2 moveAmount)
         {
-            Move(moveAmount.X, ParentMap.NonActorKinematics, true, null);
-            Move(moveAmount.Y, ParentMap.NonActorKinematics, false, null);
+            float xMoved = Move(moveAmount.X, ParentMap.NonActorKinematics, true, null);
+            float yMoved = Move(moveAmount.Y, ParentMap.NonActorKinematics, false, null);
+            return new Vector2(xMoved, yMoved);
         }
 
-        public void MoveX(float amount)
+        public float MoveX(float amount)
             => MoveX(amount, ParentMap.NonActorKinematics, null);
-        public void MoveY(float amount)
+        public float MoveY(float amount)
             => MoveY(amount, ParentMap.NonActorKinematics, null);
-        public void MoveX(float amount, Action<Kinematic> callbackOnCollision)
+        public float MoveX(float amount, Action<Kinematic> callbackOnCollision)
             => MoveX(amount, ParentMap.NonActorKinematics, callbackOnCollision);
-        public void MoveY(float amount, Action<Kinematic> callbackOnCollision)
+        public float MoveY(float amount, Action<Kinematic> callbackOnCollision)
             => MoveY(amount, ParentMap.NonActorKinematics, callbackOnCollision);
-        public void MoveX(float amount, List<Kinematic> checkedCollision, Action<Kinematic> callbackOnCollision = null)
+        public float MoveX(float amount, IEnumerable<Kinematic> checkedCollision, Action<Kinematic> callbackOnCollision = null)
             => Move(amount, checkedCollision, true, callbackOnCollision);
-
-        public void MoveY(float amount, List<Kinematic> checkedCollision, Action<Kinematic> callbackOnCollision = null)
+        public float MoveY(float amount, IEnumerable<Kinematic> checkedCollision, Action<Kinematic> callbackOnCollision = null)
             => Move(amount, checkedCollision, false, callbackOnCollision);
 
-        private void Move(float amount, List<Kinematic> checkedCollision, bool xAxis, Action<Kinematic> callbackOnCollision = null)
+        private float Move(float amount, IEnumerable<Kinematic> checkedCollision, bool xAxis, Action<Kinematic> callbackOnCollision = null)
         {
             ref float remainder = ref (xAxis ? ref xRemainder : ref yRemainder);
             float oldRemainder = remainder;
 
+            float oldExactPos = xAxis ? Pos.X + remainder : Pos.Y + remainder;
             remainder += amount;
             int move = (int)Math.Floor(remainder);
 
@@ -99,6 +100,8 @@ namespace Fiourp
             /*Vector2 childMove = xAxis ? new Vector2(remainder - oldRemainder, 0) : new Vector2(0, remainder - oldRemainder);
             foreach (Entity child in Children)
                 child.Move(childMove);*/
+
+            return (xAxis ? Pos.X + remainder : Pos.Y + remainder) - oldExactPos;
         }
     }
 }

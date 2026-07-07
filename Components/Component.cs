@@ -13,7 +13,7 @@
         public virtual void Update() { }
         public virtual void Render() { }
 
-        public void Destroy()
+        public void SelfDestroy()
             => ParentEntity.RemoveComponent(this);
     }
 }

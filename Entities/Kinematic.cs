@@ -58,10 +58,10 @@ namespace Fiourp
         public bool CollideAt(Kinematic collider, Vector2 position)
             => CollideAt(new List<Kinematic> { collider }, position, out _);
 
-        public bool CollideAt(List<Kinematic> checkedColliders, Vector2 position)
+        public bool CollideAt(IEnumerable<Kinematic> checkedColliders, Vector2 position)
             => CollideAt(checkedColliders, position, out _);
 
-        public bool CollideAt(List<Kinematic> checkedKinematics, Vector2 position, out Kinematic collidedEntity)
+        public bool CollideAt(IEnumerable<Kinematic> checkedKinematics, Vector2 position, out Kinematic collidedEntity)
         {
             Vector2 oldPos = Pos;
             Pos = position;

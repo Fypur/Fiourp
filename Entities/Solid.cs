@@ -13,13 +13,13 @@ namespace Fiourp
         public Solid(Vector2 position, AABBCollider collider, Sprite sprite) : base(position, collider, sprite)
         { }
 
-        public override void Move(Vector2 vector)
+        public override Vector2 Move(Vector2 vector)
             => Move(vector.X, vector.Y, ParentMap.Actors);
 
         public void Move(float x, float y)
             => Move(x, y, ParentMap.Actors);
 
-        public void Move(float x, float y, List<Actor> actors)
+        public Vector2 Move(float x, float y, IEnumerable<Actor> actors)
         {
             xRemainder += x;
             yRemainder += y;
@@ -36,10 +36,10 @@ namespace Fiourp
                 xRemainder -= moveX;
                 Pos.Y += moveY;
                 yRemainder -= moveY;
-                return;
+                return new Vector2(x, y);
             }
 
-            if (moveX == 0 && moveY == 0) return;
+            if (moveX == 0 && moveY == 0) return new Vector2(x, y);
 
             List<Actor> ridingActors = GetAllRidingActors(actors);
             List<Actor> ridingActorsX = new List<Actor>(ridingActors);
@@ -51,9 +51,8 @@ namespace Fiourp
                 xRemainder -= moveX;
                 Pos.X += moveX;
 
-                for (int i = actors.Count - 1; i >= 0; i--)
+                foreach (Actor actor in actors)
                 {
-                    Actor actor = actors[i];
                     if (Collider.Collide(actor.Collider))
                     {
                         if (moveX > 0)
@@ -79,9 +78,8 @@ namespace Fiourp
                 yRemainder -= moveY;
                 Pos.Y += moveY;
 
-                for (int i = actors.Count - 1; i >= 0; i--)
+                foreach (Actor actor in actors)
                 {
-                    Actor actor = actors[i];
                     if (Collider.Collide(actor.Collider))
                     {
                         if (moveY > 0)
@@ -103,14 +101,15 @@ namespace Fiourp
             }
 
             Collider.Collidable = true;
+            return new Vector2(x, y);
         }
 
         public void MoveCollideSolids(Vector2 amount, Action CallbackOnCollisionX = null, Action CallbackOnCollisionY = null)
             => MoveCollideSolids(amount.X, amount.Y, ParentMap.Actors, ParentMap.NonActorKinematics, CallbackOnCollisionX, CallbackOnCollisionY);
-        public void MoveCollideSolids(Vector2 amount, List<Actor> actors, List<Kinematic> otherKinematics, Action CallbackOnCollisionX = null, Action CallbackOnCollisionY = null)
+        public void MoveCollideSolids(Vector2 amount, IEnumerable<Actor> actors, IEnumerable<Kinematic> otherKinematics, Action CallbackOnCollisionX = null, Action CallbackOnCollisionY = null)
             => MoveCollideSolids(amount.X, amount.Y, actors, otherKinematics, CallbackOnCollisionX, CallbackOnCollisionY);
 
-        public void MoveCollideSolids(float amountX, float amountY, List<Actor> actors, List<Kinematic> otherSolids, Action CallbackOnCollisionX = null, Action CallbackOnCollisionY = null)
+        public void MoveCollideSolids(float amountX, float amountY, IEnumerable<Actor> actors, IEnumerable<Kinematic> otherSolids, Action CallbackOnCollisionX = null, Action CallbackOnCollisionY = null)
         {
             float finalX = 0;
             float finalY = 0;
@@ -166,7 +165,7 @@ namespace Fiourp
             Move(finalX, finalY, actors);
         }
 
-        private List<Actor> GetAllRidingActors(List<Actor> actors)
+        private List<Actor> GetAllRidingActors(IEnumerable<Actor> actors)
         {
             List<Actor> ridingActors = new List<Actor>();
 

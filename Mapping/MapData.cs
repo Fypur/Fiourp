@@ -6,25 +6,25 @@ namespace Fiourp
 {
     public class MapData
     {
-        public List<Entity> Entities = new List<Entity>();
+        public DeferredList<Entity> Entities = new();
 
-        public Dictionary<Type, List<Entity>> EntitiesByType = new Dictionary<Type, List<Entity>>();
+        public Dictionary<Type, DeferredList<Entity>> EntitiesByType = new Dictionary<Type, DeferredList<Entity>>();
         public List<Rigidbody> Bodies = new List<Rigidbody>();
 
         public List<T> GetEntities<T>() where T : Entity
         {
-            EntitiesByType.TryGetValue(typeof(T), out List<Entity> entities);
+            EntitiesByType.TryGetValue(typeof(T), out DeferredList<Entity> entities);
             if (entities == null)
                 return new List<T>();
-            return entities.Cast<T>().ToList();
+            return entities.Items.Cast<T>().ToList();
         }
 
         public T GetEntity<T>() where T : Entity
         {
-            EntitiesByType.TryGetValue(typeof(T), out List<Entity> entities);
-            if (entities == null || entities.Count == 0)
+            EntitiesByType.TryGetValue(typeof(T), out DeferredList<Entity> entities);
+            if (entities == null || entities.Items.Count == 0)
                 return null;
-            return (T)entities[0];
+            return (T)entities.Items[0];
         }
     }
 }

@@ -13,10 +13,15 @@ namespace Fiourp
         public ParticleSystem MiddlegroundSystem = new ParticleSystem();
         public ParticleSystem BackgroundSystem = new ParticleSystem();
 
-        public List<Kinematic> Kinematics = new();
-        public List<Kinematic> NonActorKinematics = new();
-        public List<Solid> Solids = new();
-        public List<Actor> Actors = new();
+        private DeferredList<Kinematic> deferredKinematics = new();
+        private DeferredList<Kinematic> deferredNonActorKinematics = new();
+        private DeferredList<Solid> deferredSolids = new();
+        private DeferredList<Actor> deferredActors = new();
+
+        public IReadOnlyList<Kinematic> Kinematics => deferredKinematics.Items;
+        public IReadOnlyList<Kinematic> NonActorKinematics => deferredNonActorKinematics.Items;
+        public IReadOnlyList<Solid> Solids => deferredSolids.Items;
+        public IReadOnlyList<Actor> Actors => deferredActors.Items;
 
         public Map()
         {
@@ -25,9 +30,9 @@ namespace Fiourp
 
         public virtual void Update()
         {
-            for (int i = Data.Entities.Count - 1; i >= 0; i--)
-                if (i < Data.Entities.Count && Data.Entities[i].Active)
-                    Data.Entities[i].Update();
+            foreach (Entity entity in Data.Entities.Items)
+                if (entity.Active)
+                    entity.Update();
 
             BackgroundSystem.Update();
             MiddlegroundSystem.Update();
@@ -36,14 +41,33 @@ namespace Fiourp
 
         public virtual void LateUpdate()
         {
-            for (int i = Data.Entities.Count - 1; i >= 0; i--)
-                if (i < Data.Entities.Count && Data.Entities[i].Active)
-                    Data.Entities[i].LateUpdate();
+            foreach (Entity entity in Data.Entities.Items)
+                entity.LateUpdate();
+
+            deferredKinematics.ProcessChanges();
+            deferredNonActorKinematics.ProcessChanges();
+            deferredSolids.ProcessChanges();
+            deferredActors.ProcessChanges();
+
+            foreach (DeferredList<Entity> deferredList in Data.EntitiesByType.Values)
+                deferredList.ProcessChanges();
+
+            Data.Entities.ProcessChanges((entity) =>
+                {
+                    entity.ParentMap = this;
+                    entity.Awake();
+                },
+                (entity) =>
+                {
+                    entity.OnDestroy();
+                    entity.ParentMap = null;
+                }
+                );
         }
 
         public virtual void Render()
         {
-            List<Entity> loopedEntities = new List<Entity>(Data.Entities);
+            List<Entity> loopedEntities = new List<Entity>(Data.Entities.Items);
 
             for (int l = MinLayer; l <= MaxLayer; l++)
             {
@@ -53,7 +77,7 @@ namespace Fiourp
                         break;
 
                     MaxLayer = Math.Max(loopedEntities[i].Layer, MaxLayer);
-                    MinLayer = Math.Min(loopedEntities[i].Layer, MinLayer); //technically this is updated a frame too late, but I don't wanna loop twice
+                    MinLayer = Math.Min(loopedEntities[i].Layer, MinLayer); //technically the item with a new minimum layer will be renderered a frame too late, but I don't wanna loop twice to check for the actual minLayer at every render
 
                     if (loopedEntities[i].Visible && loopedEntities[i].Layer == l)
                     {
@@ -78,36 +102,30 @@ namespace Fiourp
             Data.Entities.Add(entity);
 
             Type type = entity.GetType();
+
             if (!Engine.CurrentMap.Data.EntitiesByType.ContainsKey(type))
-                Engine.CurrentMap.Data.EntitiesByType.Add(type, new List<Entity>() { entity });
-            else
-                Engine.CurrentMap.Data.EntitiesByType[type].Add(entity);
+                Engine.CurrentMap.Data.EntitiesByType.Add(type, new DeferredList<Entity>());
+
+            Engine.CurrentMap.Data.EntitiesByType[type].Add(entity);
 
             if (entity is Kinematic kinematic)
             {
                 if (entity is Actor actor)
-                    Actors.Add(actor);
+                    deferredActors.Add(actor);
                 else
-                    NonActorKinematics.Add(kinematic);
+                    deferredNonActorKinematics.Add(kinematic);
 
                 if (entity is Solid solid)
-                    Solids.Add(solid);
+                    deferredSolids.Add(solid);
 
-                Kinematics.Add(kinematic);
+                deferredKinematics.Add(kinematic);
             }
 
-            entity.ParentMap = this;
-
-            entity.Awake();
             return entity;
         }
 
         public virtual void Destroy(Entity entity)
         {
-            for (int i = entity.Components.Count - 1; i >= 0; i--)
-                if (i < entity.Components.Count)
-                    entity.Components[i].Destroy();
-
             Data.Entities.Remove(entity);
 
             Engine.CurrentMap.Data.EntitiesByType[entity.GetType()].Remove(entity);
@@ -115,19 +133,15 @@ namespace Fiourp
             if (entity is Kinematic kinematic)
             {
                 if (entity is Actor actor)
-                    Actors.Remove(actor);
+                    deferredActors.Remove(actor);
                 else
-                    NonActorKinematics.Remove(kinematic);
+                    deferredNonActorKinematics.Remove(kinematic);
 
                 if (entity is Solid solid)
-                    Solids.Remove(solid);
+                    deferredSolids.Remove(solid);
 
-                Kinematics.Remove(kinematic);
+                deferredKinematics.Remove(kinematic);
             }
-
-            entity.OnDestroy();
-
-            entity.ParentMap = null;
         }
     }
 }

@@ -88,7 +88,7 @@ namespace Fiourp
             else if (stack != null && stack.Count > 0)
                 Enumerator = stack.Pop();
             else if (ParentEntity != null)
-                Destroy();
+                SelfDestroy();
             else Enumerator = null;
         }
 

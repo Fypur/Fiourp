@@ -62,7 +62,7 @@ namespace Fiourp
         public override void Added()
         {
             if (timer != float.NaN)
-                ParentEntity.AddComponent(new Timer(timer, null, () => Destroy()));
+                ParentEntity.AddComponent(new Timer(timer, null, () => SelfDestroy()));
         }
 
         public override void Update()

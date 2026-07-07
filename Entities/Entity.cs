@@ -13,7 +13,7 @@ namespace Fiourp
 
         public int Layer = 0;
 
-        public List<Component> Components = new List<Component>();
+        private List<Component> components = new();
 
         protected List<Entity> Children = new();
         public Entity Parent = null;
@@ -26,13 +26,14 @@ namespace Fiourp
         }
 
         public virtual void Awake()
-        { }
+        {
+        }
 
         public virtual void Update()
         {
-            for (int i = Components.Count - 1; i >= 0; i--)
-                if (Components.Count > i && Components[i].Active)
-                    Components[i].Update();
+            for (int i = components.Count - 1; i >= 0; i--)
+                if (components[i].Visible)
+                    components[i].Update();
         }
 
         public virtual void LateUpdate()
@@ -40,51 +41,62 @@ namespace Fiourp
 
         public virtual void Render()
         {
-            for (int i = Components.Count - 1; i >= 0; i--)
-                if (Components[i].Visible)
-                    Components[i].Render();
+            for (int i = components.Count - 1; i >= 0; i--)
+                if (components[i].Visible)
+                    components[i].Render();
         }
 
         public virtual void OnDestroy()
         {
-            for (int i = Components.Count - 1; i >= 0; i--)
-                Components[i].Removed();
+            for (int i = components.Count - 1; i >= 0; i--)
+                components[i].Removed();
         }
 
         public virtual bool CollidingConditions(Collider other)
             => true;
 
-        public virtual void Move(Vector2 moveAmount)
+        /// <summary>
+        /// Returns true amount moved
+        /// </summary>
+        public virtual Vector2 Move(Vector2 moveAmount)
             => Pos += moveAmount;
 
         public Component AddComponent(Component component)
         {
             component.ParentEntity = this;
+            components.Add(component);
+
             component.Added();
-            Components.Add(component);
-
             return component;
-        }
-
-        public void RemoveAllComponents<T>() where T : Component
-        {
-            for (int i = Components.Count - 1; i >= 0; i--)
-                if (Components[i] is T)
-                {
-                    RemoveComponent(Components[i]);
-                }
         }
 
         public void RemoveComponent(Component component)
         {
-            Components.Remove(component);
-            component?.Removed();
+            component.Removed();
+            component.ParentEntity = null;
+            components.Remove(component);
+        }
+
+        public void RemoveAllComponentsOfType<T>() where T : Component
+        {
+            for (int i = components.Count - 1; i >= 0; i--)
+                if (components[i] is T)
+                    RemoveComponent(components[i]);
         }
 
         public bool HasComponent<T>() where T : Component
         {
-            foreach (Component c in Components)
-                if (c is T t)
+            foreach (Component component in components)
+                if (component is T t)
+                    return true;
+
+            return false;
+        }
+
+        public bool HasComponent(Component component)
+        {
+            foreach (Component c in components)
+                if (c == component)
                     return true;
 
             return false;
@@ -92,7 +104,7 @@ namespace Fiourp
 
         public T GetComponent<T>() where T : Component
         {
-            foreach (Component c in Components)
+            foreach (Component c in components)
                 if (c is T t)
                     return (T)c;
 
@@ -102,7 +114,7 @@ namespace Fiourp
         public List<T> GetAllComponents<T>() where T : Component
         {
             List<T> result = new();
-            foreach (Component c in Components)
+            foreach (Component c in components)
             {
                 if (c is T t)
                     result.Add(t);
@@ -113,7 +125,7 @@ namespace Fiourp
 
         public bool TryGetComponent<T>(out T component) where T : Component
         {
-            foreach (Component c in Components)
+            foreach (Component c in components)
                 if (c is T t)
                 {
                     component = t;

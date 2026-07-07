@@ -42,24 +42,24 @@ namespace Fiourp
 
             for (int i = Triggerers.Count - 1; i >= 0; i--)
             {
-                Engine.CurrentMap.Data.EntitiesByType.TryGetValue(Triggerers[i], out List<Entity> triggers);
+                Engine.CurrentMap.Data.EntitiesByType.TryGetValue(Triggerers[i], out DeferredList<Entity> triggers);
 
                 if (triggers == null)
                     continue;
 
-                for (int y = triggers.Count - 1; y >= 0; y--)
+                foreach (Entity entity in triggers.Items)
                 {
-                    Kinematic entity = (Kinematic)Engine.CurrentMap.Data.EntitiesByType[Triggerers[i]][y];
+                    Kinematic kinematic = (Kinematic)entity;
 
-                    if (Collider.Collide(entity.Collider))
+                    if (Collider.Collide(kinematic.Collider))
                     {
-                        if (enteredEntities.Contains(entity))
-                            OnTriggerStay(entity);
+                        if (enteredEntities.Contains(kinematic))
+                            OnTriggerStay(kinematic);
                         else
-                            OnTriggerEnter(entity);
+                            OnTriggerEnter(kinematic);
                     }
-                    else if (enteredEntities.Contains(entity))
-                        OnTriggerExit(entity);
+                    else if (enteredEntities.Contains(kinematic))
+                        OnTriggerExit(kinematic);
                 }
             }
         }
