@@ -32,7 +32,7 @@ namespace Fiourp
         public virtual void Update()
         {
             for (int i = components.Count - 1; i >= 0; i--)
-                if (components[i].Visible)
+                if (i < components.Count && components[i].Active)
                     components[i].Update();
         }
 
@@ -42,14 +42,19 @@ namespace Fiourp
         public virtual void Render()
         {
             for (int i = components.Count - 1; i >= 0; i--)
-                if (components[i].Visible)
+                if (i < components.Count && components[i].Visible)
                     components[i].Render();
         }
 
         public virtual void OnDestroy()
         {
             for (int i = components.Count - 1; i >= 0; i--)
-                components[i].Removed();
+                if (i < components.Count)
+                    components[i].Removed();
+
+            for (int i = components.Count - 1; i >= 0; i--)
+                if (i < components.Count)
+                    components[i].SelfDestroy();
         }
 
         public virtual bool CollidingConditions(Collider other)
@@ -59,7 +64,10 @@ namespace Fiourp
         /// Returns true amount moved
         /// </summary>
         public virtual Vector2 Move(Vector2 moveAmount)
-            => Pos += moveAmount;
+        {
+            Pos += moveAmount;
+            return moveAmount;
+        }
 
         public Component AddComponent(Component component)
         {

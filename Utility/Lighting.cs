@@ -10,9 +10,6 @@ namespace Fiourp
         public const int MaxLightSize = 512;
         private const int numLightsPerRow = LightsTargetSize / MaxLightSize;
 
-        private static RenderTarget2D lightsTarget => Engine.LightsRenderTarget;
-        private static RenderTarget2D mainTarget => Engine.RenderTarget;
-
         private static Light[] lights = new Light[LightsTargetSize / MaxLightSize * LightsTargetSize / MaxLightSize];
         private static int lightNum;
 

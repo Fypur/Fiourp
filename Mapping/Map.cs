@@ -44,6 +44,11 @@ namespace Fiourp
             foreach (Entity entity in Data.Entities.Items)
                 entity.LateUpdate();
 
+            ProcessEntityChanges();
+        }
+
+        private void ProcessEntityChanges()
+        {
             deferredKinematics.ProcessChanges();
             deferredNonActorKinematics.ProcessChanges();
             deferredSolids.ProcessChanges();
@@ -53,10 +58,10 @@ namespace Fiourp
                 deferredList.ProcessChanges();
 
             Data.Entities.ProcessChanges((entity) =>
-                {
-                    entity.ParentMap = this;
-                    entity.Awake();
-                },
+            {
+                entity.ParentMap = this;
+                entity.Awake();
+            },
                 (entity) =>
                 {
                     entity.OnDestroy();
