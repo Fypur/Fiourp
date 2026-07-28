@@ -23,8 +23,6 @@ namespace Fiourp
 
         public Texture2D Texture;
         public NineSlice NineSliceSettings;
-        private int nineSliceWidth;
-        private int nineSliceHeight;
         private float rotation = 0;
         public float Rotation
         {
@@ -42,7 +40,6 @@ namespace Fiourp
 
         public Rectangle? DesinationRectangle = null;
         public Rectangle? SourceRectangle = null;
-        public bool Centered;
 
         public Texture2D CurrentAnimationFrame =>
             CurrentAnimation.Frames[CurrentFrame];
@@ -69,44 +66,15 @@ namespace Fiourp
             Texture = texture;
         }
 
-        public Sprite(NineSlice nineSliceSettings, int width, int height)
-        {
-            NineSliceSettings = nineSliceSettings;
-            nineSliceWidth = width;
-            nineSliceHeight = height;
-        }
-
-        public Sprite(Texture2D texture, Vector2 origin)
-        {
-            Texture = texture;
-            Origin = origin;
-        }
-
         public Sprite(Color color)
         {
             Texture = Drawing.PointTexture;
             Color = color;
         }
 
-        public Sprite(Color color, Rectangle? rect, float layerDepth = 0)
+        public Sprite(NineSlice nineSliceSettings)
         {
-            Texture = Drawing.PointTexture;
-            Color = color;
-            LayerDepth = layerDepth;
-            DesinationRectangle = rect;
-        }
-
-        public Sprite(Texture2D texture, Rectangle rect)
-        {
-            Texture = texture;
-            DesinationRectangle = rect;
-        }
-
-        public Sprite(Texture2D texture, Rectangle rect, float rotation)
-        {
-            Texture = texture;
-            Rotation = MathHelper.ToRadians(rotation);
-            DesinationRectangle = rect;
+            NineSliceSettings = nineSliceSettings;
         }
 
         #endregion
@@ -171,8 +139,8 @@ namespace Fiourp
 
         public override void Render()
         {
-            if (NineSliceSettings != null)
-                NineSliceSettings.Draw(nineSliceWidth, nineSliceHeight, this);
+            if (NineSliceSettings != null && ParentEntity is Kinematic kin && kin.Collider is AABBCollider aabbCollider)
+                NineSliceSettings.Draw(aabbCollider.Width, aabbCollider.Height, this);
 
             if (Texture == null)
                 return;
@@ -180,7 +148,9 @@ namespace Fiourp
             if (PixelShader != Drawing.GetCurrentPixelShader())
                 Drawing.SwitchPixelShader(PixelShader);
 
-            if (Texture == Drawing.PointTexture)
+            if (Texture != Drawing.PointTexture)
+                Drawing.Draw(Texture, ParentEntity.Pos + Offset, SourceRectangle, Color, Rotation, Origin, Scale, SpriteEffect, LayerDepth);
+            else
             {
                 if (DesinationRectangle == null)
                 {
@@ -195,11 +165,11 @@ namespace Fiourp
                 else
                     Drawing.Draw(Texture, (Rectangle)DesinationRectangle, Color, Rotation, Origin, Scale, SpriteEffect, LayerDepth);
             }
-            else if (Centered && ParentEntity is Kinematic kinematic)
+
+            /*else if (Centered && ParentEntity is Kinematic kinematic)
                 Drawing.Draw(Texture, ParentEntity.Pos + kinematic.Collider.Bounds.Size.ToVector2() / 2 + Offset, SourceRectangle, Color, Rotation, Origin,
-                    Scale, SpriteEffects.None, 1);
-            else
-                Drawing.Draw(Texture, ParentEntity.Pos + Offset, SourceRectangle, Color, Rotation, Origin, Scale, SpriteEffect, LayerDepth);
+                    Scale, SpriteEffects.None, 1);*/
+
         }
 
 
@@ -244,7 +214,6 @@ namespace Fiourp
                 GoTo = goTo;
                 IsLoop = isLoop;
                 LoopAmount = loopAmount;
-
 
                 Slices = ((List<Slice>)((object[])Frames[0].Tag)[1]).ToArray();
                 if (Slices.Length != 0)
@@ -372,7 +341,6 @@ namespace Fiourp
             s.SpriteEffect = SpriteEffect;
             s.LayerDepth = LayerDepth;
             s.DesinationRectangle = DesinationRectangle;
-            s.Centered = Centered;
             s.animations = animations;
             s.animating = animating;
             s.CurrentAnimation = CurrentAnimation;

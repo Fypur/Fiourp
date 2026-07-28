@@ -24,7 +24,7 @@ namespace Fiourp
             xRemainder += x;
             yRemainder += y;
 
-            foreach (Kinematic child in Children)
+            foreach (Entity child in Children)
                 child.Move(new Vector2(x, y));
 
             int moveX = (int)Math.Floor(xRemainder);

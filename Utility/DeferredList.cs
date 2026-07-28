@@ -10,8 +10,8 @@ namespace Fiourp
     public class DeferredList<T>
     {
         private List<T> items = new();
-        private List<T> pendingAdd = new();
-        private List<T> pendingRemove = new();
+        private Stack<T> pendingAdd = new();
+        private Stack<T> pendingRemove = new();
 
         public IReadOnlyList<T> Items => items;
 
@@ -22,8 +22,8 @@ namespace Fiourp
             items.AddRange(initialItems);
         }
 
-        public void Add(T item) => pendingAdd.Add(item);
-        public void Remove(T item) => pendingRemove.Add(item);
+        public void Add(T item) => pendingAdd.Push(item);
+        public void Remove(T item) => pendingRemove.Push(item);
         public void ProcessChanges()
         {
             foreach (var item in pendingRemove) items.Remove(item);
@@ -34,18 +34,20 @@ namespace Fiourp
 
         public void ProcessChanges(Action<T> onAdded, Action<T> onRemoved)
         {
-            foreach (var item in pendingRemove)
+            while (pendingRemove.Count > 0)
             {
+                var item = pendingRemove.Pop();
+
                 onRemoved?.Invoke(item);
                 items.Remove(item);
             }
-            foreach (var item in pendingAdd)
+            while (pendingAdd.Count > 0)
             {
+                var item = pendingAdd.Pop();
+
                 items.Add(item);
                 onAdded?.Invoke(item);
             }
-            pendingAdd.Clear();
-            pendingRemove.Clear();
         }
     }
 }
